@@ -115727,6 +115727,92 @@
       "tournament_player_id": 119848818
     }
   },
+  "graffiti_tints": {
+    "brick_red": {
+      "id": 1,
+      "hex_color": "#874444"
+    },
+    "blood_red": {
+      "id": 2,
+      "hex_color": "#b14d4d"
+    },
+    "tiger_orange": {
+      "id": 3,
+      "hex_color": "#b87148"
+    },
+    "dust_brown": {
+      "id": 4,
+      "hex_color": "#8f7d5d"
+    },
+    "desert_amber": {
+      "id": 5,
+      "hex_color": "#ae833d"
+    },
+    "tracer_yellow": {
+      "id": 6,
+      "hex_color": "#d4c95b"
+    },
+    "battle_green": {
+      "id": 7,
+      "hex_color": "#789d53"
+    },
+    "jungle_green": {
+      "id": 8,
+      "hex_color": "#417a4a"
+    },
+    "frog_green": {
+      "id": 9,
+      "hex_color": "#488f80"
+    },
+    "cash_green": {
+      "id": 10,
+      "hex_color": "#a6c4a5"
+    },
+    "wire_blue": {
+      "id": 11,
+      "hex_color": "#6ba5b2"
+    },
+    "monarch_blue": {
+      "id": 12,
+      "hex_color": "#4e7fa9"
+    },
+    "swat_blue": {
+      "id": 13,
+      "hex_color": "#4c5b98"
+    },
+    "violent_violet": {
+      "id": 14,
+      "hex_color": "#af92df"
+    },
+    "monster_purple": {
+      "id": 15,
+      "hex_color": "#6e4f9f"
+    },
+    "bazooka_pink": {
+      "id": 16,
+      "hex_color": "#ba68b2"
+    },
+    "princess_pink": {
+      "id": 17,
+      "hex_color": "#9d567a"
+    },
+    "war_pig_pink": {
+      "id": 18,
+      "hex_color": "#e4ccd5"
+    },
+    "shark_white": {
+      "id": 19,
+      "hex_color": "#c1c1c1"
+    }
+  },
+  "casket_icons": {
+    "1": {
+      "icon_path": "econ/tools/casket_rio2022_0"
+    },
+    "2": {
+      "icon_path": "econ/tools/casket_rio2022_1"
+    }
+  },
   "music_kits": {
     "1": {
       "name": "valve_csgo_01",
@@ -116204,84 +116290,6 @@
       "loc_description": "#musickit_perfectworld_01_desc",
       "image_inventory": "econ/music_kits/perfectworld_01",
       "pedestal_display_model": "models/inventory_items/music_kits/music_kit_perfectworld_01.mdl"
-    }
-  },
-  "graffiti_tints": {
-    "brick_red": {
-      "id": 1,
-      "hex_color": "#874444"
-    },
-    "blood_red": {
-      "id": 2,
-      "hex_color": "#b14d4d"
-    },
-    "tiger_orange": {
-      "id": 3,
-      "hex_color": "#b87148"
-    },
-    "dust_brown": {
-      "id": 4,
-      "hex_color": "#8f7d5d"
-    },
-    "desert_amber": {
-      "id": 5,
-      "hex_color": "#ae833d"
-    },
-    "tracer_yellow": {
-      "id": 6,
-      "hex_color": "#d4c95b"
-    },
-    "battle_green": {
-      "id": 7,
-      "hex_color": "#789d53"
-    },
-    "jungle_green": {
-      "id": 8,
-      "hex_color": "#417a4a"
-    },
-    "frog_green": {
-      "id": 9,
-      "hex_color": "#488f80"
-    },
-    "cash_green": {
-      "id": 10,
-      "hex_color": "#a6c4a5"
-    },
-    "wire_blue": {
-      "id": 11,
-      "hex_color": "#6ba5b2"
-    },
-    "monarch_blue": {
-      "id": 12,
-      "hex_color": "#4e7fa9"
-    },
-    "swat_blue": {
-      "id": 13,
-      "hex_color": "#4c5b98"
-    },
-    "violent_violet": {
-      "id": 14,
-      "hex_color": "#af92df"
-    },
-    "monster_purple": {
-      "id": 15,
-      "hex_color": "#6e4f9f"
-    },
-    "bazooka_pink": {
-      "id": 16,
-      "hex_color": "#ba68b2"
-    },
-    "princess_pink": {
-      "id": 17,
-      "hex_color": "#9d567a"
-    },
-    "war_pig_pink": {
-      "id": 18,
-      "hex_color": "#e4ccd5"
-    },
-    "shark_white": {
-      "id": 19,
-      "hex_color": "#c1c1c1"
     }
   }
 }
