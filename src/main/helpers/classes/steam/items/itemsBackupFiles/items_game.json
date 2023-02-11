@@ -4090,6 +4090,28 @@
         "pedestal display model": "models/inventory_items/maptoken_blagai.mdl"
       }
     },
+    "1088": {
+      "name": "Map Token Boyard",
+      "prefab": "map_token",
+      "item_name": "#CSGO_Collectible_MapTokenBoyard",
+      "item_description": "#CSGO_Collectible_MapTokenBoyard_Desc",
+      "image_inventory": "econ/status_icons/maptoken_boyard",
+      "map_name": "#SFUI_Map_de_boyard",
+      "attributes": {
+        "pedestal display model": "models/inventory_items/maptoken_boyard.mdl"
+      }
+    },
+    "1089": {
+      "name": "Map Token Chalice",
+      "prefab": "map_token",
+      "item_name": "#CSGO_Collectible_MapTokenChalice",
+      "item_description": "#CSGO_Collectible_MapTokenChalice_Desc",
+      "image_inventory": "econ/status_icons/maptoken_chalice",
+      "map_name": "#SFUI_Map_de_chalice",
+      "attributes": {
+        "pedestal display model": "models/inventory_items/maptoken_chalice.mdl"
+      }
+    },
     "1200": {
       "name": "Name Tag",
       "first_sale_date": "2013/08/28",
@@ -5235,6 +5257,17 @@
       "image_inventory": "econ/tools/crate_key_community_31",
       "tool": {
         "restriction": "crate_community_31"
+      }
+    },
+    "1393": {
+      "name": "community_32 Key",
+      "item_name": "#CSGO_crate_key_community_32",
+      "item_description": "#CSGO_crate_key_community_32_desc",
+      "first_sale_date": "2023-01-31",
+      "prefab": "weapon_case_key",
+      "image_inventory": "econ/tools/crate_key_community_32",
+      "tool": {
+        "restriction": "crate_community_32"
       }
     },
     "4001": {
@@ -18752,8 +18785,7 @@
       "name": "crate_signature_pack_rio2022_group_champions",
       "item_description": "#CSGO_crate_signature_pack_rio2022_group_champions_desc",
       "image_inventory": "econ/weapon_cases/crate_sticker_pack_rio2022_group_champions",
-      "prefab": "rio2022_signature_capsule_prefab ",
-      "cannot_inspect": 1,
+      "prefab": "rio2022_signature_capsule_prefab rio2022_sellable_item_with_payment_rules",
       "attributes": {
         "set supply crate series": {
           "attribute_class": "supply_crate_series",
@@ -18786,6 +18818,124 @@
         "cannot trade": 1,
         "tournament event id": 20
       }
+    },
+    "4873": {
+      "name": "prestige coin 2023",
+      "prefab": "prestige_coin",
+      "item_name": "#CSGO_Collectible_GlobalGeneral2023",
+      "item_description": "#CSGO_Collectible_Desc_GlobalGeneral2023",
+      "image_inventory": "econ/status_icons/service_medal_2023_lvl1",
+      "attributes": {
+        "prestige year": 2023,
+        "pedestal display model": "models/inventory_items/service_medal_2023_lvl1.mdl"
+      }
+    },
+    "4874": {
+      "name": "prestige coin 2023 level 2",
+      "prefab": "prestige_coin",
+      "item_name": "#CSGO_Collectible_GlobalGeneral2023",
+      "item_description": "#CSGO_Collectible_Desc_GlobalGeneral2023",
+      "image_inventory": "econ/status_icons/service_medal_2023_lvl2",
+      "attributes": {
+        "prestige year": 2023,
+        "pedestal display model": "models/inventory_items/service_medal_2023_lvl2.mdl"
+      }
+    },
+    "4875": {
+      "name": "prestige coin 2023 level 3",
+      "prefab": "prestige_coin",
+      "item_name": "#CSGO_Collectible_GlobalGeneral2023",
+      "item_description": "#CSGO_Collectible_Desc_GlobalGeneral2023",
+      "image_inventory": "econ/status_icons/service_medal_2023_lvl3",
+      "attributes": {
+        "prestige year": 2023,
+        "pedestal display model": "models/inventory_items/service_medal_2023_lvl3.mdl"
+      }
+    },
+    "4876": {
+      "name": "prestige coin 2023 level 4",
+      "prefab": "prestige_coin",
+      "item_name": "#CSGO_Collectible_GlobalGeneral2023",
+      "item_description": "#CSGO_Collectible_Desc_GlobalGeneral2023",
+      "image_inventory": "econ/status_icons/service_medal_2023_lvl4",
+      "attributes": {
+        "prestige year": 2023,
+        "pedestal display model": "models/inventory_items/service_medal_2023_lvl4.mdl"
+      }
+    },
+    "4877": {
+      "name": "prestige coin 2023 level 5",
+      "prefab": "prestige_coin",
+      "item_name": "#CSGO_Collectible_GlobalGeneral2023",
+      "item_description": "#CSGO_Collectible_Desc_GlobalGeneral2023",
+      "image_inventory": "econ/status_icons/service_medal_2023_lvl5",
+      "attributes": {
+        "prestige year": 2023,
+        "pedestal display model": "models/inventory_items/service_medal_2023_lvl5.mdl"
+      }
+    },
+    "4878": {
+      "name": "prestige coin 2023 level 6",
+      "prefab": "prestige_coin",
+      "item_name": "#CSGO_Collectible_GlobalGeneral2023",
+      "item_description": "#CSGO_Collectible_Desc_GlobalGeneral2023",
+      "image_inventory": "econ/status_icons/service_medal_2023_lvl6",
+      "attributes": {
+        "prestige year": 2023,
+        "pedestal display model": "models/inventory_items/service_medal_2023_lvl6.mdl"
+      }
+    },
+    "4879": {
+      "item_name": "#CSGO_crate_sticker_pack_community2022_capsule",
+      "name": "crate_sticker_pack_community2022_capsule",
+      "item_description": "#CSGO_crate_sticker_pack_community2022_capsule_desc",
+      "image_inventory": "econ/weapon_cases/crate_sticker_pack_community2022_capsule",
+      "first_sale_date": "2023/01/05",
+      "prefab": "sticker_capsule",
+      "attributes": {
+        "set supply crate series": {
+          "attribute_class": "supply_crate_series",
+          "value": 375
+        }
+      },
+      "tags": {
+        "StickerCapsule": {
+          "tag_value": "crate_sticker_pack_community2022_capsule_lootlist",
+          "tag_text": "#CSGO_crate_sticker_pack_community2022_capsule",
+          "tag_group": "StickerCapsule",
+          "tag_group_text": "#SFUI_InvTooltip_StickerCapsuleTag"
+        }
+      }
+    },
+    "4880": {
+      "item_name": "#CSGO_crate_community_32",
+      "item_description": "#CSGO_crate_community_32_desc",
+      "name": "crate_community_32",
+      "image_inventory": "econ/weapon_cases/crate_community_32",
+      "model_player": "models/props/crates/csgo_drop_crate_community_32.mdl",
+      "prefab": "weapon_case",
+      "associated_items": {
+        "1393": 1
+      },
+      "tool": {
+        "restriction": "crate_community_32"
+      },
+      "attributes": {
+        "set supply crate series": {
+          "attribute_class": "supply_crate_series",
+          "value": 376
+        }
+      },
+      "tags": {
+        "ItemSet": {
+          "tag_value": "set_community_32",
+          "tag_text": "#CSGO_set_community_32",
+          "tag_group": "ItemSet",
+          "tag_group_text": "#SFUI_InvTooltip_SetTag"
+        }
+      },
+      "loot_list_rare_item_footer": "#crate_community_15_unusual_lootlist",
+      "loot_list_rare_item_name": "#crate_community_15_unusual_itemname"
     },
     "5027": {
       "name": "studded_bloodhound_gloves",
@@ -23036,6 +23186,30 @@
       "loot_list_name": "coupon loot list - perfectworld_01_stattrak",
       "prefab": "coupon_prefab",
       "image_inventory": "econ/music_kits/perfectworld_01",
+      "will_produce_stattrak": 1
+    },
+    "20193": {
+      "name": "coupon - community2022_sticker_capsule",
+      "item_name": "#coupon_community2022_sticker_capsule",
+      "item_description": "#coupon_desc",
+      "loot_list_name": "coupon loot list - community2022_sticker_capsule",
+      "prefab": "coupon_community2022_capsule_prefab"
+    },
+    "20194": {
+      "name": "coupon - denzelcurry_01",
+      "item_name": "#coupon_denzelcurry_01",
+      "item_description": "#coupon_desc",
+      "loot_list_name": "coupon loot list - denzelcurry_01",
+      "prefab": "coupon_prefab",
+      "image_inventory": "econ/music_kits/denzelcurry_01"
+    },
+    "20195": {
+      "name": "coupon - denzelcurry_01_stattrak",
+      "item_name": "#coupon_denzelcurry_01_stattrak",
+      "item_description": "#coupon_desc",
+      "loot_list_name": "coupon loot list - denzelcurry_01_stattrak",
+      "prefab": "coupon_prefab",
+      "image_inventory": "econ/music_kits/denzelcurry_01",
       "will_produce_stattrak": 1
     },
     "30050": {
@@ -46779,6 +46953,411 @@
       "wear_remap_min": 0,
       "wear_remap_max": 1
     },
+    "1220": {
+      "name": "cu_mag7_insomnia",
+      "description_string": "#PaintKit_cu_mag7_insomnia",
+      "description_tag": "#PaintKit_cu_mag7_insomnia_Tag",
+      "style": 7,
+      "pattern": "workshop/mag7_insomnia",
+      "use_normal": 0,
+      "pattern_scale": 1,
+      "phongexponent": 144,
+      "phongintensity": 25,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 1,
+      "pearlescent": 0
+    },
+    "1221": {
+      "name": "cu_ak_head_shot_holo",
+      "description_string": "#PaintKit_cu_ak_head_shot_holo",
+      "description_tag": "#PaintKit_cu_ak_head_shot_holo_Tag",
+      "style": 7,
+      "pattern": "workshop/ak_head_shot_holo",
+      "use_normal": 0,
+      "pattern_scale": 1,
+      "phongexponent": 180,
+      "phongintensity": 75,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 1,
+      "pearlescent": 50
+    },
+    "1222": {
+      "name": "cu_awp_doodle_lore",
+      "description_string": "#PaintKit_cu_awp_doodle_lore",
+      "description_tag": "#PaintKit_cu_awp_doodle_lore_Tag",
+      "style": 7,
+      "pattern": "workshop/awp_doodle_lore",
+      "use_normal": 1,
+      "normal": "workshop/awp_doodle_lore_normal",
+      "pattern_scale": 1,
+      "phongexponent": 123,
+      "phongintensity": 155,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 0.8,
+      "pearlescent": 0
+    },
+    "1223": {
+      "name": "cu_m4a1s_feeding_frenzy",
+      "description_string": "#PaintKit_cu_m4a1s_feeding_frenzy",
+      "description_tag": "#PaintKit_cu_m4a1s_feeding_frenzy_Tag",
+      "style": 7,
+      "pattern": "workshop/m4a1s_feeding_frenzy",
+      "use_normal": 1,
+      "normal": "workshop/m4a1s_feeding_frenzy_normal",
+      "pattern_scale": 1,
+      "phongexponent": 190,
+      "phongintensity": 55,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 0.8,
+      "pearlescent": 0
+    },
+    "1224": {
+      "name": "cu_p2000_decline",
+      "description_string": "#PaintKit_cu_p2000_decline",
+      "description_tag": "#PaintKit_cu_p2000_decline_Tag",
+      "style": 7,
+      "pattern": "workshop/p2000_decline",
+      "use_normal": 1,
+      "normal": "workshop/p2000_decline_normal",
+      "pattern_scale": 1,
+      "phongexponent": 255,
+      "phongintensity": 25,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 1,
+      "pearlescent": 0
+    },
+    "1225": {
+      "name": "cu_mp9_superlight",
+      "description_string": "#PaintKit_cu_mp9_superlight",
+      "description_tag": "#PaintKit_cu_mp9_superlight_Tag",
+      "style": 7,
+      "pattern": "workshop/mp9_superlight",
+      "use_normal": 1,
+      "normal": "workshop/mp9_superlight_normal",
+      "pattern_scale": 1,
+      "phongexponent": 222,
+      "phongintensity": 22,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 1,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 1,
+      "pearlescent": 0
+    },
+    "1226": {
+      "name": "gs_scar_fragments_black",
+      "description_string": "#PaintKit_gs_scar_fragments_black",
+      "description_tag": "#PaintKit_gs_scar_fragments_black_Tag",
+      "style": 9,
+      "pattern": "workshop/scar_fragments_black",
+      "use_normal": 1,
+      "normal": "workshop/scar_fragments_black_normal",
+      "color0": "52 51 50",
+      "color1": "189 189 189",
+      "color2": "110 108 103",
+      "color3": "42 27 14",
+      "pattern_scale": 1,
+      "phongexponent": 230,
+      "phongintensity": 25,
+      "phongalbedoboost": 45,
+      "view_model_exponent_override_size": 1024,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 1,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 0.78,
+      "pearlescent": 0
+    },
+    "1227": {
+      "name": "cu_glock_moon_rabbit",
+      "description_string": "#PaintKit_cu_glock_moon_rabbit",
+      "description_tag": "#PaintKit_cu_glock_moon_rabbit_Tag",
+      "style": 7,
+      "pattern": "workshop/glock_moon_rabbit",
+      "use_normal": 0,
+      "pattern_scale": 1,
+      "phongexponent": 128,
+      "phongintensity": 30,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 0.75,
+      "pearlescent": 0
+    },
+    "1228": {
+      "name": "cu_m4a4_temukau",
+      "description_string": "#PaintKit_cu_m4a4_temukau",
+      "description_tag": "#PaintKit_cu_m4a4_temukau_Tag",
+      "style": 7,
+      "pattern": "workshop/m4a4_temukau",
+      "use_normal": 1,
+      "normal": "workshop/m4a4_temukau_normal",
+      "pattern_scale": 1,
+      "phongexponent": 255,
+      "phongintensity": 189,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 0.8,
+      "pearlescent": 0
+    },
+    "1229": {
+      "name": "cu_mac10_sakkaku",
+      "description_string": "#PaintKit_cu_mac10_sakkaku",
+      "description_tag": "#PaintKit_cu_mac10_sakkaku_Tag",
+      "style": 7,
+      "pattern": "workshop/mac10_sakkaku",
+      "use_normal": 1,
+      "normal": "workshop/mac10_sakkaku_normal",
+      "pattern_scale": 1,
+      "phongexponent": 145,
+      "phongintensity": 45,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0.21,
+      "wear_remap_max": 0.79,
+      "pearlescent": 0
+    },
+    "1230": {
+      "name": "cu_p250_rebuilt",
+      "description_string": "#PaintKit_cu_p250_rebuilt",
+      "description_tag": "#PaintKit_cu_p250_rebuilt_Tag",
+      "style": 7,
+      "pattern": "workshop/p250_rebuilt",
+      "use_normal": 1,
+      "normal": "workshop/p250_rebuilt_normal",
+      "pattern_scale": 1,
+      "phongexponent": 155,
+      "phongintensity": 95,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 0.9,
+      "pearlescent": 0
+    },
+    "1231": {
+      "name": "cu_mp5sd_quick_liquidation",
+      "description_string": "#PaintKit_cu_mp5sd_quick_liquidation",
+      "description_tag": "#PaintKit_cu_mp5sd_quick_liquidation_Tag",
+      "style": 7,
+      "pattern": "workshop/mp5sd_quick_liquidation",
+      "use_normal": 1,
+      "normal": "workshop/mp5sd_quick_liquidation_normal",
+      "pattern_scale": 1,
+      "phongexponent": 255,
+      "phongintensity": 45,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 1,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 1,
+      "pearlescent": 0
+    },
+    "1232": {
+      "name": "gs_r8_banana",
+      "description_string": "#PaintKit_gs_r8_banana",
+      "description_tag": "#PaintKit_gs_r8_banana_Tag",
+      "style": 9,
+      "pattern": "workshop/r8_banana",
+      "use_normal": 1,
+      "normal": "workshop/r8_banana_normal",
+      "color0": "245 245 245",
+      "color1": "239 239 239",
+      "color2": "232 232 232",
+      "color3": "220 220 220",
+      "pattern_scale": 1,
+      "phongexponent": 155,
+      "phongintensity": 5,
+      "phongalbedoboost": 5,
+      "view_model_exponent_override_size": 1024,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 1,
+      "pearlescent": 0
+    },
+    "1233": {
+      "name": "gs_p90_neoqueen",
+      "description_string": "#PaintKit_gs_p90_neoqueen",
+      "description_tag": "#PaintKit_gs_p90_neoqueen_Tag",
+      "style": 9,
+      "pattern": "workshop/p90_neoqueen",
+      "use_normal": 1,
+      "normal": "workshop/p90_neoqueen_normal",
+      "color0": "171 160 144",
+      "color1": "201 201 201",
+      "color2": "216 122 251",
+      "color3": "194 200 27",
+      "pattern_scale": 1,
+      "phongexponent": 213,
+      "phongintensity": 13,
+      "phongalbedoboost": 3,
+      "view_model_exponent_override_size": 1024,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 1,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 0.6,
+      "pearlescent": 0
+    },
+    "1234": {
+      "name": "cu_sg553_cyberforce",
+      "description_string": "#PaintKit_cu_sg553_cyberforce",
+      "description_tag": "#PaintKit_cu_sg553_cyberforce_Tag",
+      "style": 7,
+      "pattern": "workshop/sg553_cyberforce",
+      "use_normal": 1,
+      "normal": "workshop/sg553_cyberforce_normal",
+      "pattern_scale": 1,
+      "phongexponent": 190,
+      "phongintensity": 38,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 0.9,
+      "pearlescent": 0
+    },
+    "1235": {
+      "name": "cu_tec9_freedom",
+      "description_string": "#PaintKit_cu_tec9_freedom",
+      "description_tag": "#PaintKit_cu_tec9_freedom_Tag",
+      "style": 7,
+      "pattern": "workshop/tec9_freedom",
+      "use_normal": 1,
+      "normal": "workshop/tec9_freedom_normal",
+      "pattern_scale": 1,
+      "phongexponent": 243,
+      "phongintensity": 13,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 1,
+      "pearlescent": 0
+    },
+    "1236": {
+      "name": "cu_ump_clutch_kick",
+      "description_string": "#PaintKit_cu_ump_clutch_kick",
+      "description_tag": "#PaintKit_cu_ump_clutch_kick_Tag",
+      "style": 7,
+      "pattern": "workshop/ump_clutch_kick",
+      "use_normal": 0,
+      "pattern_scale": 1,
+      "phongexponent": 255,
+      "phongintensity": 5,
+      "ignore_weapon_size_scale": 1,
+      "only_first_material": 0,
+      "pattern_offset_x_start": 0,
+      "pattern_offset_x_end": 0,
+      "pattern_offset_y_start": 0,
+      "pattern_offset_y_end": 0,
+      "pattern_rotate_start": 0,
+      "pattern_rotate_end": 0,
+      "wear_remap_min": 0,
+      "wear_remap_max": 1,
+      "pearlescent": 0
+    },
     "9001": {
       "name": "workshop_default",
       "pattern": "black",
@@ -51564,7 +52143,7 @@
         "recoil magnitude": 78,
         "recoil magnitude variance": 15,
         "recoil seed": 4100,
-        "primary clip size": 10,
+        "primary clip size": 5,
         "weapon weight": 30,
         "rumble effect": 2,
         "recoil angle alt": 0,
@@ -53197,7 +53776,7 @@
         "damage": 38,
         "headshot multiplier": 3.475,
         "range": 8192,
-        "range modifier": 0.99,
+        "range modifier": 0.94,
         "bullets": 1,
         "cycletime": 0.1,
         "time to idle": 1.5,
@@ -54021,6 +54600,9 @@
     "coupon_csgo10_capsule_prefab": {
       "prefab": "coupon_prefab"
     },
+    "coupon_community2022_capsule_prefab": {
+      "prefab": "coupon_prefab"
+    },
     "coupon_radicals_capsule_prefab": {
       "prefab": "coupon_prefab"
     },
@@ -54655,13 +55237,7 @@
           "value": 0,
           "force_gc_to_generate": 1
         }
-      },
-      "tool": {
-        "type": "spraypaint"
-      },
-      "item_slot2": "spray",
-      "item_sub_position2": "spray0",
-      "inv_graphic_art": "graffiti"
+      }
     }
   },
   "sticker_kits": {
@@ -115725,6 +116301,353 @@
       "tournament_event_id": 20,
       "tournament_team_id": 109,
       "tournament_player_id": 119848818
+    },
+    "6566": {
+      "name": "rio2022_signature_fl1t_32",
+      "item_name": "#StickerKit_rio2022_signature_fl1t_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_fl1t_champion",
+      "sticker_material": "rio2022/sig_fl1t_champion",
+      "item_rarity": "rare",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 35551773
+    },
+    "6567": {
+      "name": "rio2022_signature_fl1t_32_glitter",
+      "item_name": "#StickerKit_rio2022_signature_fl1t_glitter_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_fl1t_glitter_champion",
+      "sticker_material": "rio2022/sig_fl1t_glitter_champion",
+      "item_rarity": "mythical",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 35551773
+    },
+    "6568": {
+      "name": "rio2022_signature_fl1t_32_holo",
+      "item_name": "#StickerKit_rio2022_signature_fl1t_holo_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_fl1t_holo_champion",
+      "sticker_material": "rio2022/sig_fl1t_holo_champion",
+      "item_rarity": "legendary",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 35551773
+    },
+    "6569": {
+      "name": "rio2022_signature_fl1t_32_gold",
+      "item_name": "#StickerKit_rio2022_signature_fl1t_gold_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_fl1t_gold_champion",
+      "sticker_material": "rio2022/sig_fl1t_gold_champion",
+      "item_rarity": "ancient",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 35551773
+    },
+    "6570": {
+      "name": "rio2022_signature_n0rb3r7_32",
+      "item_name": "#StickerKit_rio2022_signature_n0rb3r7_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_n0rb3r7_champion",
+      "sticker_material": "rio2022/sig_n0rb3r7_champion",
+      "item_rarity": "rare",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 262176776
+    },
+    "6571": {
+      "name": "rio2022_signature_n0rb3r7_32_glitter",
+      "item_name": "#StickerKit_rio2022_signature_n0rb3r7_glitter_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_n0rb3r7_glitter_champion",
+      "sticker_material": "rio2022/sig_n0rb3r7_glitter_champion",
+      "item_rarity": "mythical",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 262176776
+    },
+    "6572": {
+      "name": "rio2022_signature_n0rb3r7_32_holo",
+      "item_name": "#StickerKit_rio2022_signature_n0rb3r7_holo_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_n0rb3r7_holo_champion",
+      "sticker_material": "rio2022/sig_n0rb3r7_holo_champion",
+      "item_rarity": "legendary",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 262176776
+    },
+    "6573": {
+      "name": "rio2022_signature_n0rb3r7_32_gold",
+      "item_name": "#StickerKit_rio2022_signature_n0rb3r7_gold_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_n0rb3r7_gold_champion",
+      "sticker_material": "rio2022/sig_n0rb3r7_gold_champion",
+      "item_rarity": "ancient",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 262176776
+    },
+    "6574": {
+      "name": "rio2022_signature_jame_32",
+      "item_name": "#StickerKit_rio2022_signature_jame_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_jame_champion",
+      "sticker_material": "rio2022/sig_jame_champion",
+      "item_rarity": "rare",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 75859856
+    },
+    "6575": {
+      "name": "rio2022_signature_jame_32_glitter",
+      "item_name": "#StickerKit_rio2022_signature_jame_glitter_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_jame_glitter_champion",
+      "sticker_material": "rio2022/sig_jame_glitter_champion",
+      "item_rarity": "mythical",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 75859856
+    },
+    "6576": {
+      "name": "rio2022_signature_jame_32_holo",
+      "item_name": "#StickerKit_rio2022_signature_jame_holo_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_jame_holo_champion",
+      "sticker_material": "rio2022/sig_jame_holo_champion",
+      "item_rarity": "legendary",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 75859856
+    },
+    "6577": {
+      "name": "rio2022_signature_jame_32_gold",
+      "item_name": "#StickerKit_rio2022_signature_jame_gold_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_jame_gold_champion",
+      "sticker_material": "rio2022/sig_jame_gold_champion",
+      "item_rarity": "ancient",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 75859856
+    },
+    "6578": {
+      "name": "rio2022_signature_qikert_32",
+      "item_name": "#StickerKit_rio2022_signature_qikert_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_qikert_champion",
+      "sticker_material": "rio2022/sig_qikert_champion",
+      "item_rarity": "rare",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 166970562
+    },
+    "6579": {
+      "name": "rio2022_signature_qikert_32_glitter",
+      "item_name": "#StickerKit_rio2022_signature_qikert_glitter_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_qikert_glitter_champion",
+      "sticker_material": "rio2022/sig_qikert_glitter_champion",
+      "item_rarity": "mythical",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 166970562
+    },
+    "6580": {
+      "name": "rio2022_signature_qikert_32_holo",
+      "item_name": "#StickerKit_rio2022_signature_qikert_holo_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_qikert_holo_champion",
+      "sticker_material": "rio2022/sig_qikert_holo_champion",
+      "item_rarity": "legendary",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 166970562
+    },
+    "6581": {
+      "name": "rio2022_signature_qikert_32_gold",
+      "item_name": "#StickerKit_rio2022_signature_qikert_gold_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_qikert_gold_champion",
+      "sticker_material": "rio2022/sig_qikert_gold_champion",
+      "item_rarity": "ancient",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 166970562
+    },
+    "6582": {
+      "name": "rio2022_signature_fame_32",
+      "item_name": "#StickerKit_rio2022_signature_fame_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_fame_champion",
+      "sticker_material": "rio2022/sig_fame_champion",
+      "item_rarity": "rare",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 119848818
+    },
+    "6583": {
+      "name": "rio2022_signature_fame_32_glitter",
+      "item_name": "#StickerKit_rio2022_signature_fame_glitter_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_fame_glitter_champion",
+      "sticker_material": "rio2022/sig_fame_glitter_champion",
+      "item_rarity": "mythical",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 119848818
+    },
+    "6584": {
+      "name": "rio2022_signature_fame_32_holo",
+      "item_name": "#StickerKit_rio2022_signature_fame_holo_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_fame_holo_champion",
+      "sticker_material": "rio2022/sig_fame_holo_champion",
+      "item_rarity": "legendary",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 119848818
+    },
+    "6585": {
+      "name": "rio2022_signature_fame_32_gold",
+      "item_name": "#StickerKit_rio2022_signature_fame_gold_champion",
+      "description_string": "#StickerKit_desc_rio2022_signature_fame_gold_champion",
+      "sticker_material": "rio2022/sig_fame_gold_champion",
+      "item_rarity": "ancient",
+      "tournament_event_id": 20,
+      "tournament_team_id": 109,
+      "tournament_player_id": 119848818
+    },
+    "6586": {
+      "name": "community2022_360_no_scope_paper",
+      "item_name": "#StickerKit_community2022_360_no_scope_paper",
+      "description_string": "#StickerKit_desc_community2022_360_no_scope_paper",
+      "sticker_material": "community2022/360_no_scope_paper",
+      "item_rarity": "rare"
+    },
+    "6587": {
+      "name": "community2022_aim_and_fire_paper",
+      "item_name": "#StickerKit_community2022_aim_and_fire_paper",
+      "description_string": "#StickerKit_desc_community2022_aim_and_fire_paper",
+      "sticker_material": "community2022/aim_and_fire_paper",
+      "item_rarity": "rare"
+    },
+    "6588": {
+      "name": "community2022_batter_up_paper",
+      "item_name": "#StickerKit_community2022_batter_up_paper",
+      "description_string": "#StickerKit_desc_community2022_batter_up_paper",
+      "sticker_material": "community2022/batter_up_paper",
+      "item_rarity": "rare"
+    },
+    "6589": {
+      "name": "community2022_butterfly_sting_paper",
+      "item_name": "#StickerKit_community2022_butterfly_sting_paper",
+      "description_string": "#StickerKit_desc_community2022_butterfly_sting_paper",
+      "sticker_material": "community2022/butterfly_sting_paper",
+      "item_rarity": "rare"
+    },
+    "6590": {
+      "name": "community2022_fireball_paper",
+      "item_name": "#StickerKit_community2022_fireball_paper",
+      "description_string": "#StickerKit_desc_community2022_fireball_paper",
+      "sticker_material": "community2022/fireball_paper",
+      "item_rarity": "rare"
+    },
+    "6591": {
+      "name": "community2022_noir_grenade_paper",
+      "item_name": "#StickerKit_community2022_noir_grenade_paper",
+      "description_string": "#StickerKit_desc_community2022_noir_grenade_paper",
+      "sticker_material": "community2022/noir_grenade_paper",
+      "item_rarity": "rare"
+    },
+    "6592": {
+      "name": "community2022_not_a_bot_paper",
+      "item_name": "#StickerKit_community2022_not_a_bot_paper",
+      "description_string": "#StickerKit_desc_community2022_not_a_bot_paper",
+      "sticker_material": "community2022/not_a_bot_paper",
+      "item_rarity": "rare"
+    },
+    "6593": {
+      "name": "community2022_pride_paper",
+      "item_name": "#StickerKit_community2022_pride_paper",
+      "description_string": "#StickerKit_desc_community2022_pride_paper",
+      "sticker_material": "community2022/pride_paper",
+      "item_rarity": "rare"
+    },
+    "6594": {
+      "name": "community2022_run_t_run_paper",
+      "item_name": "#StickerKit_community2022_run_t_run_paper",
+      "description_string": "#StickerKit_desc_community2022_run_t_run_paper",
+      "sticker_material": "community2022/run_t_run_paper",
+      "item_rarity": "rare"
+    },
+    "6595": {
+      "name": "community2022_spectators_paper",
+      "item_name": "#StickerKit_community2022_spectators_paper",
+      "description_string": "#StickerKit_desc_community2022_spectators_paper",
+      "sticker_material": "community2022/spectators_paper",
+      "item_rarity": "rare"
+    },
+    "6596": {
+      "name": "community2022_thundercat_paper",
+      "item_name": "#StickerKit_community2022_thundercat_paper",
+      "description_string": "#StickerKit_desc_community2022_thundercat_paper",
+      "sticker_material": "community2022/thundercat_paper",
+      "item_rarity": "rare"
+    },
+    "6597": {
+      "name": "community2022_well_played_paper",
+      "item_name": "#StickerKit_community2022_well_played_paper",
+      "description_string": "#StickerKit_desc_community2022_well_played_paper",
+      "sticker_material": "community2022/well_played_paper",
+      "item_rarity": "rare"
+    },
+    "6598": {
+      "name": "community2022_cyber_chicken_holo",
+      "item_name": "#StickerKit_community2022_cyber_chicken_holo",
+      "description_string": "#StickerKit_desc_community2022_cyber_chicken_holo",
+      "sticker_material": "community2022/cyber_chicken_holo",
+      "item_rarity": "mythical"
+    },
+    "6599": {
+      "name": "community2022_in_your_head_holo",
+      "item_name": "#StickerKit_community2022_in_your_head_holo",
+      "description_string": "#StickerKit_desc_community2022_in_your_head_holo",
+      "sticker_material": "community2022/in_your_head_holo",
+      "item_rarity": "mythical"
+    },
+    "6600": {
+      "name": "community2022_infinite_triangle_holo",
+      "item_name": "#StickerKit_community2022_infinite_triangle_holo",
+      "description_string": "#StickerKit_desc_community2022_infinite_triangle_holo",
+      "sticker_material": "community2022/infinite_triangle_holo",
+      "item_rarity": "mythical"
+    },
+    "6601": {
+      "name": "community2022_salty_holo",
+      "item_name": "#StickerKit_community2022_salty_holo",
+      "description_string": "#StickerKit_desc_community2022_salty_holo",
+      "sticker_material": "community2022/salty_holo",
+      "item_rarity": "mythical"
+    },
+    "6602": {
+      "name": "community2022_snow_glitter",
+      "item_name": "#StickerKit_community2022_snow_glitter",
+      "description_string": "#StickerKit_desc_community2022_snow_glitter",
+      "sticker_material": "community2022/snow_glitter",
+      "item_rarity": "mythical"
+    },
+    "6603": {
+      "name": "community2022_street_artist_glitter",
+      "item_name": "#StickerKit_community2022_street_artist_glitter",
+      "description_string": "#StickerKit_desc_community2022_street_artist_glitter",
+      "sticker_material": "community2022/street_artist_glitter",
+      "item_rarity": "mythical"
+    },
+    "6604": {
+      "name": "community2022_ninja_smokes_foil",
+      "item_name": "#StickerKit_community2022_ninja_smokes_foil",
+      "description_string": "#StickerKit_desc_community2022_ninja_smokes_foil",
+      "sticker_material": "community2022/ninja_smokes_foil",
+      "item_rarity": "legendary"
+    },
+    "6605": {
+      "name": "community2022_old_eye_foil",
+      "item_name": "#StickerKit_community2022_old_eye_foil",
+      "description_string": "#StickerKit_desc_community2022_old_eye_foil",
+      "sticker_material": "community2022/old_eye_foil",
+      "item_rarity": "legendary"
+    },
+    "6606": {
+      "name": "community2022_peek_foil",
+      "item_name": "#StickerKit_community2022_peek_foil",
+      "description_string": "#StickerKit_desc_community2022_peek_foil",
+      "sticker_material": "community2022/peek_foil",
+      "item_rarity": "legendary"
     }
   },
   "graffiti_tints": {
@@ -116290,6 +117213,13 @@
       "loc_description": "#musickit_perfectworld_01_desc",
       "image_inventory": "econ/music_kits/perfectworld_01",
       "pedestal_display_model": "models/inventory_items/music_kits/music_kit_perfectworld_01.mdl"
+    },
+    "69": {
+      "name": "denzelcurry_01",
+      "loc_name": "#musickit_denzelcurry_01",
+      "loc_description": "#musickit_denzelcurry_01_desc",
+      "image_inventory": "econ/music_kits/denzelcurry_01",
+      "pedestal_display_model": "models/inventory_items/music_kits/music_kit_denzelcurry_01.mdl"
     }
   }
 }
