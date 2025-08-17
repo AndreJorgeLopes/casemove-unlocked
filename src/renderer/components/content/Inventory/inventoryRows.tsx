@@ -89,7 +89,7 @@ function content() {
                   <span
                     className={classNames(
                       project.bgColorClass,
-                      'w-2.5 h-2.5 flex-shrink-0 rounded-full'
+                      'w-2.5 h-2.5 shrink-0 rounded-full'
                     )}
                     aria-hidden="true"
                   />

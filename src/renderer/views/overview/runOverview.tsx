@@ -104,7 +104,7 @@ function Content() {
                 leaveFrom="translate-x-0"
                 leaveTo="-translate-x-full"
               ></Transition.Child>
-              <div className="flex-shrink-0 w-14" aria-hidden="true">
+              <div className="shrink-0 w-14" aria-hidden="true">
                 {/* Dummy element to force sidebar to shrink to fit close icon */}
               </div>
             </div>
@@ -139,7 +139,7 @@ function Content() {
                         <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
                           <dd className="mt-3 flex items-center mb-2 text-sm text-gray-500 font-medium sm:mr-6 sm:mt-0 capitalize text-dark-white">
                           <TagIcon
-                              className="flex-shrink-0 mr-1.5 h-5 w- text-gray-400"
+                              className="shrink-0 mr-1.5 h-5 w- text-gray-400"
                               aria-hidden="true"
                             />
 
@@ -147,14 +147,14 @@ function Content() {
                           </dd>
                           <dd className="flex mb-2 items-center text-sm text-gray-500 font-medium capitalize sm:mr-6 text-dark-white">
                             <PresentationChartBarIcon
-                              className="flex-shrink-0 mr-1.5 h-5 w- text-gray-400"
+                              className="shrink-0 mr-1.5 h-5 w- text-gray-400"
                               aria-hidden="true"
                             />
                             <ListBoxOptions optionsObject={OverviewLeftCharts} keyToUse={'chartleft'} />
                           </dd>
                           <dd className="flex mb-2 items-center text-sm text-gray-500 font-medium capitalize sm:mr-3 text-dark-white">
                             <PresentationChartLineIcon
-                              className="flex-shrink-0 mr-1.5 h-5 w-5  text-gray-400"
+                              className="shrink-0 mr-1.5 h-5 w-5  text-gray-400"
                               aria-hidden="true"
                             />
                             <ListBoxOptions optionsObject={OverviewRightCharts} keyToUse={'chartRight'} />
@@ -171,7 +171,7 @@ function Content() {
                     >
                       {' '}
                       <DownloadIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-dark-white"
+                        className="shrink-0 mr-1.5 h-5 w-5 text-dark-white"
                         aria-hidden="true"
                       />
                       Download all
@@ -193,7 +193,7 @@ function Content() {
                   >
                     <div className="p-5">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                           <DatabaseIcon
                             className="h-6 w-6 text-gray-400"
                             aria-hidden="true"
@@ -231,7 +231,7 @@ function Content() {
                   >
                     <div className="p-5">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                           <CollectionIcon
                             className="h-6 w-6 text-gray-400"
                             aria-hidden="true"
@@ -270,7 +270,7 @@ function Content() {
                   >
                     <div className="p-5">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                           <ArchiveIcon
                             className="h-6 w-6 text-gray-400"
                             aria-hidden="true"

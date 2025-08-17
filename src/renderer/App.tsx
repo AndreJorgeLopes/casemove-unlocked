@@ -311,7 +311,7 @@ function AppContent() {
                 <div
                   className={classNames(
                     settingsData.os == 'win32' ? 'pt-7' : '',
-                    'flex-shrink-0 flex items-center px-4'
+                    'shrink-0 flex items-center px-4'
                   )}
                 >
                   <Logo />
@@ -339,7 +339,7 @@ function AppContent() {
                               item.current
                                 ? 'text-gray-500'
                                 : 'text-gray-400 group-hover:text-gray-500',
-                              'mr-3 flex-shrink-0 h-6 w-6'
+                              'mr-3 shrink-0 h-6 w-6'
                             )}
                             aria-hidden="true"
                           />
@@ -381,7 +381,7 @@ function AppContent() {
                 </div>
               </div>
             </Transition.Child>
-            <div className="flex-shrink-0 w-14" aria-hidden="true">
+            <div className="shrink-0 w-14" aria-hidden="true">
               {/* Dummy element to force sidebar to shrink to fit close icon */}
             </div>
           </Dialog>
@@ -392,7 +392,7 @@ function AppContent() {
           <div
             className={classNames(
               settingsData.os == 'win32' ? 'pt-7' : '',
-              'flex items-center flex-shrink-0 px-6'
+              'flex items-center shrink-0 px-6'
             )}
           >
             <Logo />
@@ -413,7 +413,7 @@ function AppContent() {
                     <span className="flex min-w-0 items-center justify-between space-x-3">
                       {userDetails.userProfilePicture == null ? (
                         <svg
-                          className="w-10 h-10 rounded-full flex-shrink-0 text-gray-300"
+                          className="w-10 h-10 rounded-full shrink-0 text-gray-300"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
@@ -421,7 +421,7 @@ function AppContent() {
                         </svg>
                       ) : (
                         <img
-                          className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
+                          className="w-10 h-10 bg-gray-300 rounded-full shrink-0"
                           src={userDetails.userProfilePicture}
                           alt=""
                         />
@@ -465,7 +465,7 @@ function AppContent() {
                       </span>
                     </span>
                     <SelectorIcon
-                      className="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                      className="shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                       aria-hidden="true"
                     />
                   </span>
@@ -586,7 +586,7 @@ function AppContent() {
                   {/* <a href="https://skinledger.com" target="_blank">
                     <button
                       type="button"
-                      className="text-white bg-gradient-to-r w-full from-green-500 via-green-700 to-green-800 shadow-sm hover:opacity-80 hover:bg-gradient-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+                      className="text-white bg-linear-to-r w-full from-green-500 via-green-700 to-green-800 shadow-sm hover:opacity-80 hover:bg-linear-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
                     >
                       <span className="mr-3">Join the Skinledger beta</span>
                     </button>
@@ -617,7 +617,7 @@ function AppContent() {
                         currentSideMenuOption.includes(item.href)
                           ? 'text-gray-500 dark:text-opacity-60'
                           : 'text-gray-400 group-hover:text-gray-500',
-                        'mr-3 flex-shrink-0 h-6 w-6  dark:text-dark-white'
+                        'mr-3 shrink-0 h-6 w-6  dark:text-dark-white'
                       )}
                       aria-hidden="true"
                     />
@@ -763,7 +763,7 @@ function AppContent() {
         {/* Main column */}
         <div className="lg:pl-64 flex flex-col">
           {/* Search header */}
-          <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden dark:bg-dark-level-two">
+          <div className="sticky top-0 z-10 shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden dark:bg-dark-level-two">
             <button
               type="button"
               className="px-4 border-r border-gray-200 text-gray-500 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-inset lg:hidden"
@@ -827,7 +827,7 @@ function AppContent() {
                       <span className="sr-only">Open user menu</span>
                       {userDetails.userProfilePicture == null ? (
                         <svg
-                          className="w-10 h-10 rounded-full flex-shrink-0 text-gray-300"
+                          className="w-10 h-10 rounded-full shrink-0 text-gray-300"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
@@ -839,7 +839,7 @@ function AppContent() {
                             userDetails.CSGOConnection
                               ? 'border-2 border-solid border-green-400'
                               : 'border-4 border-solid border-red-400',
-                            'w-10 h-10 bg-gray-300 rounded-full flex-shrink-0'
+                            'w-10 h-10 bg-gray-300 rounded-full shrink-0'
                           )}
                           src={userDetails.userProfilePicture}
                           alt=""

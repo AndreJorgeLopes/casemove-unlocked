@@ -205,7 +205,7 @@ function content() {
               fromReducer.hideFull
                 ? 'bg-indigo-600 dark:bg-indigo-700'
                 : 'bg-gray-200',
-              'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+              'relative inline-flex mr-3 shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
             )}
           >
             <span
@@ -337,7 +337,7 @@ function content() {
                       fromSelector.activeStorages.includes(project.item_id)
                         ? 'border-green-300 '
                         : 'border-gray-200 ',
-                      'flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b rounded-l-md dark:bg-dark-level-two'
+                      'shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b rounded-l-md dark:bg-dark-level-two'
                     )}
                   >
                     <img
@@ -408,7 +408,7 @@ function content() {
                       </p>
                     </div>
                   </Link>
-                  <Menu as="div" className="flex-shrink-0 pr-2">
+                  <Menu as="div" className="shrink-0 pr-2">
                     <Menu.Button className="w-8 h-8 inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500">
                       <span className="sr-only">Open options</span>
                       <DotsVerticalIcon

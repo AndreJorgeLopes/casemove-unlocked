@@ -36,7 +36,7 @@ export default function NotificationElement({
             <div className="max-w-sm dark:bg-dark-level-four w-full bg-white shadow-lg rounded-lg pointer-events-auto mt-0 lg:mt-0 md:mt-12 ring-1 ring-black ring-opacity-5 overflow-hidden">
               <div className="p-4">
                 <div className="flex items-start">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     {success ? (
                       <CheckCircleIcon
                         className="h-6 w-6 text-green-400"
@@ -57,7 +57,7 @@ export default function NotificationElement({
                       {textToDisplay}
                     </p>
                   </div>
-                  <div className="ml-4 flex-shrink-0 flex">
+                  <div className="ml-4 shrink-0 flex">
                     <button
                       className="bg-white dark:bg-dark-level-four rounded-md inline-flex text-gray-400 hover:text-gray-500"
                       onClick={() => {
