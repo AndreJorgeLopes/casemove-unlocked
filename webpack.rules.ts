@@ -18,24 +18,12 @@ export const rules: Required<ModuleOptions>['rules'] = [
       }
     }
   },
-   {
-      test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                // Ensure your PostCSS plugins are correctly loaded
-                // The plugins can be defined here or in postcss.config.js
-                plugins: [
-                  require('@tailwindcss/postcss'),
-                  require('autoprefixer'),
-                ],
-            },
-            },
-          },
-        ],
-      }
+  {
+  test: /\.css$/,
+  use: [
+    { loader: 'style-loader' },
+    { loader: 'css-loader' },
+    { loader: 'postcss-loader' },
+  ],
+},
 ];
