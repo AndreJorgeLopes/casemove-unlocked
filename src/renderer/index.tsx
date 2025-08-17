@@ -4,6 +4,8 @@ import App from "./App";
 import { PersistGate } from 'redux-persist/integration/react'
 import returnVar from './store/configureStore'
 import { BrowserRouter as Router } from 'react-router-dom';
+import './index.css';
+import React from 'react';
 
 
 const myVar = returnVar();
@@ -28,6 +30,7 @@ const container = document.getElementById('root');
 if (container != null) {
 const root = createRoot(container);
 root.render(
+  <React.StrictMode>
   <Router>
       <Provider store={myVar.reduxStore}>
         <PersistGate loading={null} persistor={myVar.persistor}>
@@ -35,5 +38,6 @@ root.render(
         </PersistGate>
       </Provider>
   </Router>
+   </React.StrictMode>
 );
 }
