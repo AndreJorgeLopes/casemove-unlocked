@@ -110,9 +110,9 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
                       'relative rounded-lg border border-gray-300 border-dashed dark:bg-dark-level-four bg-white px-6 py-5 flex items-center space-x-3 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
                     )}
                   >
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                       <svg
-                        className="w-10 h-10 rounded-full flex-shrink-0 text-gray-300"
+                        className="w-10 h-10 rounded-full shrink-0 text-gray-300"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -145,7 +145,7 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
                           'relative rounded-lg border dark:border-opacity-0 dark:border-none dark:bg-dark-level-four border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
                         )}
                       >
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                           <img
                             className="h-10 w-10 rounded-full"
                             src={person.imageURL}

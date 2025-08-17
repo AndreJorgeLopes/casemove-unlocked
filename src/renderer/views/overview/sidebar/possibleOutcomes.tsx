@@ -78,7 +78,7 @@ export default function PossibleOutcomes() {
                 }}
                 target="_blank"
               >
-                <div className=" from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400 flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md dark:bg-dark-level-two bg-gradient-to-t">
+                <div className=" from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400 shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md dark:bg-dark-level-two bg-linear-to-t">
                   <img
                     className="max-w-none h-11 w-11  object-cover"
                     src={project.image}
@@ -96,7 +96,7 @@ export default function PossibleOutcomes() {
                         project?.profit_cal > 100
                           ? 'bg-green-500'
                           : 'bg-red-500',
-                        'w-2.5 h-2.5 flex-shrink-0 rounded-full'
+                        'w-2.5 h-2.5 shrink-0 rounded-full'
                       )}
                       aria-hidden="true"
                     />
@@ -129,7 +129,7 @@ export default function PossibleOutcomes() {
       ) : (
         <ul role="list" className="mt-3 grid grid-cols-1 gap-5 sm:gap-6 ">
           <li key={9999} className="col-span-1 flex shadow-sm rounded-md">
-            <div className=" flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md border-dotted dark:bg-dark-level-two border-r">
+            <div className=" shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md border-dotted dark:bg-dark-level-two border-r">
               <div className="max-w-none h-11 w-11  object-cover" />
             </div>
             <div className="flex-1 dark:bg-dark-level-two border-dotted dark:border-opacity-50 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">

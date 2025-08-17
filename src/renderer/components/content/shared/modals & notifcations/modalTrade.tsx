@@ -158,7 +158,7 @@ export default function TradeModal() {
                             onMouseEnter={() => setActiveHover(project.item_id)}
                             onMouseLeave={() => setActiveHover('')}
                             onMouseOver={() => handleOver(project.item_id)}
-                            className=" from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400 flex-shrink-0 h-full  flex items-center justify-center w-10 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md dark:bg-dark-level-two bg-gradient-to-t"
+                            className=" from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400 shrink-0 h-full  flex items-center justify-center w-10 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md dark:bg-dark-level-two bg-linear-to-t"
                           >
                             {project.item_id == activeHover ? (
                               <button

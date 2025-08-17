@@ -280,8 +280,8 @@ export default function settingsPage() {
                               </dt>
 
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow"></span>
-                                <span className="flex items-center ml-4 flex-shrink-0">
+                                <span className="grow"></span>
+                                <span className="flex items-center ml-4 shrink-0">
                                   <Switch
                                      checked={showSteamLogin}
                                     onChange={() => updateShowSteamLogin()}
@@ -289,7 +289,7 @@ export default function settingsPage() {
                                       showSteamLogin
                                         ? 'bg-indigo-600 dark:bg-indigo-700'
                                         : 'bg-gray-200',
-                                      'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+                                      'relative inline-flex mr-3 shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
                                     )}
                                   >
                                     <span
@@ -355,8 +355,8 @@ export default function settingsPage() {
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow"></span>
-                                <span className="flex items-center ml-4 flex-shrink-0">
+                                <span className="grow"></span>
+                                <span className="flex items-center ml-4 shrink-0">
                                   <Switch
                                     checked={window.electron.store.get(
                                       'fastmove'
@@ -366,7 +366,7 @@ export default function settingsPage() {
                                       fastMoveStatus
                                         ? 'bg-indigo-600 dark:bg-indigo-700'
                                         : 'bg-gray-200',
-                                      'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+                                      'relative inline-flex mr-3 shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
                                     )}
                                   >
                                     <span
@@ -432,8 +432,8 @@ export default function settingsPage() {
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow"></span>
-                                <span className="flex items-center ml-4 flex-shrink-0">
+                                <span className="grow"></span>
+                                <span className="flex items-center ml-4 shrink-0">
                                   <Switch
                                     checked={devModeStatus}
                                     onChange={() => updateDevMode()}
@@ -441,7 +441,7 @@ export default function settingsPage() {
                                       devModeStatus
                                         ? 'bg-indigo-600 dark:bg-indigo-700'
                                         : 'bg-gray-200',
-                                      'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+                                      'relative inline-flex mr-3 shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
                                     )}
                                   >
                                     <span
@@ -507,8 +507,8 @@ export default function settingsPage() {
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow"></span>
-                                <span className="flex items-center ml-4 flex-shrink-0">
+                                <span className="grow"></span>
+                                <span className="flex items-center ml-4 shrink-0">
                                   <ColumnsDropDown />
                                 </span>
                               </dd>
@@ -535,8 +535,8 @@ export default function settingsPage() {
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow"></span>
-                                <span className="flex items-center ml-4 flex-shrink-0">
+                                <span className="grow"></span>
+                                <span className="flex items-center ml-4 shrink-0">
                                   <Listbox
                                     value={source}
                                     onChange={(e) => updateSource(e)}
@@ -549,7 +549,7 @@ export default function settingsPage() {
                                               <img
                                                 src={source?.avatar}
                                                 alt=""
-                                                className="flex-shrink-0 h-6 w-6 rounded-full"
+                                                className="shrink-0 h-6 w-6 rounded-full"
                                               />
                                               <span className="ml-3 block truncate">
                                                 {source?.name}
@@ -590,7 +590,7 @@ export default function settingsPage() {
                                                         <img
                                                           src={person.avatar}
                                                           alt=""
-                                                          className="flex-shrink-0 h-6 w-6 rounded-full"
+                                                          className="shrink-0 h-6 w-6 rounded-full"
                                                         />
                                                         <span
                                                           className={classNames(
@@ -641,8 +641,8 @@ export default function settingsPage() {
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow"></span>
-                                <span className="flex items-center ml-4 flex-shrink-0">
+                                <span className="grow"></span>
+                                <span className="flex items-center ml-4 shrink-0">
                                   <div>
                                     <select
                                       id="location"

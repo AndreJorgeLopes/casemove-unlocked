@@ -290,15 +290,15 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                   <div
                     className={classNames(
                       projectRow.rarityColor,
-                      'flex-shrink-0 w-2.5 h-2.5 rounded-full'
+                      'shrink-0 w-2.5 h-2.5 rounded-full'
                     )}
                     aria-hidden="true"
                   />
-                  <div className="flex flex-shrink-0 -space-x-1">
+                  <div className="flex shrink-0 -space-x-1">
                     {projectRow.item_moveable != true ? (
-                      <div className="flex flex-shrink-0 -space-x-1">
+                      <div className="flex shrink-0 -space-x-1">
                         <img
-                          className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+                          className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-linear-to-t from-gray-100 to-gray-300"
                           src={
                             createCSGOImage(projectRow.item_url)
                           }
@@ -319,7 +319,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                         }}
                         target="_blank"
                       >
-                        <div className="flex flex-shrink-0 -space-x-1">
+                        <div className="flex shrink-0 -space-x-1">
                           <img
                             onMouseEnter={() =>
                               setItemHover(projectRow.item_id)
@@ -329,7 +329,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                               itemHover == projectRow.item_id
                                 ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
                                 : '',
-                              'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300'
+                              'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-linear-to-t from-gray-100 to-gray-300'
                             )}
                             src={
                               createCSGOImage(projectRow.item_url)
@@ -454,7 +454,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
               {settingsData.columns.includes('Price') ? (
                 <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                    <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
+                    <div className="flex shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
                     {pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined
                         ? ''
                         : new Intl.NumberFormat(settingsData.locale, {
@@ -475,7 +475,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
               )}
               <td className="hidden 2xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
                 <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex flex-shrink-0 -space-x-1">
+                  <div className="flex shrink-0 -space-x-1">
                     {projectRow.stickers?.map((sticker, index) => (
                       <Link
                         to={{
@@ -493,7 +493,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                             stickerHover == index + projectRow.item_id
                               ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
                               : '',
-                            'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
+                            'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-linear-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
                           )}
                           src={
                             createCSGOImage(sticker.sticker_url)
