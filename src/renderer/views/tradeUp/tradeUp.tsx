@@ -70,7 +70,7 @@ function settingsContent() {
                 <div className="flex items-center"></div>
               </div>
 
-              <div className="ml-4 mt-4 flex-shrink-0 flex">
+              <div className="ml-4 mt-4 shrink-0 flex">
 
 
                 <PricingAmount
@@ -184,7 +184,7 @@ function settingsContent() {
               </div>
               {/* End main area */}
             </main>
-            <aside className="hidden absolute relative lg:flex lg:flex-col bg-gray-50 flex-shrink-0 w-96 border-l dark:border-opacity-50  border-gray-200 overflow-y-auto dark:bg-dark-level-one">
+            <aside className="hidden absolute relative lg:flex lg:flex-col bg-gray-50 shrink-0 w-96 border-l dark:border-opacity-50  border-gray-200 overflow-y-auto dark:bg-dark-level-one">
               {/* Start secondary column (hidden on smaller screens) */}
               <div className="">
                 <TradeUpSideBar />

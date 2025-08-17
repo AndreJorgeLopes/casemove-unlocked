@@ -24,7 +24,7 @@ export function RowProduct({ itemRow }) {
           <div
             className={classNames(
               itemRow.bgColorClass,
-              'flex-shrink-0 w-2.5 h-2.5 rounded-full'
+              'shrink-0 w-2.5 h-2.5 rounded-full'
             )}
             aria-hidden="true"
           />
@@ -34,7 +34,7 @@ export function RowProduct({ itemRow }) {
             }}
             target="_blank"
           >
-            <div className="flex flex-shrink-0 -space-x-1">
+            <div className="flex shrink-0 -space-x-1">
               <img
                 onMouseEnter={() => setItemHover(true)}
                 onMouseLeave={() => setItemHover(false)}
@@ -42,7 +42,7 @@ export function RowProduct({ itemRow }) {
                   itemHover
                     ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
                     : '',
-                  'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300'
+                  'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-linear-to-t from-gray-100 to-gray-300'
                 )}
                 src={
                  createCSGOImage(itemRow.item_url)

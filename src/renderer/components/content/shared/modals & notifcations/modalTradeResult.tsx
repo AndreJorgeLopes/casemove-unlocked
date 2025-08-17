@@ -57,7 +57,7 @@ export default function TradeResultModal() {
               <div>
                 <div className='flex items-center justify-center'>
               <img
-                          className="max-w-none h-16 w-16 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+                          className="max-w-none h-16 w-16 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-linear-to-t from-gray-100 to-gray-300"
                           src={
                             createCSGOImage(modalData.rowToMatch?.item_url)
                           }

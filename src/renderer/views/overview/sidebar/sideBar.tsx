@@ -35,7 +35,7 @@ export default function TradeUpSideBar() {
               <div className="flex items-center flex-nowrap">
                 {productsToUse.map((projectRow) => (
                   <div
-                    className="flex flex-shrink-0 -space-x-1"
+                    className="flex shrink-0 -space-x-1"
                     key={projectRow.item_id}
                   >
                     {projectRow.item_name == 'EMPTY' ? (
@@ -57,7 +57,7 @@ export default function TradeUpSideBar() {
                             itemHover == projectRow.item_id
                               ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
                               : '',
-                            'max-w-none h-8 w-8 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300'
+                            'max-w-none h-8 w-8 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-linear-to-t from-gray-100 to-gray-300'
                           )}
                           src={
                             createCSGOImage(projectRow.item_url)

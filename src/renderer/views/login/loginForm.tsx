@@ -451,7 +451,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
             ) : loginMethod === 'WEBTOKEN' ? (
               <div className="rounded-md mb-6">
                 <div className="mt-1 flex rounded-md shadow-sm">
-                  <div className="relative flex items-stretch flex-grow focus-within:z-10">
+                  <div className="relative flex items-stretch grow focus-within:z-10">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <ClipboardCheckIcon
                         className="h-5 w-5 text-gray-400"

@@ -31,12 +31,12 @@ export function LoadButton() {
 
                 {getLoadingButton ? (
                     <LoadingButton
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-dark-white"
+                        className="shrink-0 mr-1.5 h-5 w-5 text-dark-white"
                         aria-hidden="true"
                     />
                 ) : (
                     <CollectionIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-dark-white"
+                        className="shrink-0 mr-1.5 h-5 w-5 text-dark-white"
                         aria-hidden="true"
                     />
                 )}
