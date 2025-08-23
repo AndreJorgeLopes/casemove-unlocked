@@ -27,7 +27,7 @@ const ClassFilters = InventoryGetFilterManager()
 // ClassFilters.loadFilter(CharacteristicsFilter, true)
 // ClassFilters.loadFilter(ContainerFilter, true)
 
-function content() {
+function Content() {
   const dispatch = useDispatch();
   const ReducerClass = new ReducerManager(useSelector)
   const inventoryFilters = ReducerClass.getStorage(ReducerClass.names.inventoryFilters)
@@ -174,7 +174,7 @@ function content() {
 export default function InventoryFilters() {
   return (
     <Routes>
-      <Route path="/" Component={content} />
+      <Route path="*" element={<Content />} />
     </Routes>
 
   );

@@ -25,7 +25,7 @@ import {
   Routes,
   useLocation,
 } from 'react-router-dom';
-import inventoryContent from './components/content/Inventory/inventory';
+import InventoryContent from './components/content/Inventory/inventory';
 import { itemCategories } from './components/content/shared/categories';
 import {
   classNames,
@@ -56,7 +56,7 @@ import { signOut } from './store/actions/userStatsActions';
 import { handleUserEvent } from './store/handleMessage';
 import LoginPage from './views/login/login';
 import OverviewPage from './views/overview/overview';
-import settingsPage from './views/settings/settings';
+import SettingsPage from './views/settings/settings';
 import TradeupPage from './views/tradeUp/tradeUp';
 import { ItemRow } from './interfaces/items';
 import './index.css'
@@ -100,14 +100,13 @@ function AppContent() {
 
   // Redux user details
 
-  const ReducerClass = new ReducerManager(useSelector);
-  const currentState: State = ReducerClass.getStorage();
-  const userDetails = currentState.authReducer;
-  const modalData = currentState.modalMoveReducer;
-  const settingsData = currentState.settingsReducer;
-  const tradeUpData = currentState.modalTradeReducer;
-  const inventory = currentState.inventoryReducer;
-  const filterDetails = currentState.inventoryFiltersReducer;
+  // Use useSelector directly for each slice to avoid returning the entire state
+  const userDetails = useSelector((state: any) => state.authReducer);
+  const modalData = useSelector((state: any) => state.modalMoveReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
+  const tradeUpData = useSelector((state: any) => state.modalTradeReducer);
+  const inventory = useSelector((state: any) => state.inventoryReducer);
+  const filterDetails = useSelector((state: any) => state.inventoryFiltersReducer);
 
   document.documentElement.classList.add('dark');
   function updateAutomation(itemHref: SetStateAction<string>) {
@@ -124,26 +123,32 @@ function AppContent() {
   const StoreClass = new DispatchStore(dispatch);
   const IPCClass = new DispatchIPC(dispatch);
 
-  async function handleFilterData(combinedInventory: ItemRow[]) {
+  async function handleFilterData(
+    combinedInventory: ItemRow[],
+    inventoryFilters: any,
+    pricing: any,
+    settings: any,
+    dispatch: any
+  ) {
     if (
-      filterDetails.inventoryFilter.length > 0 ||
-      filterDetails.sortValue != 'Default'
+      inventoryFilters.inventoryFilter.length > 0 ||
+      inventoryFilters.sortValue != 'Default'
     ) {
       let filteredInv = await filterItemRows(
         combinedInventory,
-        currentState.inventoryFiltersReducer.inventoryFilter
+        inventoryFilters.inventoryFilter
       );
       filteredInv = await sortDataFunction(
-        currentState.inventoryFiltersReducer.sortValue,
+        inventoryFilters.sortValue,
         filteredInv,
-        currentState.pricingReducer.prices,
-        currentState.settingsReducer?.source?.title
+        pricing.prices,
+        settings?.source?.title
       );
 
       dispatch(
         inventorySetFilter(
-          currentState.inventoryFiltersReducer.inventoryFilter,
-          currentState.inventoryFiltersReducer.sortValue,
+          inventoryFilters.inventoryFilter,
+          inventoryFilters.sortValue,
           filteredInv
         )
       );
@@ -167,16 +172,32 @@ function AppContent() {
   }
 
   // Forward user event to Store
+  const pricing = useSelector((state: any) => state.pricingReducer);
+
   if (isListening == false) {
     setFirstTimeSettings();
     window.electron.ipcRenderer.userEvents().then((messageValue) => {
-      handleSubMessage(messageValue, settingsData);
+      handleSubMessage(
+        messageValue,
+        settingsData,
+        modalData,
+        filterDetails,
+        pricing,
+        dispatch
+      );
     });
 
     setIsListening(true);
   }
 
-  async function handleSubMessage(messageValue, settingsData) {
+  async function handleSubMessage(
+    messageValue,
+    settingsData,
+    modalData,
+    filterDetails,
+    pricing,
+    dispatch
+  ) {
     if (settingsData.fastMove && modalData.query.length > 0) {
       console.log('Command blocked', modalData.moveOpen, settingsData.fastMove);
       setIsListening(false);
@@ -189,7 +210,13 @@ function AppContent() {
       )) as any;
       dispatch(actionToTake);
       if (messageValue[0] == 1) {
-        await handleFilterData(actionToTake.payload.combinedInventory);
+        await handleFilterData(
+          actionToTake.payload.combinedInventory,
+          filterDetails,
+          pricing,
+          settingsData,
+          dispatch
+        );
       }
     }
 
@@ -884,15 +911,15 @@ function AppContent() {
           <main className="flex-1 dark:bg-dark-level-one">
           <toMoveContext.Provider value={toMoveValue}>
               <Routes>
-              <Route path="/signin" element={<LoginPage />} />
+              <Route path="/signin/*" element={<LoginPage />} />
               <Route
-                path="/stats"
+                path="/stats/*"
                 element={
                   userDetails.isLoggedIn ? <OverviewPage /> : <Navigate to="/signin" />
                 }
               />
               <Route
-                path="/transferfrom"
+                path="/transferfrom/*"
                 element={
                   userDetails.isLoggedIn ? (
                     <StorageUnitsComponent />
@@ -901,13 +928,11 @@ function AppContent() {
                   )
                 }
               />
-              <Route path="/transferto" Component={ToContent} />
-              <Route path="/transferto" Component={ToContent} />
-                  <Route path="/signin" Component={LoginPage} />
-                  <Route path="/inventory" Component={inventoryContent} />
-                  <Route path="/tradeup" Component={TradeupPage} />
-                  <Route path="/settings" Component={settingsPage} />
-                  <Route path="/stats" Component={OverviewPage} />
+              <Route path="/transferto/*" element={<ToContent />} />
+              <Route path="/inventory/*" element={<InventoryContent />} />
+              <Route path="/tradeup/*" element={<TradeupPage />} />
+              <Route path="/settings/*" element={<SettingsPage />} />
+              <Route path="/stats/*" element={<OverviewPage />} />
               <Route path="*" element={<Navigate to="/signin" />} />
             </Routes>
             </toMoveContext.Provider>

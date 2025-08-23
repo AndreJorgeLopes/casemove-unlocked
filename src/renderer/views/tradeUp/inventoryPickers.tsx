@@ -18,13 +18,13 @@ import { createCSGOImage } from '../../functionsClasses/createCSGOImage';
 function content() {
   const [stickerHover, setStickerHover] = useState('');
   const [itemHover, setItemHover] = useState('');
-  const currentState: State = new ReducerManager(useSelector).getStorage();
+  const reducerManager = new ReducerManager(useSelector);
 
-  const inventory = currentState.inventoryReducer;
-  const inventoryFilters = currentState.inventoryFiltersReducer;
-  const pricesResult = currentState.pricingReducer;
-  const settingsData = currentState.settingsReducer;
-  const tradeUpData = currentState.tradeUpReducer;
+  const inventory = reducerManager.getStorage('inventoryReducer');
+  const inventoryFilters = reducerManager.getStorage('inventoryFiltersReducer');
+  const pricesResult = reducerManager.getStorage('pricingReducer');
+  const settingsData = reducerManager.getStorage('settingsReducer');
+  const tradeUpData = reducerManager.getStorage('tradeUpReducer');
 
   const dispatch = useDispatch();
 

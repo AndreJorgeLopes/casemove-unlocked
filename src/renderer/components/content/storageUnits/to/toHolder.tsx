@@ -223,7 +223,7 @@ function StorageUnits() {
 export default function ToContent() {
   return (
     <Routes>
-      <Route path="/" Component={StorageUnits} />
+      <Route path="*" element={<StorageUnits />} />
     </Routes>
   );
 }

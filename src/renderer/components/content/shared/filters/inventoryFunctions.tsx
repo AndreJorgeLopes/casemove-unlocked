@@ -1,5 +1,5 @@
 import { ItemRow, ItemRowStorage } from '../../../../../renderer/interfaces/items';
-import { State } from '../../../../../renderer/interfaces/states';
+import { Inventory, InventoryFilters, Prices, Settings, State } from '../../../../../renderer/interfaces/states';
 import { filterInventorySetSort } from '../../../../../renderer/store/actions/filtersInventoryActions';
 import {itemCategories, itemSubCategories} from '../categories';
 
@@ -199,10 +199,13 @@ export function classNames(...classes) {
 }
 
 // Sort function
-export async function onSortChange(dispatch: Function, currentState: State, sortValue: string) {
+export async function onSortChange(dispatch: Function, inventoryFiltersReducer: InventoryFilters, inventoryReducer: Inventory, pricingReducer: Prices, settingsReducer: Settings, sortValue: string) {
   dispatch(
     await filterInventorySetSort(
-      currentState,
+      inventoryFiltersReducer,
+      inventoryReducer,
+      pricingReducer,
+      settingsReducer,
       sortValue
     )
   );

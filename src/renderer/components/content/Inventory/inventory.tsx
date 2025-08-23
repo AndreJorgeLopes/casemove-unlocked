@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { LoadingButton } from '../shared/animations';
 import { RefreshIcon } from '@heroicons/react/solid';
 
-function content() {
+function Content() {
   const [getLoadingButton, setLoadingButton] = useState(false);
   setLoadingButton;
 
@@ -65,7 +65,7 @@ function content() {
 export default function inventoryContent() {
   return (
     <Routes>
-        <Route path="/" Component={content} />
+        <Route path="*" element={<Content />} />
     </Routes>
 
   );

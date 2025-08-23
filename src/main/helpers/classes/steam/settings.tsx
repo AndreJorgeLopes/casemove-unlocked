@@ -7,7 +7,7 @@ import { WithImplicitCoercion } from 'buffer';
 async function getURL(steamID) {
   return new Promise((resolve) => {
     axios
-      .get(`http://steamcommunity.com/profiles/${steamID}/?xml=1`)
+      .get(`https://steamcommunity.com/profiles/${steamID}/?xml=1`)
       .then(function (response) {
         const parser = new DOMParser();
         resolve(
