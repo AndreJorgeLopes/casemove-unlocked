@@ -24,12 +24,12 @@ import { ConvertPricesFormatted } from '../../../../../renderer/functionsClasses
 import { createCSGOImage } from '../../../../functionsClasses/createCSGOImage';
 setTradeConfirm;
 export default function TradeModal() {
-  let currentState: State = new ReducerManager(useSelector).getStorage();
-  const tradeUpData = currentState.tradeUpReducer;
-  const settingsData = currentState.settingsReducer;
-  const modalData = currentState.modalTradeReducer;
-  const pricesResult = currentState.pricingReducer;
-  const inventory = currentState.inventoryReducer;
+  const reducerManager = new ReducerManager(useSelector);
+  const tradeUpData = reducerManager.getStorage('tradeUpReducer');
+  const settingsData = reducerManager.getStorage('settingsReducer');
+  const modalData = reducerManager.getStorage('modalTradeReducer');
+  const pricesResult = reducerManager.getStorage('pricingReducer');
+  const inventory = reducerManager.getStorage('inventoryReducer');
 
   const pricesFormat = new ConvertPricesFormatted(settingsData, pricesResult);
 

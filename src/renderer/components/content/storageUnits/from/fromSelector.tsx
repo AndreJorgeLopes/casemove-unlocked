@@ -33,14 +33,16 @@ function content() {
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
   let ReducerClass = new ReducerManager(useSelector);
 
-  let currentState = ReducerClass.getStorage();
-
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [storageLoading, setStorageLoading] = useState(false);
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-  const fromSelector = useSelector((state: any) => state.moveFromReducer);
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
+  const inventory = ReducerClass.getStorage('inventoryReducer');
+  const fromSelector = ReducerClass.getStorage('moveFromReducer');
+  const pricesResult = ReducerClass.getStorage('pricingReducer');
+  const settingsData = ReducerClass.getStorage('settingsReducer');
+  const inventoryFiltersReducer = ReducerClass.getStorage(
+    'inventoryFiltersReducer'
+  );
+  const moveFromReducer = ReducerClass.getStorage('moveFromReducer');
 
   // Clear all filters
 
@@ -61,7 +63,7 @@ function content() {
       dispatch(moveFromRemoveCasket(storageRow.item_id));
       setLoadingSetStorage(false);
     } else {
-      new HandleStorageData(dispatch, currentState)
+      new HandleStorageData(dispatch, settingsData, pricesResult, moveFromReducer, inventory, inventoryFiltersReducer)
         .addStorage(storageRow)
         .then(() => {
           setLoadingSetStorage(false);
@@ -77,7 +79,7 @@ function content() {
   // Get all storage unit data
   async function getAllStor() {
     setLoadingSetStorage(true)
-    getAllStorages(dispatch, currentState).then(() => {
+    getAllStorages(dispatch, settingsData, pricesResult, moveFromReducer, inventory, inventoryFiltersReducer).then(() => {
       setLoadingSetStorage(false)
     })
   }

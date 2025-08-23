@@ -24,11 +24,11 @@ import { RowTradehold } from './inventoryRows/tradeholdRow';
 function content() {
   const [getInventory, setInventory] = useState([] as any);
   const ReducerClass = new ReducerManager(useSelector)
-  const currentState: State = ReducerClass.getStorage()
-  const inventory = currentState.inventoryReducer
-  const inventoryFilters = currentState.inventoryFiltersReducer
-  const pricesResult = currentState.pricingReducer
-  const settingsData = currentState.settingsReducer
+  const inventory = ReducerClass.getStorage('inventoryReducer');
+  const inventoryFilters = ReducerClass.getStorage('inventoryFiltersReducer');
+  const pricesResult = ReducerClass.getStorage('pricingReducer');
+  const settingsData = ReducerClass.getStorage('settingsReducer');
+  const auth = ReducerClass.getStorage('authReducer');
 
   const dispatch = useDispatch();
 
@@ -145,7 +145,7 @@ function content() {
               <RowTradehold itemRow={projectRow} settingsData={settingsData} />
               <RowQTY itemRow={projectRow} />
               <RowMoveable itemRow={projectRow} settingsData={settingsData} />
-              <RowLinkInventory itemRow={projectRow} settingsData={settingsData} userDetails={currentState.authReducer}/>
+              <RowLinkInventory itemRow={projectRow} settingsData={settingsData} userDetails={auth}/>
               <td
                 key={Math.random().toString(36).substr(2, 9)}
                 className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"

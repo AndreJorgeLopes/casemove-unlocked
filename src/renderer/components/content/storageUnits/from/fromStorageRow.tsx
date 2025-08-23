@@ -17,10 +17,10 @@ import { State } from '../../../../../renderer/interfaces/states';
 function content({ projectRow, index }) {
   const dispatch = useDispatch();
   const ReducerClass = new ReducerManager(useSelector)
-  const currentState: State = ReducerClass.getStorage()
-  const fromReducer = currentState.moveFromReducer
-  const inventory = currentState.inventoryReducer
-
+  const fromReducer = ReducerClass.getStorage('moveFromReducer');
+  const inventory = ReducerClass.getStorage('inventoryReducer');
+  const settingsReducer = ReducerClass.getStorage('settingsReducer');
+  const pricingReducer = ReducerClass.getStorage('pricingReducer');
 
   async function returnField(fieldValue) {
     fieldValue = parseInt(fieldValue);
@@ -80,13 +80,13 @@ function content({ projectRow, index }) {
     <>
 
       <RowProduct itemRow={projectRow} />
-      <RowCollections itemRow={projectRow} settingsData={currentState.settingsReducer}/>
-      <RowPrice itemRow={projectRow} settingsData={currentState.settingsReducer} pricesReducer={currentState.pricingReducer} />
-      <RowStickersPatches itemRow={projectRow} settingsData={currentState.settingsReducer} />
-      <RowFloat itemRow={projectRow} settingsData={currentState.settingsReducer}/>
-      <RowRarity itemRow={projectRow} settingsData={currentState.settingsReducer} />
-      <RowStorage itemRow={projectRow} settingsData={currentState.settingsReducer} />
-      <RowTradehold itemRow={projectRow} settingsData={currentState.settingsReducer}/>
+      <RowCollections itemRow={projectRow} settingsData={settingsReducer} />
+      <RowPrice itemRow={projectRow} settingsData={settingsReducer} pricesReducer={pricingReducer} />
+      <RowStickersPatches itemRow={projectRow} settingsData={settingsReducer} />
+      <RowFloat itemRow={projectRow} settingsData={settingsReducer} />
+      <RowRarity itemRow={projectRow} settingsData={settingsReducer} />
+      <RowStorage itemRow={projectRow} settingsData={settingsReducer} />
+      <RowTradehold itemRow={projectRow} settingsData={settingsReducer} />
       <RowQTY itemRow={projectRow}/>
 
       <td className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hover:text-gray-200 text-right">

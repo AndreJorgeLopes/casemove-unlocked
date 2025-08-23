@@ -1,6 +1,6 @@
 
 import { ItemRow, ItemRowStorage } from "../../../renderer/interfaces/items";
-import { State } from "../../../renderer/interfaces/states";
+import { Inventory, InventoryFilters, MoveFromReducer, Prices, Settings, State } from "../../../renderer/interfaces/states";
 import { HandleStorageData } from "./storageUnitsClass";
 
 function sorting(valueOne, valueTwo) {
@@ -28,11 +28,15 @@ class Sort {
 
 export async function getAllStorages(
   dispatch: Function,
-  state: State
+  settingsData: Settings,
+  pricesResult: Prices,
+  moveFromReducer: MoveFromReducer,
+  inventory: Inventory,
+  inventoryFiltersReducer: InventoryFilters
 ) {
 
   // Filter the storage inventory
-  const casketResults = await state.inventoryReducer.inventory.filter(function (row) {
+  const casketResults = await inventory.inventory.filter(function (row) {
     if (!row.item_url.includes('casket')) {
       return false; // skip
     }
@@ -40,22 +44,22 @@ export async function getAllStorages(
       return false; // skip
     }
     if (
-      state.moveFromReducer.searchInputStorage != '' &&
-      !row?.item_customname?.toLowerCase()?.includes(state.moveFromReducer.searchInputStorage)
+     moveFromReducer.searchInputStorage != '' &&
+      !row?.item_customname?.toLowerCase()?.includes(moveFromReducer.searchInputStorage)
     ) {
       return false; // skip
     }
-    if (row.item_storage_total == 1000 && state.moveFromReducer.hideFull) {
+    if (row.item_storage_total == 1000 && moveFromReducer.hideFull) {
       return false; // skip
     }
     return true;
   });
 
   async function sendArrayAddStorage(returnValue: Array<any>) {
-    let StorageClass = new HandleStorageData(dispatch, state)
+    let StorageClass = new HandleStorageData(dispatch, settingsData, pricesResult, moveFromReducer, inventory, inventoryFiltersReducer)
     let addArray: Array<ItemRow> = []
     for (const [_key, project] of Object.entries(returnValue)) {
-      if (!state.moveFromReducer.activeStorages.includes(project.item_id)) {
+      if (!moveFromReducer.activeStorages.includes(project.item_id)) {
         addArray = [...addArray, ...await StorageClass.addStorage(
           project as ItemRowStorage,
           addArray

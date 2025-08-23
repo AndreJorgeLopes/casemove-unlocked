@@ -1,5 +1,6 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import { useDispatch } from 'react-redux'
@@ -28,7 +29,6 @@ export default function SteamCloseModal({ open, setOpen, loginWithouClosingSteam
 
   async function cancel() {
     setSetting()
-    
     setLoadingButton(false)
     setOpen(false)
   }

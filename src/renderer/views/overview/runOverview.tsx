@@ -329,7 +329,7 @@ function Content() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/stats" Component={Content} />
+      <Route path="*" element={<Content />} />
     </Routes>
   );
 }

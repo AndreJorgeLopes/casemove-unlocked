@@ -15,19 +15,18 @@ import { State } from '../../../../renderer/interfaces/states';
 export default function InventoryFiltersDisclosure({ClassFilters}) {
   const dispatch = useDispatch();
   const ReducerClass = new ReducerManager(useSelector)
-  const currentState: State = ReducerClass.getStorage()
 
 
-  const inventoryFilters = currentState.inventoryFiltersReducer
-  const inventory = currentState.inventoryReducer
-  const pricesResult = currentState.pricingReducer
-  const settingsData = currentState.settingsReducer
+  const inventoryFilters = ReducerClass.getStorage('inventoryFiltersReducer');
+  const inventory = ReducerClass.getStorage('inventoryReducer');
+  const pricesResult = ReducerClass.getStorage('pricingReducer');
+  const settingsData = ReducerClass.getStorage('settingsReducer');
 
 
   // Update selected filter
   async function addRemoveFilter(filterValue: Filter) {
     dispatch(
-      await filterInventoryAddOption(currentState,
+      await filterInventoryAddOption(inventoryFilters, inventory, pricesResult, settingsData,
         filterValue
       )
     );

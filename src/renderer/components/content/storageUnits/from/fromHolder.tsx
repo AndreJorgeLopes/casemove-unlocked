@@ -12,11 +12,10 @@ import { ReducerManager } from '../../../../../renderer/functionsClasses/reducer
 
 function StorageUnits() {
   const ReducerClass = new ReducerManager(useSelector);
-  const currentState: State = ReducerClass.getStorage()
-  const inventory = currentState.inventoryReducer
-  const inventoryFilters = currentState.inventoryFiltersReducer
-  const fromReducer = currentState.moveFromReducer
-  const settingsData = currentState.settingsReducer
+  const inventory = ReducerClass.getStorage('inventoryReducer');
+  const inventoryFilters = ReducerClass.getStorage('inventoryFiltersReducer');
+  const fromReducer = ReducerClass.getStorage('moveFromReducer');
+  const settingsData = ReducerClass.getStorage('settingsReducer');
   function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
@@ -170,7 +169,7 @@ function StorageUnits() {
 export default function FromMainComponent() {
   return (
     <Routes>
-      <Route path="/" Component={StorageUnits} />
+      <Route path="*" element={<StorageUnits />} />
     </Routes>
   );
 }

@@ -7,10 +7,10 @@ import { ReducerManager } from '../../../../renderer/functionsClasses/reducerMan
 import { State } from '../../../../renderer/interfaces/states';
 
 export default function CollectionsDropDown() {
-  const currentState: State = new ReducerManager(useSelector).getStorage()
-  const tradeUpData = currentState.tradeUpReducer;
-  const inventory = currentState.inventoryReducer
-  const inventoryFilters = currentState.inventoryFiltersReducer;
+  const reducerManager = new ReducerManager(useSelector)
+  const tradeUpData = reducerManager.getStorage('tradeUpReducer');
+  const inventory = reducerManager.getStorage('inventoryReducer');
+  const inventoryFilters = reducerManager.getStorage('inventoryFiltersReducer');
   const dispatch = useDispatch();
 
   let inventoryToUse = [...inventory.inventory, ...inventory.storageInventoryRaw] as any;
