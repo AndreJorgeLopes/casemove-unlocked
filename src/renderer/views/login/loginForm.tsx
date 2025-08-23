@@ -4,6 +4,7 @@ import {
   ExternalLinkIcon,
   LockClosedIcon,
 } from '@heroicons/react/solid';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { useDispatch, useSelector } from 'react-redux';
@@ -74,6 +75,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   // Usestate
   isLock;
   replaceLock;
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authCode, setAuthCode] = useState('');
@@ -181,6 +183,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
         return;
       }
 
+      console.log("clientjstokenToSend:", clientjstokenToSend);
       // Is logged in?
       if (!clientjstokenToSend.logged_in) {
         openNotification('webtokenNotLoggedIn');
@@ -232,7 +235,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
         clientjstokenToSend != '' ? false : storePasswordToSend,
         authCode,
         sharedSecret,
-        clientjstokenToSend
+        clientjstokenToSend,
       );
 
     // Notification and react
@@ -242,11 +245,16 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
       handleSuccess(
         responseStatus.returnPackage as LoginCommandReturnPackage,
         dispatch,
-        currentState
+        currentState,
       );
+      setLoadingButton(false);
+      navigate('/overview');
     } else {
       handleError();
     }
+
+    console.log("loading status:", getLoadingButton)
+
   }
   async function updateUsername(value) {
     setUsername(value);
@@ -293,11 +301,9 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   qrURL;
 
   useEffect(() => {
-
     if (loginMethod !== 'QR') {
       return;
     }
-
 
     window.electron.ipcRenderer.once('qrLogin:show', (pack) => {
       setQrURL(pack);
@@ -314,8 +320,10 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
           handleSuccess(
             responseStatus.returnPackage as LoginCommandReturnPackage,
             dispatch,
-            currentState
+            currentState,
           );
+          setLoadingButton(false);
+          navigate('/stats');
         } else {
           handleError();
         }
@@ -351,15 +359,15 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
               {loginMethod === 'REGULAR'
                 ? 'Connect to Steam'
                 : loginMethod === 'QR'
-                ? 'Scan QR Code'
-                : 'Connect from browser'}
+                  ? 'Scan QR Code'
+                  : 'Connect from browser'}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
               {loginMethod === 'REGULAR'
                 ? 'The application needs to have an active Steam connection to manage your CSGO items. You should not have any games open on the Steam account.'
                 : loginMethod === 'QR'
-                ? 'Scan the QR code with your Steam mobile app. You should be logged into the account you wish to connect Casemove with.'
-                : 'Open the URL by clicking on the button, or by copying it to the clipboard. You should be logged into the account you wish to connect Casemove with. Paste the entire string below.'}
+                  ? 'Scan the QR code with your Steam mobile app. You should be logged into the account you wish to connect Casemove with.'
+                  : 'Open the URL by clicking on the button, or by copying it to the clipboard. You should be logged into the account you wish to connect Casemove with. Paste the entire string below.'}
             </p>
           </div>
 
@@ -472,7 +480,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                   <button
                     onClick={() =>
                       navigator.clipboard.writeText(
-                        `https://steamcommunity.com/chat/clientjstoken`
+                        `https://steamcommunity.com/chat/clientjstoken`,
                       )
                     }
                     type="button"
@@ -483,18 +491,17 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                       aria-hidden="true"
                     />
                   </button>
-                  <Link
-                    to={{
-                      pathname: `https://steamcommunity.com/chat/clientjstoken`,
-                    }}
+                  <a
+                    href="https://steamcommunity.com/chat/clientjstoken"
                     target="_blank"
-                    className="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 border-opacity-50 text-sm font-medium rounded-r-md text-gray-700 bg-dark-level-two hover:bg-dark-level-three focus:outline-none focus:border-green-500  "
+                    className="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 border-opacity-50 text-sm font-medium rounded-r-md text-gray-700 bg-dark-level-two hover:bg-dark-level-three focus:outline-none focus:border-green-500"
                   >
+                    {/* Link content here */}
                     <ExternalLinkIcon
                       className="h-5 w-5 text-gray-400"
                       aria-hidden="true"
                     />
-                  </Link>
+                  </a>
                 </div>
               </div>
             ) : (
@@ -524,7 +531,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
               <div
                 className={classNames(
                   loginMethod === 'REGULAR' ? '' : 'hidden',
-                  'flex items-center justify-between'
+                  'flex items-center justify-between',
                 )}
               >
                 <div className="flex items-center">

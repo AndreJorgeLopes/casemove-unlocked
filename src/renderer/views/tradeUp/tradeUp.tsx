@@ -21,18 +21,21 @@ import { useState } from 'react';
 import { getAllStorages } from '../../functionsClasses/storageUnits/storageUnitsFunctions';
 import { LoadingButton } from '../../components/content/shared/animations';
 
-function settingsContent() {
+function SettingsContent() {
   let ReducerClass = new ReducerManager(useSelector);
-  let currentState: State = ReducerClass.getStorage();
-  const tradeUpData = currentState.tradeUpReducer
-  const settingsData = currentState.settingsReducer
+  const tradeUpData = ReducerClass.getStorage('tradeUpReducer');
+  const settingsData = ReducerClass.getStorage('settingsReducer');
+  const moveFromReducer = ReducerClass.getStorage('moveFromReducer');
+  const pricesResult = ReducerClass.getStorage('pricingReducer');
+  const inventory = ReducerClass.getStorage('inventoryReducer');
+  const inventoryFiltersReducer = ReducerClass.getStorage('inventoryFiltersReducer');
 
   const dispatch = useDispatch();
-  const PricingClass = new ConvertPrices(settingsData, currentState.pricingReducer)
+  const PricingClass = new ConvertPrices(settingsData, ReducerClass.getStorage('pricingReducer'));
   const [getLoadingButton, setLoadingButton] = useState(false);
   async function getAllStor() {
     setLoadingButton(true)
-    getAllStorages(dispatch, currentState).then(() => {
+    getAllStorages(dispatch, settingsData, pricesResult, moveFromReducer, inventory, inventoryFiltersReducer).then(() => {
       setLoadingButton(false)
     })
   }
@@ -122,12 +125,12 @@ function settingsContent() {
                     <button
                       type="button"
                       onClick={() => getAllStor()}
-                      className={classNames(currentState.moveFromReducer.activeStorages.length == 0 || getLoadingButton ? 'bg-green-700' : 'bg-dark-level-three',
+                      className={classNames(moveFromReducer.activeStorages.length == 0 || getLoadingButton ? 'bg-green-700' : 'bg-dark-level-three',
 
                         'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:border-opacity-0 dark:text-dark-white text-sm font-medium hover:bg-dark-level-four rounded-md text-gray-700 focus:outline-none sm:order-0 sm:ml-0'
                       )}
                     >
-                      {currentState.moveFromReducer.activeStorages.length != 0 ? currentState.moveFromReducer.activeStorages.length + " Storage units loaded" : "Load storage units"}
+                      {moveFromReducer.activeStorages.length != 0 ? moveFromReducer.activeStorages.length + " Storage units loaded" : "Load storage units"}
                       {getLoadingButton ? (
                         <LoadingButton
                           className="ml-3 dark:text-dark-white h-4 w-4 text-gray-700"
@@ -200,7 +203,7 @@ function settingsContent() {
 export default function TradeupPage() {
   return (
     <Routes>
-      <Route path="/" Component={settingsContent} />
+      <Route path="*" element={<SettingsContent />} />
     </Routes>
   );
 }

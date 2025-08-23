@@ -17,12 +17,11 @@ function content() {
   const [stickerHover, setStickerHover] = useState('');
   const [itemHover, setItemHover] = useState('');
   const ReducerClass = new ReducerManager(useSelector)
-  const currentState: State = ReducerClass.getStorage()
-  const inventory = currentState.inventoryReducer;
-  const inventoryFilters = currentState.inventoryFiltersReducer;
-  const pricesResult = currentState.pricingReducer;
-  const settingsData = currentState.settingsReducer;
-  const tradeUpData = currentState.tradeUpReducer;
+  const inventory = ReducerClass.getStorage('inventoryReducer');
+  const inventoryFilters = ReducerClass.getStorage('inventoryFiltersReducer');
+  const pricesResult = ReducerClass.getStorage('pricingReducer');
+  const settingsData = ReducerClass.getStorage('settingsReducer');
+  const tradeUpData = ReducerClass.getStorage('tradeUpReducer');
 
   const dispatch = useDispatch();
 
@@ -194,7 +193,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
           >
             <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               <button
-                onClick={() => onSortChange(dispatch,currentState, 'Product name')}
+                onClick={() => onSortChange(dispatch, inventoryFilters, inventory, pricesResult, settingsData, 'Product name')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -204,7 +203,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
             </th>
             <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
               <button
-                onClick={() => onSortChange(dispatch,currentState, 'Collection')}
+                onClick={() => onSortChange(dispatch, inventoryFilters, inventory, pricesResult, settingsData, 'Collection')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -215,7 +214,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
 
             <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
               <button
-                onClick={() => onSortChange(dispatch,currentState, 'Price') }
+                onClick={() => onSortChange(dispatch, inventoryFilters, inventory, pricesResult, settingsData, 'Price')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -226,7 +225,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
 
             <th className="hidden 2xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <button
-                onClick={() => onSortChange(dispatch,currentState, 'Stickers')  }
+                onClick={() => onSortChange(dispatch, inventoryFilters, inventory, pricesResult, settingsData, 'Stickers')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -237,7 +236,7 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
 
             <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <button
-                onClick={() => onSortChange(dispatch,currentState, 'wearValue')}
+                onClick={() => onSortChange(dispatch, inventoryFilters, inventory, pricesResult, settingsData, 'Float')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">

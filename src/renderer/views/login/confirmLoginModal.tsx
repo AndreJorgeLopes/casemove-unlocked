@@ -11,13 +11,13 @@ import { ReducerManager } from '../../../renderer/functionsClasses/reducerManage
 
 export default function ConfirmModal({open, setOpen, setLoadingButton}) {
   const dispatch = useDispatch();
-  const currentState: State = new ReducerManager(useSelector).getStorage();
+  const reducerManager = new ReducerManager(useSelector);
   async function confirm() {
     setLoadingButton(true)
     setOpen(false)
     window.electron.ipcRenderer.forceLogin()
     let responseStatus: LoginCommand = await window.electron.ipcRenderer.forceLoginReply()
-    handleSuccess(responseStatus.returnPackage as LoginCommandReturnPackage, dispatch, currentState)
+    handleSuccess(responseStatus.returnPackage as LoginCommandReturnPackage, dispatch, reducerManager.getStorage())
   }
 
   async function cancel() {

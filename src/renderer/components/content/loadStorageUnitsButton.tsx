@@ -3,18 +3,23 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ReducerManager } from "../../../renderer/functionsClasses/reducerManager";
 import { getAllStorages } from "../../../renderer/functionsClasses/storageUnits/storageUnitsFunctions";
-import { State } from "../../../renderer/interfaces/states";
 import { LoadingButton } from "./shared/animations";
 import { classNames } from "./shared/filters/inventoryFunctions";
 
 export function LoadButton() {
     let ReducerClass = new ReducerManager(useSelector);
-    let currentState: State = ReducerClass.getStorage();
+    let currentState = ReducerClass.getStorage('moveFromReducer');
     const dispatch = useDispatch();
     // Get all storage unit data
     async function getAllStor() {
         setLoadingButton(true)
-        getAllStorages(dispatch, currentState).then(() => {
+        getAllStorages(dispatch,
+            ReducerClass.getStorage('settingsReducer'),
+            ReducerClass.getStorage('pricingReducer'),
+            ReducerClass.getStorage('moveFromReducer'),
+            ReducerClass.getStorage('inventoryReducer'),
+            ReducerClass.getStorage('inventoryFiltersReducer')
+        ).then(() => {
             setLoadingButton(false)
         })
     }
@@ -25,7 +30,7 @@ export function LoadButton() {
             <button
                 type="button"
                 onClick={() => getAllStor()}
-                className={classNames(currentState.moveFromReducer.activeStorages.length == 0 || getLoadingButton ? 'bg-green-700' : 'bg-dark-level-three', "inline-flex items-center px-4 py-2 shadow-sm text-sm font-medium rounded-md text-dark-white hover:bg-dark-level-four")}
+                className={classNames(currentState.activeStorages.length == 0 || getLoadingButton ? 'bg-green-700' : 'bg-dark-level-three', "inline-flex items-center px-4 py-2 shadow-sm text-sm font-medium rounded-md text-dark-white hover:bg-dark-level-four")}
             >
                 {' '}
 
@@ -40,7 +45,7 @@ export function LoadButton() {
                         aria-hidden="true"
                     />
                 )}
-                {currentState.moveFromReducer.activeStorages.length != 0 ? currentState.moveFromReducer.activeStorages.length + " Storage units loaded" : "Load storage units"}
+                {currentState.activeStorages.length != 0 ? currentState.activeStorages.length + " Storage units loaded" : "Load storage units"}
             </button>
         </>
     );

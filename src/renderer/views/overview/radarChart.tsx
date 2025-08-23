@@ -37,6 +37,14 @@ const categoriesRGB = {
   tools: "rgba(255, 159, 64, 0.2)"
 };
 export default function RadarApp() {
+  // Guard: prevent Chart.js errors if no data or invalid data
+  if (!categoriesFixed.length || !finalDataToUse.length) {
+    return <div>No data available for chart.</div>;
+  }
+  const validData = finalDataToUse.every(val => typeof val === 'number' && !isNaN(val));
+  if (!validData) {
+    return <div>Invalid chart data.</div>;
+  }
   let categoriesFixed: Array<string> = [];
   let categoriesColors: any = {};
 
