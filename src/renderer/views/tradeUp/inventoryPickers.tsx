@@ -2,7 +2,10 @@ import { BeakerIcon, PencilIcon, TagIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { RowHeader, RowHeaderHiddenXL } from '../../../renderer/components/content/Inventory/inventoryRows/headerRows';
+import {
+  RowHeader,
+  RowHeaderHiddenXL,
+} from '../../../renderer/components/content/Inventory/inventoryRows/headerRows';
 import {
   classNames,
   sortDataFunctionTwo,
@@ -14,6 +17,7 @@ import { State } from '../../../renderer/interfaces/states';
 import { setRenameModal } from '../../../renderer/store/actions/modalMove actions';
 import { tradeUpAddRemove } from '../../../renderer/store/actions/tradeUpActions';
 import { createCSGOImage } from '../../functionsClasses/createCSGOImage';
+import { isTradeUpEligible } from '../../functionsClasses/filters/tradeUpEligibility';
 
 function content() {
   const [stickerHover, setStickerHover] = useState('');
@@ -70,11 +74,11 @@ function content() {
     inventoryFilters.sortValue,
     finalInventoryToUse,
     pricesResult.prices,
-    settingsData?.source?.title
+    settingsData?.source?.title,
   );
 
   finalInventoryToUse = finalInventoryToUse.filter(function (item) {
-    if (!item.tradeUpConfirmed) {
+    if (!isTradeUpEligible(item)) {
       return false;
     }
     if (
@@ -108,10 +112,7 @@ function content() {
       }
     }
 
-    if (item.tradeUp) {
-      return true;
-    }
-    return false;
+    return true;
   });
 
   let itemR = {};
@@ -134,15 +135,17 @@ function content() {
           <tr
             className={classNames(
               settingsData.os == 'win32' ? 'top-0' : 'top-0',
-              'border-gray-200 sticky'
+              'border-gray-200 sticky',
             )}
           >
             <RowHeader headerName="Product" sortName="Product name" />
             <RowHeader headerName="Collection" sortName="Collection" />
             <RowHeader headerName="Price" sortName="Price" />
 
-
-            <RowHeaderHiddenXL headerName="Stickers/Patches" sortName="Stickers" />
+            <RowHeaderHiddenXL
+              headerName="Stickers/Patches"
+              sortName="Stickers"
+            />
             <RowHeader headerName="Float" sortName="wearValue" />
             <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <span className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -170,12 +173,12 @@ function content() {
                   : 'hidden',
                 inventoryFilters.rarityFilter.length != 0
                   ? inventoryFilters.rarityFilter?.includes(
-                      projectRow.rarityColor
+                      projectRow.rarityColor,
                     )
                     ? ''
                     : 'hidden'
                   : '',
-                'hover:shadow-inner'
+                'hover:shadow-inner',
               )}
             >
               <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
@@ -183,7 +186,7 @@ function content() {
                   <div
                     className={classNames(
                       projectRow.rarityColor,
-                      'shrink-0 w-2.5 h-2.5 rounded-full'
+                      'shrink-0 w-2.5 h-2.5 rounded-full',
                     )}
                     aria-hidden="true"
                   />
@@ -192,9 +195,7 @@ function content() {
                       <div className="flex shrink-0 -space-x-1">
                         <img
                           className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-linear-to-t from-gray-100 to-gray-300"
-                          src={
-                            createCSGOImage(projectRow.item_url)
-                          }
+                          src={createCSGOImage(projectRow.item_url)}
                         />
                       </div>
                     ) : (
@@ -221,11 +222,9 @@ function content() {
                               itemHover == projectRow.item_id
                                 ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
                                 : '',
-                              'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-linear-to-t from-gray-100 to-gray-300'
+                              'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-linear-to-t from-gray-100 to-gray-300',
                             )}
-                            src={
-                              createCSGOImage(projectRow.item_url)
-                            }
+                            src={createCSGOImage(projectRow.item_url)}
                           />
                         </div>
                       </Link>
@@ -253,7 +252,7 @@ function content() {
                             className="px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             onClick={() =>
                               navigator.clipboard.writeText(
-                                JSON.stringify(projectRow)
+                                JSON.stringify(projectRow),
                               )
                             }
                           >
@@ -296,8 +295,8 @@ function content() {
                                 projectRow.item_id,
                                 projectRow.item_customname !== null
                                   ? projectRow.item_customname
-                                  : projectRow.item_name
-                              )
+                                  : projectRow.item_name,
+                              ),
                             )
                           }
                         >
@@ -361,7 +360,7 @@ function content() {
                       ? ''
                       : new ConvertPricesFormatted(
                           settingsData,
-                          pricesResult
+                          pricesResult,
                         ).getFormattedPrice(projectRow)}
                   </div>
                 </div>
@@ -387,11 +386,9 @@ function content() {
                             stickerHover == index + projectRow.item_id
                               ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
                               : '',
-                            'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-linear-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
+                            'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-linear-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400',
                           )}
-                          src={
-                            createCSGOImage(sticker.sticker_url)
-                          }
+                          src={createCSGOImage(sticker.sticker_url)}
                           alt={sticker.sticker_name}
                           title={sticker.sticker_name}
                         />
@@ -408,7 +405,7 @@ function content() {
                 <div
                   className={classNames(
                     isFull ? 'hidden' : '',
-                    'flex justify-center'
+                    'flex justify-center',
                   )}
                 >
                   <button
@@ -416,7 +413,7 @@ function content() {
                   >
                     <BeakerIcon
                       className={classNames(
-                        'text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 h-5'
+                        'text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 h-5',
                       )}
                       aria-hidden="true"
                     />
