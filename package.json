@@ -22,9 +22,12 @@
     "format:check:changed": "node scripts/format-check-changed.cjs",
     "cleanup": "npm run format:check:changed && npm run lint && npm test -- --runInBand --passWithNoTests",
     "package": "electron-forge package",
+    "prepare": "husky",
     "start": "electron-forge start",
     "test": "jest",
-    "make": "electron-forge make --stats-error-details"
+    "make": "electron-forge make --stats-error-details",
+    "linear:init": "node scripts/linear-sync.js --mode=init",
+    "linear:sync": "node scripts/linear-sync.js --mode=manual"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
