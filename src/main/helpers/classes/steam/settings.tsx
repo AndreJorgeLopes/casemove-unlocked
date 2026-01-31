@@ -1,4 +1,4 @@
-import Store from 'electron-store'
+import Store from 'electron-store';
 import { safeStorage } from 'electron';
 import axios from 'axios';
 
@@ -14,7 +14,7 @@ async function getURL(steamID) {
           parser
             .parseFromString(response.data, 'text/xml')
             .getElementsByTagName('profile')[0]
-            .getElementsByTagName('avatarMedium')[0]?.childNodes[0]?.nodeValue
+            .getElementsByTagName('avatarMedium')[0]?.childNodes[0]?.nodeValue,
         );
       });
   }).catch((error) => console.log(error.message));
@@ -25,6 +25,39 @@ const store = new Store({
   watch: true,
   encryptionKey: 'this_only_obfuscates',
 });
+
+function canUseSafeStorage() {
+  try {
+    return safeStorage.isEncryptionAvailable();
+  } catch {
+    return false;
+  }
+}
+
+function encryptStringOrFallback(value: string) {
+  if (canUseSafeStorage()) {
+    const buffer = safeStorage.encryptString(value);
+    return buffer.toString('latin1');
+  }
+
+  return value;
+}
+
+function decryptStringOrFallback(value?: WithImplicitCoercion<string> | null) {
+  if (!value) {
+    return null;
+  }
+
+  if (canUseSafeStorage()) {
+    try {
+      return safeStorage.decryptString(Buffer.from(value, 'latin1'));
+    } catch {
+      return value.toString();
+    }
+  }
+
+  return value.toString();
+}
 
 // Store user data
 export async function storeRefreshToken(username: string, loginKey?: string) {
@@ -39,19 +72,17 @@ export async function storeRefreshToken(username: string, loginKey?: string) {
   }
 
   if (loginKey) {
-    // Encrypt sensitive data
-    const buffer = safeStorage.encryptString(loginKey);
-
-    // Add to account details
-    accountDetails[username]['refreshToken'] = buffer.toString('latin1')
+    // Encrypt sensitive data (fallback to plain when unavailable)
+    accountDetails[username]['refreshToken'] =
+      encryptStringOrFallback(loginKey);
   } else {
     if (accountDetails[username]['refreshToken']) {
-      delete accountDetails[username]['refreshToken']
+      delete accountDetails[username]['refreshToken'];
     }
   }
 
   // Set store
-  console.log('saving refreshToken')
+  console.log('saving refreshToken');
   store.set({
     account: accountDetails,
   });
@@ -62,7 +93,7 @@ export async function storeUserAccount(
   username,
   displayName,
   steamID,
-  secretKey: string | null
+  secretKey: string | null,
 ) {
   // Get the profile picture
   let imageURL = undefined as any;
@@ -71,9 +102,6 @@ export async function storeUserAccount(
   } catch (error) {
     console.log(error);
   }
-
-
-
 
   // Get account details
   let accountDetails = store.get('account');
@@ -93,12 +121,13 @@ export async function storeUserAccount(
     const dictToWrite = {
       secretKey: secretKey,
     };
-    const buffer = safeStorage.encryptString(JSON.stringify(dictToWrite));
-    accountDetails[username]['safeData'] = buffer.toString('latin1');
+    accountDetails[username]['safeData'] = encryptStringOrFallback(
+      JSON.stringify(dictToWrite),
+    );
   }
 
   // Set store
-  console.log('Saving regular')
+  console.log('Saving regular');
   store.set({
     account: accountDetails,
   });
@@ -139,16 +168,30 @@ export async function deleteUserData(username) {
 
 // Get login details
 export async function getLoginDetails(username) {
-  const secretData = safeStorage.decryptString(
-    Buffer.from(store.get('account.' + username + '.safeData') as WithImplicitCoercion<string>, 'latin1')
+  const secretData = decryptStringOrFallback(
+    store.get('account.' + username + '.safeData') as
+      | WithImplicitCoercion<string>
+      | undefined,
   );
-  return JSON.parse(secretData);
+
+  if (!secretData) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(secretData);
+  } catch {
+    return {};
+  }
 }
 // Get login details
 export async function getRefreshToken(username) {
-  const secretData = safeStorage.decryptString(
-    Buffer.from(store.get('account.' + username + '.refreshToken' ) as WithImplicitCoercion<string>, 'latin1')
+  const secretData = decryptStringOrFallback(
+    store.get('account.' + username + '.refreshToken') as
+      | WithImplicitCoercion<string>
+      | undefined,
   );
+
   return secretData;
 }
 // Get all account details
