@@ -1,5 +1,12 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const Store = require('electron-store');
 var ByteBuffer = require('bytebuffer');
+
+const localStore = new Store({
+  name: 'casemoveEnc',
+  watch: true,
+  encryptionKey: 'this_only_obfuscates',
+});
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -36,7 +43,7 @@ contextBridge.exposeInMainWorld('electron', {
           'electron-store-getAccountDetails-reply',
           (evt, message) => {
             resolve(message);
-          }
+          },
         );
       });
     },
@@ -76,7 +83,7 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send(
         'electron-store-setAccountPosition',
         username,
-        indexPosition
+        indexPosition,
       );
     },
 
@@ -135,7 +142,7 @@ contextBridge.exposeInMainWorld('electron', {
       shouldRemember,
       authcode,
       sharedSecret,
-      clientjstoken
+      clientjstoken,
     ) {
       console.log(clientjstoken);
 
@@ -156,7 +163,7 @@ contextBridge.exposeInMainWorld('electron', {
           shouldRemember,
           authcode,
           sharedSecret,
-          clientjstoken
+          clientjstoken,
         );
         ipcRenderer.once('login-reply', (event, arg) => {
           resolve(arg);
@@ -330,6 +337,9 @@ contextBridge.exposeInMainWorld('electron', {
   },
   store: {
     // Commands
+    getThemeSync() {
+      return localStore.get('theme') || 'dark';
+    },
     get(val) {
       const key =
         Math.random().toString(36).substr(2, 3) +
