@@ -18,9 +18,12 @@
   "scripts": {
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.ts-node",
     "package": "electron-forge package",
+    "prepare": "husky",
     "start": "electron-forge start",
     "test": "jest",
-    "make": "electron-forge make --stats-error-details"
+    "make": "electron-forge make --stats-error-details",
+    "linear:init": "node scripts/linear-sync.js --mode=init",
+    "linear:sync": "node scripts/linear-sync.js --mode=manual"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
