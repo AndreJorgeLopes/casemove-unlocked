@@ -23,6 +23,9 @@ release/build
 .erb/dll
 .env
 
+# Local automation/session state
+.sisyphus/
+
 .idea
 npm-debug.log.*
 *.css.d.ts
