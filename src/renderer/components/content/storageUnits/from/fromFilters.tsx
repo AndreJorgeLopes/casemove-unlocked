@@ -18,6 +18,7 @@ import { moveModalQuerySet } from '../../../../../renderer/store/actions/modalMo
 import PricingAmount from '../../shared/filters/pricingAmount';
 import { downloadReport } from '../../../../../renderer/functionsClasses/downloadReport';
 import { classNames } from '../../shared/filters/inventoryFunctions';
+import { ConvertPrices } from '../../../../../renderer/functionsClasses/prices';
 
 import StorageFilterDisclosure from './storageFilterDisclosure';
 import { fromGetFilterManager } from './fromFilterSetup';
@@ -35,8 +36,9 @@ function content() {
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
+  const pricingClass = new ConvertPrices(settingsData, pricesResult);
   const inventoryFilters = useSelector(
-    (state: any) => state.inventoryFiltersReducer
+    (state: any) => state.inventoryFiltersReducer,
   );
 
   async function moveItems() {
@@ -74,29 +76,27 @@ function content() {
   let inventoryFilter = searchFilter(
     storageDataToUse,
     inventoryFilters,
-    fromReducer
+    fromReducer,
   );
 
   let totalHighlighted = 0 as any;
 
   inventoryFilter.forEach((projectRow) => {
     let filtered = fromReducer.totalToMove.filter(
-      (row) => row[0] == projectRow.item_id
+      (row) => row[0] == projectRow.item_id,
     );
     if (filtered.length > 0) {
-      totalHighlighted +=
-        pricesResult.prices[
-          projectRow.item_name + projectRow.item_wear_name || ''
-        ]?.[settingsData.source.title] *
-        settingsData.currencyPrice[settingsData.currency] *
-        filtered[0][2].length;
+      totalHighlighted += pricingClass.getPriceWithMultiplier(
+        projectRow,
+        filtered[0][2].length,
+        true,
+      );
     }
-    let individualPrice =
-      projectRow.combined_QTY *
-      pricesResult.prices[
-        projectRow.item_name + projectRow.item_wear_name || ''
-      ]?.[settingsData.source.title] *
-      settingsData.currencyPrice[settingsData.currency];
+    let individualPrice = pricingClass.getPriceWithMultiplier(
+      projectRow,
+      projectRow.combined_QTY,
+      true,
+    );
     totalAmount += individualPrice = individualPrice ? individualPrice : 0;
   });
   totalHighlighted = totalHighlighted.toFixed(0);
@@ -179,7 +179,7 @@ function content() {
                     inventory.storageInventory.length == 0
                       ? 'pointer-events-none border-gray-100'
                       : 'hover:shadow-sm border-gray-200 ',
-                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:bg-dark-level-three dark:border-none dark:border-opacity-0 dark:text-dark-white   text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:bg-dark-level-three dark:border-none dark:border-opacity-0 dark:text-dark-white   text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0',
                   )}
                 >
                   <DocumentDownloadIcon
@@ -232,7 +232,7 @@ function content() {
                     fromReducer.totalItemsToMove == 0
                       ? 'pointer-events-none border-gray-100 bg-dark-level-one'
                       : 'shadow-sm border-gray-200 bg-dark-level-three',
-                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:border-none dark:border-opacity-0 dark:text-dark-white text-sm font-medium rounded-md text-gray-700 hover:bg-dark-level-four  sm:order-0 sm:ml-0'
+                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:border-none dark:border-opacity-0 dark:text-dark-white text-sm font-medium rounded-md text-gray-700 hover:bg-dark-level-four  sm:order-0 sm:ml-0',
                   )}
                 >
                   Move

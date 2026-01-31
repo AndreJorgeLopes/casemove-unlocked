@@ -12,20 +12,37 @@ export class ConvertPrices {
   }
 
   _getName(itemRow: ItemRow) {
-    return itemRow.item_name + itemRow.item_wear_name || '';
+    return getPriceKey(itemRow, this.prices?.prices);
   }
 
-  getPrice(itemRow:ItemRow, nanToZero=false) {
-    let itemPrice =
-      this.prices.prices[this._getName(itemRow)]?.[
+  getPrice(itemRow: ItemRow, nanToZero = false) {
+    const itemPrice = safeMultiply(
+      this.prices?.prices?.[this._getName(itemRow)]?.[
         this.settingsData.source.title
-      ] * this.settingsData.currencyPrice[this.settingsData.currency];
+      ],
+      this.settingsData.currencyPrice?.[this.settingsData.currency],
+    );
 
     if (nanToZero && isNaN(itemPrice)) {
-      return 0
+      return 0;
     }
 
-    return itemPrice
+    return itemPrice;
+  }
+
+  getPriceWithMultiplier(
+    itemRow: ItemRow,
+    multiplier: number,
+    nanToZero = false,
+  ) {
+    const itemPrice = this.getPrice(itemRow, nanToZero);
+    const totalPrice = safeMultiply(itemPrice, multiplier);
+
+    if (nanToZero && isNaN(totalPrice)) {
+      return 0;
+    }
+
+    return totalPrice;
   }
 }
 
@@ -41,15 +58,15 @@ export class ConvertPricesFormatted extends ConvertPrices {
     }).format(price);
   }
 
-  getFormattedPrice(itemRow: ItemRow) {
-    return this.formatPrice(this.getPrice(itemRow));
+  getFormattedPrice(itemRow: ItemRow, nanToZero = false) {
+    return this.formatPrice(this.getPrice(itemRow, nanToZero));
   }
   getFormattedPriceCombined(itemRow: ItemRow) {
     let comQty = itemRow?.combined_QTY as number;
     return new Intl.NumberFormat(this.settingsData.locale, {
       style: 'currency',
       currency: this.settingsData.currency,
-    }).format(comQty * this.getPrice(itemRow));
+    }).format(this.getPriceWithMultiplier(itemRow, comQty, true));
   }
 }
 
@@ -57,9 +74,54 @@ async function requestPrice(priceToGet: Array<ItemRow>) {
   window.electron.ipcRenderer.getPrice(priceToGet);
 }
 
+const MAX_SAFE_PRICE = Number.MAX_SAFE_INTEGER;
+
+function clampPrice(value: number) {
+  if (!Number.isFinite(value)) {
+    return Number.NaN;
+  }
+
+  if (value > MAX_SAFE_PRICE) {
+    return MAX_SAFE_PRICE;
+  }
+
+  if (value < -MAX_SAFE_PRICE) {
+    return -MAX_SAFE_PRICE;
+  }
+
+  return value;
+}
+
+function safeMultiply(valueOne?: number, valueTwo?: number) {
+  if (typeof valueOne !== 'number' || typeof valueTwo !== 'number') {
+    return Number.NaN;
+  }
+
+  return clampPrice(valueOne * valueTwo);
+}
+
+export function getPriceKey(itemRow: ItemRow, prices?: Prices['prices']) {
+  const baseName = itemRow?.item_name?.replaceAll('(Holo/Foil)', '(Holo-Foil)');
+  const hasWear =
+    itemRow?.item_wear_name !== undefined && itemRow?.item_wear_name !== '';
+  const wearName = hasWear
+    ? `${itemRow.item_name} (${itemRow.item_wear_name})`
+    : baseName;
+
+  if (prices?.[wearName]) {
+    return wearName;
+  }
+
+  if (prices?.[baseName]) {
+    return baseName;
+  }
+
+  return wearName || baseName || '';
+}
+
 async function dispatchRequested(
   dispatch: Function,
-  rowsToGet: Array<ItemRow>
+  rowsToGet: Array<ItemRow>,
 ) {
   dispatch(pricing_add_to_requested(rowsToGet));
 }
@@ -78,7 +140,10 @@ export class RequestPrices extends ConvertPrices {
   }
 
   handleRequested(itemRow: ItemRow): void {
-    if (isNaN(this.getPrice(itemRow)) == true && this._checkRequested(itemRow)) {
+    if (
+      isNaN(this.getPrice(itemRow)) == true &&
+      this._checkRequested(itemRow)
+    ) {
       let rowsToSend = [itemRow];
       requestPrice(rowsToSend);
       dispatchRequested(this.dispatch, rowsToSend);
@@ -86,16 +151,18 @@ export class RequestPrices extends ConvertPrices {
   }
 
   handleRequestArray(itemRows: Array<ItemRow>): void {
-    let rowsToSend = [] as Array<ItemRow>
+    let rowsToSend = [] as Array<ItemRow>;
     itemRows.forEach((itemRow) => {
-      if (isNaN(this.getPrice(itemRow)) == true && this._checkRequested(itemRow)) {
-        rowsToSend.push(itemRow)
+      if (
+        isNaN(this.getPrice(itemRow)) == true &&
+        this._checkRequested(itemRow)
+      ) {
+        rowsToSend.push(itemRow);
       }
     });
     if (rowsToSend.length > 0) {
       requestPrice(rowsToSend);
       dispatchRequested(this.dispatch, rowsToSend);
-
     }
   }
 }
