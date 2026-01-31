@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { classNames } from '../../../components/content/shared/filters/inventoryFunctions';
+import { ConvertPrices } from '../../../functionsClasses/prices';
 import { tradeUpSetPossible } from '../../../store/actions/tradeUpActions';
 
 const rarityShort = {
@@ -19,18 +20,21 @@ export default function PossibleOutcomes() {
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const [outcomesRequested, setOutcomesRequested] = useState(0);
   const dispatch = useDispatch();
-  console.log(tradeUpData.possibleOutcomes.length, tradeUpData.tradeUpProducts.length)
+  const pricingClass = new ConvertPrices(settingsData, pricesResult);
+  console.log(
+    tradeUpData.possibleOutcomes.length,
+    tradeUpData.tradeUpProducts.length,
+  );
 
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    totalPrice += pricesResult.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'];
+    totalPrice += pricingClass.getPrice(element, true);
   });
-  totalPrice;
 
   tradeUpData.possibleOutcomes.forEach((element) => {
+    const outcomePrice = pricingClass.getPrice(element, true);
     element['profit_cal'] =
-      (100 / (totalPrice * 100)) *
-      (pricesResult?.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'] * 100);
+      totalPrice > 0 ? (outcomePrice / totalPrice) * 100 : 0;
   });
   tradeUpData.possibleOutcomes.sort(function (a, b) {
     var keyA = a.profit_cal,
@@ -41,9 +45,7 @@ export default function PossibleOutcomes() {
   });
 
   // Get outcomes
-  if (
-    tradeUpData.tradeUpProducts.length > 0
-  ) {
+  if (tradeUpData.tradeUpProducts.length > 0) {
     if (outcomesRequested != tradeUpData.tradeUpProducts.length) {
       setOutcomesRequested(tradeUpData.tradeUpProducts.length);
       window.electron.ipcRenderer
@@ -55,7 +57,7 @@ export default function PossibleOutcomes() {
   }
 
   if (outcomesRequested != tradeUpData.tradeUpProducts.length) {
-    setOutcomesRequested(tradeUpData.tradeUpProducts.length)
+    setOutcomesRequested(tradeUpData.tradeUpProducts.length);
   }
 
   return (
@@ -96,11 +98,10 @@ export default function PossibleOutcomes() {
                         project?.profit_cal > 100
                           ? 'bg-green-500'
                           : 'bg-red-500',
-                        'w-2.5 h-2.5 shrink-0 rounded-full'
+                        'w-2.5 h-2.5 shrink-0 rounded-full',
                       )}
                       aria-hidden="true"
                     />
-
                   </div>
                   <div className="flex justify-between">
                     <p className="text-gray-500">
@@ -142,9 +143,7 @@ export default function PossibleOutcomes() {
                 <div className="flex justify-start">
                   <p className="text-gray-500"></p>
                   <div className="flex items-center">
-                    <p className="text-gray-500">
-                      Prices are the SCM prices
-                    </p>
+                    <p className="text-gray-500">Prices are the SCM prices</p>
                     <p className="text-gray-500"></p>
                   </div>
                 </div>
