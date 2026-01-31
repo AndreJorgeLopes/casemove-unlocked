@@ -27,6 +27,7 @@ import EmptyComponent from '../../shared/emptyState';
 import { classNames } from '../../shared/filters/inventoryFunctions';
 import RenameModal from '../../shared/modals & notifcations/modalRename';
 import { createCSGOImage } from '../../../../functionsClasses/createCSGOImage';
+import { ConvertPrices } from '../../../../functionsClasses/prices';
 
 function content() {
   const dispatch = useDispatch();
@@ -39,8 +40,9 @@ function content() {
   const fromSelector = ReducerClass.getStorage('moveFromReducer');
   const pricesResult = ReducerClass.getStorage('pricingReducer');
   const settingsData = ReducerClass.getStorage('settingsReducer');
+  const pricingClass = new ConvertPrices(settingsData, pricesResult);
   const inventoryFiltersReducer = ReducerClass.getStorage(
-    'inventoryFiltersReducer'
+    'inventoryFiltersReducer',
   );
   const moveFromReducer = ReducerClass.getStorage('moveFromReducer');
 
@@ -63,7 +65,14 @@ function content() {
       dispatch(moveFromRemoveCasket(storageRow.item_id));
       setLoadingSetStorage(false);
     } else {
-      new HandleStorageData(dispatch, settingsData, pricesResult, moveFromReducer, inventory, inventoryFiltersReducer)
+      new HandleStorageData(
+        dispatch,
+        settingsData,
+        pricesResult,
+        moveFromReducer,
+        inventory,
+        inventoryFiltersReducer,
+      )
         .addStorage(storageRow)
         .then(() => {
           setLoadingSetStorage(false);
@@ -78,15 +87,22 @@ function content() {
 
   // Get all storage unit data
   async function getAllStor() {
-    setLoadingSetStorage(true)
-    getAllStorages(dispatch, settingsData, pricesResult, moveFromReducer, inventory, inventoryFiltersReducer).then(() => {
-      setLoadingSetStorage(false)
-    })
+    setLoadingSetStorage(true);
+    getAllStorages(
+      dispatch,
+      settingsData,
+      pricesResult,
+      moveFromReducer,
+      inventory,
+      inventoryFiltersReducer,
+    ).then(() => {
+      setLoadingSetStorage(false);
+    });
   }
 
   // Get all storage unit data
   async function unMarkAllStorages() {
-    dispatch(moveFromReset())
+    dispatch(moveFromReset());
   }
 
   // Get prices for storage units
@@ -97,12 +113,11 @@ function content() {
     }
 
     let pricingAmount = totalDict[projectRow.storage_id];
-    pricingAmount +=
-      projectRow.combined_QTY *
-      pricesResult.prices[
-        projectRow.item_name + projectRow.item_wear_name || ''
-      ]?.[settingsData.source.title] *
-      settingsData.currencyPrice[settingsData.currency];
+    pricingAmount += pricingClass.getPriceWithMultiplier(
+      projectRow,
+      projectRow.combined_QTY,
+      true,
+    );
     totalDict[projectRow.storage_id] = pricingAmount;
   });
 
@@ -207,13 +222,13 @@ function content() {
               fromReducer.hideFull
                 ? 'bg-indigo-600 dark:bg-indigo-700'
                 : 'bg-gray-200',
-              'relative inline-flex mr-3 shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+              'relative inline-flex mr-3 shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none',
             )}
           >
             <span
               className={classNames(
                 fromReducer.hideFull ? 'translate-x-5' : 'translate-x-0',
-                'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white  shadow transform ring-0 transition ease-in-out duration-200'
+                'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white  shadow transform ring-0 transition ease-in-out duration-200',
               )}
             >
               <span
@@ -221,7 +236,7 @@ function content() {
                   fromReducer.hideFull
                     ? 'opacity-0 ease-out duration-100'
                     : 'opacity-100 ease-in duration-200',
-                  'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
+                  'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
                 )}
                 aria-hidden="true"
               >
@@ -244,7 +259,7 @@ function content() {
                   fromReducer.hideFull
                     ? 'opacity-100 ease-in duration-200'
                     : 'opacity-0 ease-out duration-100',
-                  'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
+                  'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
                 )}
                 aria-hidden="true"
               >
@@ -323,13 +338,15 @@ function content() {
                   getLoadingButton
                     ? 'pointer-events-none	'
                     : 'pointer-events-auto',
-                  'relative col-span-1  flex shadow-sm rounded-md'
+                  'relative col-span-1  flex shadow-sm rounded-md',
                 )}
               >
                 <Link
                   to=""
                   className={classNames(
-                    project.item_customname != null ? '' : 'pointer-events-none'
+                    project.item_customname != null
+                      ? ''
+                      : 'pointer-events-none',
                   )}
                   onClick={() => getStorageData(project)}
                   key={project.item_id}
@@ -339,7 +356,7 @@ function content() {
                       fromSelector.activeStorages.includes(project.item_id)
                         ? 'border-green-300 '
                         : 'border-gray-200 ',
-                      'shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b rounded-l-md dark:bg-dark-level-two'
+                      'shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b rounded-l-md dark:bg-dark-level-two',
                     )}
                   >
                     <img
@@ -347,11 +364,9 @@ function content() {
                         fromSelector.activeStorages.includes(project.item_id)
                           ? ''
                           : 'opacity-50 dark:opacity-40',
-                        'max-w-none h-11 w-11  object-cover'
+                        'max-w-none h-11 w-11  object-cover',
                       )}
-                      src={
-                        createCSGOImage(project.item_url)
-                      }
+                      src={createCSGOImage(project.item_url)}
                     />
                   </div>
                 </Link>
@@ -360,7 +375,7 @@ function content() {
                     fromSelector.activeStorages.includes(project.item_id)
                       ? 'border-green-300'
                       : 'border-gray-200',
-                    'flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b bg-white rounded-r-md truncate'
+                    'flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b bg-white rounded-r-md truncate',
                   )}
                 >
                   <Link
@@ -369,7 +384,7 @@ function content() {
                     className={classNames(
                       project.item_customname != null
                         ? ''
-                        : 'pointer-events-none'
+                        : 'pointer-events-none',
                     )}
                     key={project.item_id}
                   >
@@ -385,12 +400,12 @@ function content() {
                                 project.item_id,
                                 project.item_customname !== null
                                   ? project.item_customname
-                                  : project.item_name
-                              )
+                                  : project.item_name,
+                              ),
                             )
                           }
                           className={classNames(
-                            'block text-sm text-blue-800 pointer-events-auto	'
+                            'block text-sm text-blue-800 pointer-events-auto	',
                           )}
                         >
                           {' '}
@@ -439,15 +454,15 @@ function content() {
                                       project.item_id,
                                       project.item_customname !== null
                                         ? project.item_customname
-                                        : project.item_name
-                                    )
+                                        : project.item_name,
+                                    ),
                                   )
                                 }
                                 className={classNames(
                                   active
                                     ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-four'
                                     : 'text-gray-700',
-                                  'block px-4 py-2 text-sm dark:text-dark-white'
+                                  'block px-4 py-2 text-sm dark:text-dark-white',
                                 )}
                               >
                                 {' '}
