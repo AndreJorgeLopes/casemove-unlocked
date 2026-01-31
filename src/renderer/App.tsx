@@ -59,7 +59,7 @@ import OverviewPage from './views/overview/overview';
 import SettingsPage from './views/settings/settings';
 import TradeupPage from './views/tradeUp/tradeUp';
 import { ItemRow } from './interfaces/items';
-import './index.css'
+import './index.css';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -87,7 +87,7 @@ function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [currentSideMenuOption, setSideMenuOption] = useState(
-    location.pathname
+    location.pathname,
   );
 
   const [getToMoveContext, setToMoveContext] = useState({
@@ -95,7 +95,7 @@ function AppContent() {
   });
   const toMoveValue = useMemo(
     () => ({ getToMoveContext, setToMoveContext }),
-    [getToMoveContext, setToMoveContext]
+    [getToMoveContext, setToMoveContext],
   );
 
   // Redux user details
@@ -106,9 +106,9 @@ function AppContent() {
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const tradeUpData = useSelector((state: any) => state.modalTradeReducer);
   const inventory = useSelector((state: any) => state.inventoryReducer);
-  const filterDetails = useSelector((state: any) => state.inventoryFiltersReducer);
-
-  document.documentElement.classList.add('dark');
+  const filterDetails = useSelector(
+    (state: any) => state.inventoryFiltersReducer,
+  );
   function updateAutomation(itemHref: SetStateAction<string>) {
     setSideMenuOption(itemHref);
     setSidebarOpen(false);
@@ -128,7 +128,7 @@ function AppContent() {
     inventoryFilters: any,
     pricing: any,
     settings: any,
-    dispatch: any
+    dispatch: any,
   ) {
     if (
       inventoryFilters.inventoryFilter.length > 0 ||
@@ -136,21 +136,21 @@ function AppContent() {
     ) {
       let filteredInv = await filterItemRows(
         combinedInventory,
-        inventoryFilters.inventoryFilter
+        inventoryFilters.inventoryFilter,
       );
       filteredInv = await sortDataFunction(
         inventoryFilters.sortValue,
         filteredInv,
         pricing.prices,
-        settings?.source?.title
+        settings?.source?.title,
       );
 
       dispatch(
         inventorySetFilter(
           inventoryFilters.inventoryFilter,
           inventoryFilters.sortValue,
-          filteredInv
-        )
+          filteredInv,
+        ),
       );
     }
   }
@@ -183,7 +183,7 @@ function AppContent() {
         modalData,
         filterDetails,
         pricing,
-        dispatch
+        dispatch,
       );
     });
 
@@ -196,7 +196,7 @@ function AppContent() {
     modalData,
     filterDetails,
     pricing,
-    dispatch
+    dispatch,
   ) {
     if (settingsData.fastMove && modalData.query.length > 0) {
       console.log('Command blocked', modalData.moveOpen, settingsData.fastMove);
@@ -206,7 +206,7 @@ function AppContent() {
     if (messageValue.command == undefined) {
       const actionToTake = (await handleUserEvent(
         messageValue,
-        settingsData
+        settingsData,
       )) as any;
       dispatch(actionToTake);
       if (messageValue[0] == 1) {
@@ -215,7 +215,7 @@ function AppContent() {
           filterDetails,
           pricing,
           settingsData,
-          dispatch
+          dispatch,
         );
       }
     }
@@ -282,7 +282,7 @@ function AppContent() {
       <div
         className={classNames(
           settingsData.os == 'win32' ? 'pt-7' : '',
-          'min-h-full dark:bg-dark-level-one h-screen'
+          'min-h-full dark:bg-dark-level-one h-screen',
         )}
       >
         <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -338,7 +338,7 @@ function AppContent() {
                 <div
                   className={classNames(
                     settingsData.os == 'win32' ? 'pt-7' : '',
-                    'shrink-0 flex items-center px-4'
+                    'shrink-0 flex items-center px-4',
                   )}
                 >
                   <Logo />
@@ -356,7 +356,7 @@ function AppContent() {
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
                             userDetails.isLoggedIn ? '' : 'pointer-events-none',
-                            'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md'
+                            'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
                           )}
                           aria-current={item.current ? 'page' : undefined}
                           onClick={() => updateAutomation(item.href)}
@@ -366,7 +366,7 @@ function AppContent() {
                               item.current
                                 ? 'text-gray-500'
                                 : 'text-gray-400 group-hover:text-gray-500',
-                              'mr-3 shrink-0 h-6 w-6'
+                              'mr-3 shrink-0 h-6 w-6',
                             )}
                             aria-hidden="true"
                           />
@@ -395,7 +395,7 @@ function AppContent() {
                             <span
                               className={classNames(
                                 team.bgColorClass,
-                                'w-2.5 h-2.5 mr-4 rounded-full'
+                                'w-2.5 h-2.5 mr-4 rounded-full',
                               )}
                               aria-hidden="true"
                             />
@@ -419,7 +419,7 @@ function AppContent() {
           <div
             className={classNames(
               settingsData.os == 'win32' ? 'pt-7' : '',
-              'flex items-center shrink-0 px-6'
+              'flex items-center shrink-0 px-6',
             )}
           >
             <Logo />
@@ -431,7 +431,7 @@ function AppContent() {
               as="div"
               className={classNames(
                 userDetails.isLoggedIn ? '' : 'pointer-events-none',
-                'px-3 relative inline-block text-left'
+                'px-3 relative inline-block text-left',
               )}
             >
               <div>
@@ -464,7 +464,7 @@ function AppContent() {
                               userDetails.CSGOConnection
                                 ? 'text-green-400'
                                 : 'text-red-400',
-                              'text-xs font-medium'
+                              'text-xs font-medium',
                             )}
                           >
                             <div className="flex justify-between">
@@ -484,7 +484,7 @@ function AppContent() {
                                       userDetails.walletBalance?.currency ||
                                       settingsData.currency,
                                   }).format(
-                                    userDetails.walletBalance?.balance || 0
+                                    userDetails.walletBalance?.balance || 0,
                                   )}
                             </div>
                           </span>
@@ -517,7 +517,7 @@ function AppContent() {
                             active
                               ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
                               : 'text-gray-700 dark:text-dark-white',
-                            'block px-4 py-2 text-sm'
+                            'block px-4 py-2 text-sm',
                           )}
                         >
                           Settings
@@ -535,7 +535,7 @@ function AppContent() {
                             active
                               ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
                               : 'text-gray-700 dark:text-dark-white',
-                            'block px-4 py-2 text-sm'
+                            'block px-4 py-2 text-sm',
                           )}
                         >
                           Logout
@@ -579,7 +579,7 @@ function AppContent() {
                   </span>
                 </button>
               ) : (
-                <div className='flex flex-col gap-3'>
+                <div className="flex flex-col gap-3">
                   <a href="https://discord.gg/n8QExYF7Qs" target="_blank">
                     <button
                       type="button"
@@ -634,7 +634,7 @@ function AppContent() {
                         ? 'bg-gray-100 text-gray-900 dark:bg-opacity-10 dark:text-opacity-60'
                         : 'text-gray-600 dark:text-gray-200 hover:text-gray-900 hover:bg-gray-50 dark:bg-opacity-10 dark:hover:text-opacity-60 ',
                       userDetails.isLoggedIn ? '' : 'pointer-events-none',
-                      'group flex items-center px-2 py-2 dark:text-dark-white text-base leading-5 font-medium rounded-md'
+                      'group flex items-center px-2 py-2 dark:text-dark-white text-base leading-5 font-medium rounded-md',
                     )}
                     aria-current={item.current ? 'page' : undefined}
                     onClick={() => updateAutomation(item.href)}
@@ -644,7 +644,7 @@ function AppContent() {
                         currentSideMenuOption.includes(item.href)
                           ? 'text-gray-500 dark:text-opacity-60'
                           : 'text-gray-400 group-hover:text-gray-500',
-                        'mr-3 shrink-0 h-6 w-6  dark:text-dark-white'
+                        'mr-3 shrink-0 h-6 w-6  dark:text-dark-white',
                       )}
                       aria-hidden="true"
                     />
@@ -670,31 +670,31 @@ function AppContent() {
                       <div
                         className={classNames(
                           filterDetails.categoryFilter?.includes(
-                            team.bgColorClass
+                            team.bgColorClass,
                           )
                             ? 'bg-gray-200 dark:bg-dark-level-three'
                             : '',
-                          'w-full'
+                          'w-full',
                         )}
                       >
                         <button
                           key={team.name}
                           onClick={() =>
                             dispatch(
-                              inventoryAddCategoryFilter(team.bgColorClass)
+                              inventoryAddCategoryFilter(team.bgColorClass),
                             )
                           }
                           className={classNames(
                             userDetails.isLoggedIn == false
                               ? 'pointer-events-none'
                               : '',
-                            'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md'
+                            'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md',
                           )}
                         >
                           <span
                             className={classNames(
                               team.bgColorClass,
-                              'w-2.5 h-2.5 mr-4 rounded-full'
+                              'w-2.5 h-2.5 mr-4 rounded-full',
                             )}
                             aria-hidden="true"
                           />
@@ -722,31 +722,31 @@ function AppContent() {
                       <div
                         className={classNames(
                           filterDetails.rarityFilter?.includes(
-                            rarity.bgColorClass
+                            rarity.bgColorClass,
                           )
                             ? 'bg-gray-200 dark:bg-dark-level-three'
                             : '',
-                          'w-full'
+                          'w-full',
                         )}
                       >
                         <button
                           key={rarity.value}
                           onClick={() =>
                             dispatch(
-                              inventoryAddRarityFilter(rarity.bgColorClass)
+                              inventoryAddRarityFilter(rarity.bgColorClass),
                             )
                           }
                           className={classNames(
                             userDetails.isLoggedIn == false
                               ? 'pointer-events-none'
                               : '',
-                            'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md'
+                            'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md',
                           )}
                         >
                           <span
                             className={classNames(
                               rarity.bgColorClass,
-                              'w-2.5 h-2.5 mr-4 rounded-full'
+                              'w-2.5 h-2.5 mr-4 rounded-full',
                             )}
                             aria-hidden="true"
                           />
@@ -846,7 +846,7 @@ function AppContent() {
                   as="div"
                   className={classNames(
                     userDetails.isLoggedIn ? '' : 'pointer-events-none',
-                    'ml-3 relative'
+                    'ml-3 relative',
                   )}
                 >
                   <div>
@@ -866,7 +866,7 @@ function AppContent() {
                             userDetails.CSGOConnection
                               ? 'border-2 border-solid border-green-400'
                               : 'border-4 border-solid border-red-400',
-                            'w-10 h-10 bg-gray-300 rounded-full shrink-0'
+                            'w-10 h-10 bg-gray-300 rounded-full shrink-0',
                           )}
                           src={userDetails.userProfilePicture}
                           alt=""
@@ -894,7 +894,7 @@ function AppContent() {
                                 active
                                   ? 'bg-gray-100 text-gray-900'
                                   : 'text-gray-700',
-                                'block px-4 py-2 text-sm'
+                                'block px-4 py-2 text-sm',
                               )}
                             >
                               Logout
@@ -909,32 +909,36 @@ function AppContent() {
             </div>
           </div>
           <main className="flex-1 dark:bg-dark-level-one">
-          <toMoveContext.Provider value={toMoveValue}>
+            <toMoveContext.Provider value={toMoveValue}>
               <Routes>
-              <Route path="/signin/*" element={<LoginPage />} />
-              <Route
-                path="/stats/*"
-                element={
-                  userDetails.isLoggedIn ? <OverviewPage /> : <Navigate to="/signin" />
-                }
-              />
-              <Route
-                path="/transferfrom/*"
-                element={
-                  userDetails.isLoggedIn ? (
-                    <StorageUnitsComponent />
-                  ) : (
-                    <Navigate to="/signin" />
-                  )
-                }
-              />
-              <Route path="/transferto/*" element={<ToContent />} />
-              <Route path="/inventory/*" element={<InventoryContent />} />
-              <Route path="/tradeup/*" element={<TradeupPage />} />
-              <Route path="/settings/*" element={<SettingsPage />} />
-              <Route path="/stats/*" element={<OverviewPage />} />
-              <Route path="*" element={<Navigate to="/signin" />} />
-            </Routes>
+                <Route path="/signin/*" element={<LoginPage />} />
+                <Route
+                  path="/stats/*"
+                  element={
+                    userDetails.isLoggedIn ? (
+                      <OverviewPage />
+                    ) : (
+                      <Navigate to="/signin" />
+                    )
+                  }
+                />
+                <Route
+                  path="/transferfrom/*"
+                  element={
+                    userDetails.isLoggedIn ? (
+                      <StorageUnitsComponent />
+                    ) : (
+                      <Navigate to="/signin" />
+                    )
+                  }
+                />
+                <Route path="/transferto/*" element={<ToContent />} />
+                <Route path="/inventory/*" element={<InventoryContent />} />
+                <Route path="/tradeup/*" element={<TradeupPage />} />
+                <Route path="/settings/*" element={<SettingsPage />} />
+                <Route path="/stats/*" element={<OverviewPage />} />
+                <Route path="*" element={<Navigate to="/signin" />} />
+              </Routes>
             </toMoveContext.Provider>
           </main>
         </div>
@@ -944,8 +948,5 @@ function AppContent() {
 }
 
 export default function App() {
-
-  return (
-      <AppContent />
-  );
+  return <AppContent />;
 }
