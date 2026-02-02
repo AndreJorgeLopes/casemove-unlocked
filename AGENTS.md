@@ -7,6 +7,7 @@ This project uses Linear for issue tracking.
 - Create and update issues in Linear for all work.
 - Assign issues to the owner.
 - Link PRs to issues and keep status in sync.
+- Target base branch `dev` for PRs and sync `dev` before branching.
 
 ## Landing the Plane (Session Completion)
 
