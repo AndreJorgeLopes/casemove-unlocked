@@ -1,6 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const Store = require('electron-store');
-var ByteBuffer = require('bytebuffer');
 
 const localStore = new Store({
   name: 'casemoveEnc',

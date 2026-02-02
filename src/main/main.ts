@@ -113,10 +113,47 @@ async function checkSteam(): Promise<{
 }
 checkSteam();
 
-// Define helpers
-var ByteBuffer = require('bytebuffer');
 const Protos = require('globaloffensive/protobufs/generated/_load.js');
 const Language = require('globaloffensive/language.js');
+
+class LEBuffer {
+  private buffer: Buffer;
+  private offset: number;
+  private markedOffset: number;
+
+  constructor(size: number) {
+    this.buffer = Buffer.alloc(size);
+    this.offset = 0;
+    this.markedOffset = 0;
+  }
+
+  append(hexString: string, encoding: 'hex'): this {
+    if (encoding === 'hex') {
+      const bytes = Buffer.from(hexString, 'hex');
+      bytes.copy(this.buffer, this.offset);
+      this.offset += bytes.length;
+    }
+    return this;
+  }
+
+  writeUint64(value: number | bigint): this {
+    const bigVal = typeof value === 'bigint' ? value : BigInt(value);
+    this.buffer.writeBigUInt64LE(bigVal, this.offset);
+    this.offset += 8;
+    return this;
+  }
+
+  flip(): this {
+    this.markedOffset = this.offset;
+    this.offset = 0;
+    return this;
+  }
+
+  toBuffer(): Buffer {
+    return this.buffer.subarray(0, this.markedOffset || this.buffer.length);
+  }
+}
+
 const currencyClass = new currency();
 let tradeUpClass = new tradeUps();
 const ClassLoginResponse = new LoginGenerator();
@@ -142,6 +179,9 @@ if (isDevelopment) {
 }
 
 const installExtensions = async () => {
+  if (process.env.ENABLE_DEVTOOLS_EXTENSIONS !== 'true') {
+    return null;
+  }
   const installer = require('electron-devtools-installer');
   const forceDownload = !process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
@@ -197,11 +237,11 @@ const createWindow = async () => {
       UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
 
       UpsertKeyValue(responseHeaders, 'Content-Security-Policy', [
-          "default-src 'self' 'unsafe-inline' data:; " +
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-            "style-src 'self' 'unsafe-inline'; " +
-            "img-src 'self' data: https://raw.githubusercontent.com https://avatars.akamai.steamstatic.com; " +
-            "connect-src 'self' https://steamcommunity.com;",
+        "default-src 'self' 'unsafe-inline' data:; " +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+          "style-src 'self' 'unsafe-inline'; " +
+          "img-src 'self' data: https://raw.githubusercontent.com https://avatars.akamai.steamstatic.com; " +
+          "connect-src 'self' https://steamcommunity.com;",
       ]);
 
       callback({
@@ -333,7 +373,9 @@ if (!gotTheLock) {
           );
         }
 
-        await session.defaultSession.loadExtension(reactDevToolsPath);
+        await session.defaultSession.extensions.loadExtension(
+          reactDevToolsPath,
+        );
       }
       createWindow();
       app.on('activate', () => {
@@ -716,10 +758,7 @@ async function startEvents(csgo, user) {
     idsToProcess.forEach((element) => {
       idsToUse.push(parseInt(element));
     });
-    let tradeupPayLoad = new ByteBuffer(
-      1 + 2 + idsToUse.length * 8,
-      ByteBuffer.LITTLE_ENDIAN,
-    );
+    let tradeupPayLoad = new LEBuffer(1 + 2 + idsToUse.length * 8);
     tradeupPayLoad.append(rarObject[rarityToUse], 'hex');
     for (let id of idsToUse) {
       tradeupPayLoad.writeUint64(id);
@@ -729,7 +768,7 @@ async function startEvents(csgo, user) {
 
   // Open container
   ipcMain.on('openContainer', async (_event, itemsToOpen) => {
-    let containerPayload = new ByteBuffer(16, ByteBuffer.LITTLE_ENDIAN);
+    let containerPayload = new LEBuffer(16);
     containerPayload.append('0000000000000000', 'hex');
     for (let id of itemsToOpen) {
       containerPayload.writeUint64(parseInt(id));

@@ -15,19 +15,20 @@ export const mainConfig: Configuration = {
     rules,
   },
 
- externals: {
+  externals: {
     // Treat 'lzma' as an external dependency
-    'lzma': 'commonjs lzma',
-    'steam-crypto': 'commonjs steamcrypto'
+    lzma: 'commonjs lzma',
+    'steam-crypto': 'commonjs steamcrypto',
   },
 
   plugins,
+  target: 'electron-main',
   resolve: {
-    modules: [
-      path.resolve(__dirname, 'src'),
-      'node_modules'
-    ],
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
+    fallback: {
+      memcpy: false,
+    },
   },
   devtool: 'source-map',
 };
