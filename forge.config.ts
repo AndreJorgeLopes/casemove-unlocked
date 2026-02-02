@@ -1,5 +1,6 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
+import path from 'path';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
@@ -12,54 +13,29 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 
-const portRangeStart = 9000;
-const portRangeEnd = 9999;
+const loggerPortBase = 19000;
+const loggerPortRangeEnd = loggerPortBase + 999;
 
-const resolveLoggerPort = (): number => {
-  const requestedPort = Number(process.env.PORT);
-  const startPort =
-    Number.isFinite(requestedPort) &&
-    requestedPort >= portRangeStart &&
-    requestedPort <= portRangeEnd
-      ? requestedPort
-      : portRangeStart;
-
-  const probeScript = `
-const net = require('net');
-const start = ${startPort};
-const end = ${portRangeEnd};
-const tryPort = (port) => new Promise((resolve) => {
-  const server = net.createServer().unref();
-  server.once('error', () => resolve(false));
-  server.listen(port, () => server.close(() => resolve(true)));
-});
-(async () => {
-  for (let port = start; port <= end; port++) {
-    if (await tryPort(port)) {
-      process.stdout.write(String(port));
-      return;
-    }
-  }
-  process.stderr.write('No available port in range');
-  process.exit(1);
-})();
-`;
-
-  const output = execSync(`node -e ${JSON.stringify(probeScript)}`, {
-    stdio: ['ignore', 'pipe', 'pipe'],
-  })
-    .toString()
-    .trim();
+const resolveLoggerPortSync = (start: number, end: number): number => {
+  const scriptPath = path.resolve(__dirname, 'scripts', 'forge-logger-port.js');
+  const output = execFileSync(
+    'node',
+    [scriptPath, String(start), String(end)],
+    {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    },
+  ).trim();
   const port = Number(output);
   if (!Number.isFinite(port)) {
     throw new Error(
-      `Failed to resolve dev server port from probe output: "${output}"`,
+      `Failed to resolve logger port from probe output: "${output}"`,
     );
   }
   return port;
 };
 
-const loggerPort = resolveLoggerPort();
+const loggerPort = resolveLoggerPortSync(loggerPortBase, loggerPortRangeEnd);
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -78,7 +54,6 @@ const config: ForgeConfig = {
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
-      loggerPort: 19000,
       port: 3001,
       mainConfig,
       loggerPort,
