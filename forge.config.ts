@@ -59,7 +59,7 @@ const config: ForgeConfig = {
       loggerPort,
       renderer: {
         config: rendererConfig,
-        nodeIntegration: true,
+        nodeIntegration: false,
         entryPoints: [
           {
             html: './src/renderer/index.html',

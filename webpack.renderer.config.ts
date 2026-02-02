@@ -4,7 +4,7 @@ import { rules } from './webpack.rules';
 import { plugins } from './webpack.plugins';
 
 export const rendererConfig: Configuration = {
-  target: 'electron-renderer',
+  // CRITICAL: Do NOT set 'target' - Forge plugin derives it from nodeIntegration
   module: {
     rules,
   },
