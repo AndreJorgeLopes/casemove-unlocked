@@ -142,6 +142,9 @@ if (isDevelopment) {
 }
 
 const installExtensions = async () => {
+  if (process.env.ENABLE_DEVTOOLS_EXTENSIONS !== 'true') {
+    return null;
+  }
   const installer = require('electron-devtools-installer');
   const forceDownload = !process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
@@ -197,11 +200,11 @@ const createWindow = async () => {
       UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
 
       UpsertKeyValue(responseHeaders, 'Content-Security-Policy', [
-          "default-src 'self' 'unsafe-inline' data:; " +
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-            "style-src 'self' 'unsafe-inline'; " +
-            "img-src 'self' data: https://raw.githubusercontent.com https://avatars.akamai.steamstatic.com; " +
-            "connect-src 'self' https://steamcommunity.com;",
+        "default-src 'self' 'unsafe-inline' data:; " +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+          "style-src 'self' 'unsafe-inline'; " +
+          "img-src 'self' data: https://raw.githubusercontent.com https://avatars.akamai.steamstatic.com; " +
+          "connect-src 'self' https://steamcommunity.com;",
       ]);
 
       callback({
@@ -333,7 +336,9 @@ if (!gotTheLock) {
           );
         }
 
-        await session.defaultSession.loadExtension(reactDevToolsPath);
+        await session.defaultSession.extensions.loadExtension(
+          reactDevToolsPath,
+        );
       }
       createWindow();
       app.on('activate', () => {
