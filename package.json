@@ -20,6 +20,7 @@
     "package": "electron-forge package",
     "prepare": "husky",
     "start": "electron-forge start",
+    "start-hyprland": "DEBUG=steam-session* electron-forge start -- -- --ozone-platform=wayland",
     "test": "jest",
     "make": "electron-forge make --stats-error-details",
     "linear:init": "node scripts/linear-sync.js --mode=init",
