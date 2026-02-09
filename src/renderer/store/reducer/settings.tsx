@@ -2,6 +2,7 @@ import { Settings } from "../../../renderer/interfaces/states";
 
 const initialState: Settings = {
   fastMove: false,
+  theme: 'dark',
   currency: 'USD',
   locale: 'EN-GB',
   os: '',
@@ -48,6 +49,11 @@ const settingsReducer = (state = initialState, action) => {
       return {
         ...safeState,
         fastMove: action.payload,
+      };
+    case 'SETTINGS_SET_THEME':
+      return {
+        ...state,
+        theme: action.payload,
       };
     case 'SETTINGS_SET_COLUMNS':
       return {

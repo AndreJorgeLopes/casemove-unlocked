@@ -8,6 +8,7 @@ import {
   setOS,
   setSourceValue,
   setSteamLoginShow,
+  setTheme,
 } from '../../../renderer/store/actions/settings';
 import {
   DispatchIPCBuildingObject,
@@ -69,6 +70,10 @@ export class DispatchStore extends IPCCommunication {
     fastmove: {
       name: 'fastmove',
       action: setFastMove
+    },
+    theme: {
+      name: 'theme',
+      action: setTheme
     },
     currency: {
       name: 'currency',

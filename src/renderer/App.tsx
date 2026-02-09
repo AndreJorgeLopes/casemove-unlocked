@@ -258,6 +258,13 @@ function AppContent() {
       clearReconnectTimers();
     };
   }, []);
+
+  useEffect(() => {
+    const theme = settingsData.theme === 'light' ? 'light' : 'dark';
+    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.add(theme);
+    document.documentElement.style.colorScheme = theme;
+  }, [settingsData.theme]);
   function updateAutomation(itemHref: SetStateAction<string>) {
     setSideMenuOption(itemHref);
     setSidebarOpen(false);
@@ -314,6 +321,7 @@ function AppContent() {
       StoreClass.run(StoreClass.buildingObject.columns);
       StoreClass.run(StoreClass.buildingObject.devmode);
       StoreClass.run(StoreClass.buildingObject.fastmove);
+      StoreClass.run(StoreClass.buildingObject.theme);
       StoreClass.run(StoreClass.buildingObject.source);
       StoreClass.run(StoreClass.buildingObject.locale);
       StoreClass.run(StoreClass.buildingObject.steamLoginShow);
