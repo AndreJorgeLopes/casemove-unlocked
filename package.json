@@ -193,6 +193,7 @@
     "ts-loader": "^9.5.2",
     "uglify-js": "^3.19.3",
     "update-electron-app": "^3.1.1",
+    "vibe-kanban-web-companion": "^0.0.5",
     "webpack": "^5.100.1",
     "webpack-cli": "^6.0.1",
     "xmldom": "^0.6.0"
