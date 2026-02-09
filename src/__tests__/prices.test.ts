@@ -7,6 +7,7 @@ import { Prices, Settings } from '../renderer/interfaces/states';
 
 const baseSettings: Settings = {
   fastMove: false,
+  theme: 'dark',
   currency: 'USD',
   locale: 'en-US',
   steamLoginShow: false,

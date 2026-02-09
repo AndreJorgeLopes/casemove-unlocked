@@ -345,7 +345,8 @@ contextBridge.exposeInMainWorld('electron', {
   store: {
     // Commands
     getThemeSync() {
-      return localStore.get('theme') || 'dark';
+      const theme = localStore.get('theme');
+      return theme === 'light' ? 'light' : 'dark';
     },
     get(val) {
       const key =
