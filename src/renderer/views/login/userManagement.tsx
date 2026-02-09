@@ -3,7 +3,12 @@ import { useState } from 'react';
 import { classNames } from '../../../renderer/components/content/shared/filters/inventoryFunctions';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
-export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser }) {
+export default function UserGrid({
+  clickOnProfile,
+  deleteUser,
+  runDeleteUser,
+  disabled = false,
+}) {
   const [hasRun, setHasRun] = useState(false);
   const [getUsers, setUsers] = useState([] as any);
 
@@ -76,6 +81,9 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
 
   // Drag n drop features
   async function handleOnDragEnd(result) {
+    if (disabled) {
+      return;
+    }
     // Check if actually moved
     if (!result.destination) return;
     const items = Array.from(getUsers);
@@ -163,6 +171,7 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
                         <button
                           type="button"
                           onClick={() => clickOnProfile([person.username, person.refreshToken])}
+                          disabled={disabled}
                           className="inline-flex items-center dark:text-dark-white p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
                         >
                           <CheckIcon className="h-5 w-5" aria-hidden="true" />
@@ -170,7 +179,9 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
                         <button
                           type="button"
                           onClick={() => removeUsername(person.username)}
+                          disabled={disabled}
                           className={classNames(
+                            disabled ? 'opacity-50 cursor-not-allowed hover:transform-none hover:scale-100 hover:bg-transparent' : '',
                             'inline-flex items-center p-1 border border-transparent rounded-full dark:text-dark-white hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110'
                           )}
                         >
@@ -186,6 +197,11 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
             )}
           </Droppable>
         </DragDropContext>
+        {disabled ? (
+          <div className="text-xs px-2 text-gray-500 dark:text-gray-400">
+            Account actions are disabled while authentication is in progress.
+          </div>
+        ) : null}
       </div>
     </div>
   );

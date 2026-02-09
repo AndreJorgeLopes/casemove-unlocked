@@ -1,29 +1,20 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import {  XIcon } from '@heroicons/react/outline'
-import { LoginIcon } from '@heroicons/react/solid'
-import { handleSuccess } from './HandleSuccess'
-import { LoginCommand, LoginCommandReturnPackage } from '../../../shared/Interfaces.tsx/store'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from '../../../renderer/interfaces/states'
-import { ReducerManager } from '../../../renderer/functionsClasses/reducerManager'
+import { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import { LoginIcon } from '@heroicons/react/solid';
 
-export default function ConfirmModal({open, setOpen, setLoadingButton}) {
-  const dispatch = useDispatch();
-  const reducerManager = new ReducerManager(useSelector);
-  async function confirm() {
-    setLoadingButton(true)
-    setOpen(false)
-    window.electron.ipcRenderer.forceLogin()
-    const responseStatus: LoginCommand = await window.electron.ipcRenderer.forceLoginReply()
-    handleSuccess(responseStatus.returnPackage as LoginCommandReturnPackage, dispatch, reducerManager.getStorage())
-  }
-
+export default function ConfirmModal({
+  open,
+  setOpen,
+  onConfirm,
+  isPending = false,
+}) {
   async function cancel() {
+    if (isPending) {
+      return;
+    }
     window.electron.ipcRenderer.logUserOut();
-    setLoadingButton(false)
-    setOpen(false)
+    setOpen(false);
   }
 
   return (
@@ -56,7 +47,8 @@ export default function ConfirmModal({open, setOpen, setLoadingButton}) {
                 <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
                   <button
                     type="button"
-                    className=" rounded-md text-gray-400 hover:text-gray-500"
+                    disabled={isPending}
+                    className="rounded-md text-gray-400 hover:text-gray-500 disabled:opacity-50"
                     onClick={() => cancel()}
                   >
                     <span className="sr-only">Close</span>
@@ -81,14 +73,16 @@ export default function ConfirmModal({open, setOpen, setLoadingButton}) {
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
                     type="button"
-                    className="mt-3 w-full inline-flex justify-center rounded-md hover:bg-green-700 text-dark-white shadow-sm px-4 py-2 bg-green-700 text-base font-medium sm:mt-0 sm:w-auto sm:text-sm"
-                    onClick={() => confirm()}
+                    disabled={isPending}
+                    className="mt-3 w-full inline-flex justify-center rounded-md hover:bg-green-700 text-dark-white shadow-sm px-4 py-2 bg-green-700 text-base font-medium sm:mt-0 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => onConfirm()}
                   >
-                    Log in
+                    {isPending ? 'Logging in...' : 'Log in'}
                   </button>
                   <button
                     type="button"
-                    className="mt-3 w-full inline-flex justify-center rounded-md hover:bg-dark-level-four text-dark-white shadow-sm px-4 py-2 bg-dark-level-three text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm"
+                    disabled={isPending}
+                    className="mt-3 w-full inline-flex justify-center rounded-md hover:bg-dark-level-four text-dark-white shadow-sm px-4 py-2 bg-dark-level-three text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => cancel()}
                   >
                     Cancel
@@ -100,5 +94,5 @@ export default function ConfirmModal({open, setOpen, setLoadingButton}) {
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }
