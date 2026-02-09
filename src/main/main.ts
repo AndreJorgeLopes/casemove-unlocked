@@ -201,7 +201,19 @@ const createWindow = async () => {
           "default-src 'self' 'unsafe-inline' data:; " +
             "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
             "style-src 'self' 'unsafe-inline'; " +
-            "img-src 'self' data: https://raw.githubusercontent.com https://avatars.akamai.steamstatic.com; " +
+            "img-src 'self' data: " +
+            'https://raw.githubusercontent.com ' +
+            'https://steamcommunity.com ' +
+            'https://avatars.steamstatic.com ' +
+            'https://avatars.akamai.steamstatic.com ' +
+            'https://avatars.fastly.steamstatic.com ' +
+            'https://avatars.cloudflare.steamstatic.com ' +
+            'https://community.cloudflare.steamstatic.com ' +
+            'https://steamcdn-a.akamaihd.net ' +
+            'https://cdn.steamcommunity.com ' +
+            'http://cdn.steamcommunity.com ' +
+            'https://media.steampowered.com ' +
+            'http://media.steampowered.com; ' +
             "connect-src 'self' https://steamcommunity.com;",
       ]);
 
