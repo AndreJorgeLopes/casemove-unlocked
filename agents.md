@@ -89,12 +89,14 @@ Casemove is an Electron + React app for managing CS2 storage units using Steam A
 
 ## Vibe Kanban Task Orchestration Notes
 
-- For `start_workspace_session` with `executor: "CODEX"`, use the agent configuration name in `variant` exactly as configured in Vibe Kanban.
-- Confirmed working variant for this project: `GPT_5_3_Codex` (model label: `GPT-5.3-Codex`).
-- Do not normalize or rewrite variant names (no lowercase conversion, no hyphen substitution).
-- If variant is missing, invalid, or fails to start:
-  - Ask the user to choose from the available configured agent variants first.
-  - Then retry task start with the exact selected variant string.
+- For `start_workspace_session`, always inherit `executor` and `variant` from the currently opened/origin task when available.
+- For `executor: "CODEX"`, `variant` must match the configured key exactly (case-sensitive).
+- Confirmed key for GPT-5.3 Codex: `GPT_5_3_CODEX` (model value: `gpt-5.3-codex`).
+- Do not normalize or rewrite variant strings (no lowercasing, title-casing, or hyphen/underscore conversion).
+- If inherited variant is unavailable, missing, or fails:
+  - Ask the user to choose from configured variants for that executor.
+  - Retry with the exact chosen key.
+- Known CODEX variants from current config: `DEFAULT`, `HIGH`, `APPROVALS`, `MAX`, `GPT_5_3_CODEX`.
 
 ## Skills / Playbooks
 
