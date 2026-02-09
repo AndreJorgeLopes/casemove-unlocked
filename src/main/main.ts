@@ -182,6 +182,7 @@ const createWindow = async () => {
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       sandbox: false,
       enableBlinkFeatures: 'CSSColorSchemeUARendering',
