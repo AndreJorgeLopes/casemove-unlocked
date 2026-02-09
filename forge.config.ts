@@ -30,6 +30,10 @@ const config: ForgeConfig = {
     new WebpackPlugin({
       loggerPort: 19000,
       port: 3001,
+      devServer: {
+        hot: false,
+        liveReload: false,
+      },
       mainConfig,
       renderer: {
         config: rendererConfig,
