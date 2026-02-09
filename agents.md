@@ -107,6 +107,17 @@ Casemove is an Electron + React app for managing CS2 storage units using Steam A
 - **Linear MCP**: configured in OpenCode global settings.
 - **Additional MCP**: Exa, Playwright, GitHub, Next.js, Electron configured in global settings.
 
+## Vibe Kanban Task Orchestration Notes
+
+- For `start_workspace_session`, always inherit `executor` and `variant` from the currently opened/origin task when available.
+- For `executor: "CODEX"`, `variant` must match the configured key exactly (case-sensitive).
+- Confirmed key for GPT-5.3 Codex: `GPT_5_3_CODEX` (model value: `gpt-5.3-codex`).
+- Do not normalize or rewrite variant strings (no lowercasing, title-casing, or hyphen/underscore conversion).
+- If inherited variant is unavailable, missing, or fails:
+  - Ask the user to choose from configured variants for that executor.
+  - Retry with the exact chosen key.
+- Known CODEX variants from current config: `DEFAULT`, `HIGH`, `APPROVALS`, `MAX`, `GPT_5_3_CODEX`.
+
 ## Skills / Playbooks
 
 - **Debugging**: trace IPC → main → renderer, validate state transitions.
