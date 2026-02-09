@@ -87,6 +87,15 @@ Casemove is an Electron + React app for managing CS2 storage units using Steam A
 - **Linear MCP**: configured in OpenCode global settings.
 - **Additional MCP**: Exa, Playwright, GitHub, Next.js, Electron configured in global settings.
 
+## Vibe Kanban Task Orchestration Notes
+
+- For `start_workspace_session` with `executor: "CODEX"`, use the agent configuration name in `variant` exactly as configured in Vibe Kanban.
+- Confirmed working variant for this project: `GPT_5_3_Codex` (model label: `GPT-5.3-Codex`).
+- Do not normalize or rewrite variant names (no lowercase conversion, no hyphen substitution).
+- If variant is missing, invalid, or fails to start:
+  - Ask the user to choose from the available configured agent variants first.
+  - Then retry task start with the exact selected variant string.
+
 ## Skills / Playbooks
 
 - **Debugging**: trace IPC → main → renderer, validate state transitions.
