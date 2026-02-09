@@ -128,6 +128,12 @@ function AppContent() {
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer,
   );
+  const isSessionReady = Boolean(
+    userDetails?.hasConnection &&
+      (userDetails?.isLoggedIn ||
+        userDetails?.CSGOConnection ||
+        userDetails?.steamID),
+  );
 
   useEffect(() => {
     isLoggedInRef.current = userDetails.isLoggedIn;
@@ -529,7 +535,7 @@ function AppContent() {
                             currentSideMenuOption.includes(item.href)
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
-                            userDetails.isLoggedIn ? '' : 'pointer-events-none',
+                            isSessionReady ? '' : 'pointer-events-none',
                             'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
                           )}
                           aria-current={item.current ? 'page' : undefined}
@@ -604,7 +610,7 @@ function AppContent() {
             <Menu
               as="div"
               className={classNames(
-                userDetails.isLoggedIn ? '' : 'pointer-events-none',
+                isSessionReady ? '' : 'pointer-events-none',
                 'px-3 relative inline-block text-left',
               )}
             >
@@ -837,7 +843,7 @@ function AppContent() {
                       currentSideMenuOption.includes(item.href)
                         ? 'bg-gray-100 text-gray-900 dark:bg-opacity-10 dark:text-opacity-60'
                         : 'text-gray-600 dark:text-gray-200 hover:text-gray-900 hover:bg-gray-50 dark:bg-opacity-10 dark:hover:text-opacity-60 ',
-                      userDetails.isLoggedIn ? '' : 'pointer-events-none',
+                      isSessionReady ? '' : 'pointer-events-none',
                       'group flex items-center px-2 py-2 dark:text-dark-white text-base leading-5 font-medium rounded-md',
                     )}
                     aria-current={item.current ? 'page' : undefined}
@@ -889,9 +895,7 @@ function AppContent() {
                             )
                           }
                           className={classNames(
-                            userDetails.isLoggedIn == false
-                              ? 'pointer-events-none'
-                              : '',
+                            isSessionReady ? '' : 'pointer-events-none',
                             'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md',
                           )}
                         >
@@ -941,9 +945,7 @@ function AppContent() {
                             )
                           }
                           className={classNames(
-                            userDetails.isLoggedIn == false
-                              ? 'pointer-events-none'
-                              : '',
+                            isSessionReady ? '' : 'pointer-events-none',
                             'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md',
                           )}
                         >
@@ -1065,11 +1067,11 @@ function AppContent() {
               </div>
               <div className="flex items-center">
                 {/* Profile dropdown */}
-                  <Menu
-                    as="div"
-                    className={classNames(
-                      userDetails.isLoggedIn ? '' : 'pointer-events-none',
-                      'ml-3 relative',
+                <Menu
+                  as="div"
+                  className={classNames(
+                    isSessionReady ? '' : 'pointer-events-none',
+                    'ml-3 relative',
                   )}
                 >
                   <div>
@@ -1141,7 +1143,7 @@ function AppContent() {
                 <Route
                   path="/stats/*"
                   element={
-                    userDetails.isLoggedIn ? (
+                    isSessionReady ? (
                       <OverviewPage />
                     ) : (
                       <Navigate to="/signin" />
@@ -1151,7 +1153,7 @@ function AppContent() {
                 <Route
                   path="/transferfrom/*"
                   element={
-                    userDetails.isLoggedIn ? (
+                    isSessionReady ? (
                       <StorageUnitsComponent />
                     ) : (
                       <Navigate to="/signin" />
