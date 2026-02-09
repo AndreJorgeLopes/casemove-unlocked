@@ -370,26 +370,24 @@ let gitHub = 0;
 ipcMain.on('needUpdate', async (event: any) => {
   try {
     if (gitHub == 0) {
-      getGithubVersion(process.platform).then((returnValue) => {
-        // Get the current version
-        const version = parseInt(
-          app.getVersion().toString().replaceAll('.', ''),
-        );
+      const returnValue = await getGithubVersion(process.platform);
 
-        // Check success status
-        let successStatus: boolean = false;
-        if (returnValue.version > version) {
-          successStatus = true;
-        } else {
-          successStatus = false;
-        }
+      // Get the current version
+      const version = parseInt(app.getVersion().toString().replaceAll('.', ''));
 
-        // Send the event back back
-        event.reply('needUpdate-reply', {
-          requireUpdate: successStatus,
-          currentVersion: app.getVersion(),
-          githubResponse: returnValue,
-        });
+      // Check success status
+      let successStatus: boolean = false;
+      if (returnValue.version > version) {
+        successStatus = true;
+      } else {
+        successStatus = false;
+      }
+
+      // Send the event back back
+      event.reply('needUpdate-reply', {
+        requireUpdate: successStatus,
+        currentVersion: app.getVersion(),
+        githubResponse: returnValue,
       });
     }
   } catch {

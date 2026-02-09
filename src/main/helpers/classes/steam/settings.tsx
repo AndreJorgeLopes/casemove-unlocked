@@ -4,20 +4,47 @@ import axios from 'axios';
 
 import { DOMParser } from 'xmldom';
 import { WithImplicitCoercion } from 'buffer';
-async function getURL(steamID) {
-  return new Promise((resolve) => {
-    axios
-      .get(`https://steamcommunity.com/profiles/${steamID}/?xml=1`)
-      .then(function (response) {
-        const parser = new DOMParser();
-        resolve(
-          parser
-            .parseFromString(response.data, 'text/xml')
-            .getElementsByTagName('profile')[0]
-            .getElementsByTagName('avatarMedium')[0]?.childNodes[0]?.nodeValue,
-        );
-      });
-  }).catch((error) => console.log(error.message));
+function logOptionalFetchError(context: string, resourceURL: string, error: unknown) {
+  if (axios.isAxiosError(error)) {
+    const statusCode = error.response?.status;
+    if (statusCode === 404) {
+      console.warn(
+        `[optional-fetch] ${context} returned 404; using fallback`,
+        { resourceURL, statusCode },
+      );
+      return;
+    }
+
+    console.error(`[optional-fetch] ${context} request failed`, {
+      resourceURL,
+      statusCode,
+      message: error.message,
+    });
+    return;
+  }
+
+  console.error(`[optional-fetch] ${context} request failed`, {
+    resourceURL,
+    error,
+  });
+}
+
+async function getURL(steamID): Promise<string | null> {
+  const profileURL = `https://steamcommunity.com/profiles/${steamID}/?xml=1`;
+  try {
+    const response = await axios.get(profileURL);
+    const parser = new DOMParser();
+    return (
+      parser
+        .parseFromString(response.data, 'text/xml')
+        .getElementsByTagName('profile')[0]
+        .getElementsByTagName('avatarMedium')[0]?.childNodes[0]?.nodeValue ??
+      null
+    );
+  } catch (error) {
+    logOptionalFetchError('Steam profile avatar fetch', profileURL, error);
+    return null;
+  }
 }
 // Define store
 const store = new Store({
@@ -96,12 +123,7 @@ export async function storeUserAccount(
   secretKey: string | null,
 ) {
   // Get the profile picture
-  let imageURL = undefined as any;
-  try {
-    imageURL = await getURL(steamID);
-  } catch (error) {
-    console.log(error);
-  }
+  const imageURL = await getURL(steamID);
 
   // Get account details
   let accountDetails = store.get('account');
