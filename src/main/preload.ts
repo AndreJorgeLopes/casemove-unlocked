@@ -1,11 +1,18 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const Store = require('electron-store');
-var ByteBuffer = require('bytebuffer');
 
 const localStore = new Store({
   name: 'casemoveEnc',
   watch: true,
   encryptionKey: 'this_only_obfuscates',
+});
+
+contextBridge.exposeInMainWorld('require', (moduleName: string) => {
+  if (moduleName === 'events') {
+    return require('events');
+  }
+
+  throw new Error(`Module "${moduleName}" is not available in renderer`);
 });
 
 contextBridge.exposeInMainWorld('electron', {
