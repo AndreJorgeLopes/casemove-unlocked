@@ -69,7 +69,7 @@ function SettingsContent() {
     <>
       <TradeModal />
 
-      <div className="h-screen flex flex-col overflow-hidden">
+      <div className="h-full min-h-0 flex flex-col overflow-hidden">
         {/* Page title & actions */}
         <div className="border-b border-gray-200 px-4 h-14  py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8 dark:border-opacity-50 shrink-0">
           <div className="flex-1 min-w-0">
@@ -184,8 +184,8 @@ function SettingsContent() {
         {/* Content area */}
 
         <div className="flex-1 flex overflow-hidden min-h-0">
-          <div className="flex-1 relative z-0 flex h-full">
-            <main className="flex-1 relative z-0 overflow-y-auto">
+          <div className="flex h-full flex-1 min-h-0 relative z-0">
+            <main className="flex-1 min-h-0 relative z-0 overflow-y-auto">
               {/* Start main area*/}
               <div className="inset-0">
                 <TradeUpFilters />
@@ -193,7 +193,7 @@ function SettingsContent() {
               </div>
               {/* End main area */}
             </main>
-            <aside className="hidden relative lg:flex lg:flex-col bg-gray-50 shrink-0 w-96 border-l dark:border-opacity-50  border-gray-200 overflow-y-auto dark:bg-dark-level-one">
+            <aside className="hidden relative lg:flex lg:flex-col bg-gray-50 shrink-0 w-96 border-l dark:border-opacity-50 border-gray-200 min-h-0 overflow-hidden dark:bg-dark-level-one">
               {/* Start secondary column (hidden on smaller screens) */}
               <div className="">
                 <TradeUpSideBar />
