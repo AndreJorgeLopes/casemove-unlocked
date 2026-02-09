@@ -29,6 +29,7 @@ function content() {
   const pricesResult = reducerManager.getStorage('pricingReducer');
   const settingsData = reducerManager.getStorage('settingsReducer');
   const tradeUpData = reducerManager.getStorage('tradeUpReducer');
+  const pricingFormatted = new ConvertPricesFormatted(settingsData, pricesResult);
 
   const dispatch = useDispatch();
 
@@ -350,16 +351,11 @@ function content() {
               </td>
 
               <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
-                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
-                    {pricesResult.prices[
-                      projectRow.item_name + projectRow.item_wear_name || ''
-                    ] == undefined
+                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                    <div className="flex shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
+                    {Number.isNaN(pricingFormatted.getPrice(projectRow))
                       ? ''
-                      : new ConvertPricesFormatted(
-                          settingsData,
-                          pricesResult,
-                        ).getFormattedPrice(projectRow)}
+                      : pricingFormatted.getFormattedPrice(projectRow)}
                   </div>
                 </div>
               </td>

@@ -1,6 +1,7 @@
 import {
   ConvertPrices,
   getPriceKey,
+  safePercent,
 } from '../renderer/functionsClasses/prices';
 import { ItemRow } from '../renderer/interfaces/items';
 import { Prices, Settings } from '../renderer/interfaces/states';
@@ -95,6 +96,20 @@ describe('pricing helpers', () => {
     expect(getPriceKey(itemRow, prices.prices)).toBe('AK-47');
   });
 
+  it('normalizes Holo/Foil wear key lookups', () => {
+    const prices = createPrices({
+      'Sticker | Test (Holo-Foil) (Factory New)': { steam_listing: 3 },
+    });
+    const itemRow = createItemRow({
+      item_name: 'Sticker | Test (Holo/Foil)',
+      item_wear_name: 'Factory New',
+    });
+
+    expect(getPriceKey(itemRow, prices.prices)).toBe(
+      'Sticker | Test (Holo-Foil) (Factory New)',
+    );
+  });
+
   it('clamps getPrice to MAX_SAFE_INTEGER on overflow', () => {
     const prices = createPrices({
       'AK-47 (Factory New)': { steam_listing: Number.MAX_SAFE_INTEGER },
@@ -136,5 +151,9 @@ describe('pricing helpers', () => {
     });
 
     expect(converter.getPrice(itemRow, true)).toBe(0);
+  });
+
+  it('safePercent returns fallback for zero totals', () => {
+    expect(safePercent(20, 0, 0)).toBe(0);
   });
 });

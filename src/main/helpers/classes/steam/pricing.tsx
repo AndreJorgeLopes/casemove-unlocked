@@ -112,15 +112,18 @@ export class runItems {
     this.prices = pricingData;
   }
   async makeSinglerequest(itemRow) {
-    let itemNamePricing = itemRow.item_name.replaceAll(
+    const baseName = itemRow.item_name.replaceAll(
       '(Holo/Foil)',
       '(Holo-Foil)'
     );
-    if (itemRow.item_wear_name !== undefined) {
-      itemNamePricing = itemRow.item_name + ' (' + itemRow.item_wear_name + ')';
-      if (!this.prices[itemNamePricing] && this.prices[itemRow.item_name]) {
-        itemNamePricing = itemRow.item_name;
-      }
+    const hasWear =
+      itemRow.item_wear_name !== undefined && itemRow.item_wear_name !== '';
+    let itemNamePricing = hasWear
+      ? baseName + ' (' + itemRow.item_wear_name + ')'
+      : baseName;
+
+    if (!this.prices[itemNamePricing] && this.prices[baseName]) {
+      itemNamePricing = baseName;
     }
 
     if (this.prices[itemNamePricing] !== undefined) {
