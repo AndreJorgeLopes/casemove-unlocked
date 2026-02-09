@@ -57,6 +57,26 @@ Casemove is an Electron + React app for managing CS2 storage units using Steam A
 - **Trade-up showing few items**: overly strict filtering on `tradeUpConfirmed`. Allow `tradeUpConfirmed || tradeUp`.
 - **CSP errors**: add new image domains in `main.ts` CSP if needed.
 - **safeStorage errors**: occur if keyring is missing/unlocked.
+- **`require is not defined` in renderer (`webpack/hot/emitter` / `reloadApp`)**:
+  - Do **not** fix this by flipping `contextIsolation` off.
+  - Keep preload architecture stable: `contextIsolation: true` + `contextBridge` in `preload.ts`.
+  - Investigate renderer dev client/HMR injection and webpack target/runtime settings first.
+- **`EPIPE` + `EADDRINUSE` during `npm run start`**:
+  - Usually stale Forge/Electron processes, not an app-logic regression.
+  - Always clean-stop old sessions before restart (see Dev Restart Runbook below).
+
+## Dev Restart Runbook
+
+- Before rerunning dev, stop existing Forge sessions:
+  - `pgrep -f "electron-forge start|electron-forge-start.js|web-multi-logger" | xargs -r kill -TERM`
+  - `sleep 1`
+  - `pgrep -f "electron-forge start|electron-forge-start.js|web-multi-logger" | xargs -r kill -KILL`
+- Verify no stale processes:
+  - `pgrep -af "electron-forge start|electron-forge-start.js|web-multi-logger" || true`
+- If ports are still busy, inspect holders:
+  - `lsof -i :19000 -i :3001`
+- Then start clean:
+  - `npm run start`
 
 ## Decisions & Changes
 
