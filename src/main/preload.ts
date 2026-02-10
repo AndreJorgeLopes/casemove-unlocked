@@ -8,6 +8,14 @@ const localStore = new Store({
   encryptionKey: 'this_only_obfuscates',
 });
 
+contextBridge.exposeInMainWorld('require', (moduleName: string) => {
+  if (moduleName === 'events') {
+    return require('events');
+  }
+
+  throw new Error(`Module "${moduleName}" is not available in renderer`);
+});
+
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
     myPing(message = 'ping') {
