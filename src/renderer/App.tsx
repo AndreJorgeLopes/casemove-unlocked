@@ -282,7 +282,7 @@ function AppContent() {
       <div
         className={classNames(
           settingsData.os == 'win32' ? 'pt-7' : '',
-          'min-h-full dark:bg-dark-level-one h-screen',
+          'h-full min-h-0 overflow-hidden dark:bg-dark-level-one',
         )}
       >
         <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -788,7 +788,7 @@ function AppContent() {
           </div>
         </div>
         {/* Main column */}
-        <div className="lg:pl-64 flex flex-col">
+        <div className="lg:pl-64 flex h-full min-h-0 flex-col">
           {/* Search header */}
           <div className="sticky top-0 z-10 shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden dark:bg-dark-level-two">
             <button
@@ -908,7 +908,7 @@ function AppContent() {
               </div>
             </div>
           </div>
-          <main className="flex-1 dark:bg-dark-level-one">
+          <main className="flex-1 min-h-0 overflow-hidden dark:bg-dark-level-one">
             <toMoveContext.Provider value={toMoveValue}>
               <Routes>
                 <Route path="/signin/*" element={<LoginPage />} />
