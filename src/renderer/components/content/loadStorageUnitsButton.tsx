@@ -7,8 +7,8 @@ import { LoadingButton } from "./shared/animations";
 import { classNames } from "./shared/filters/inventoryFunctions";
 
 export function LoadButton() {
-    let ReducerClass = new ReducerManager(useSelector);
-    let currentState = ReducerClass.getStorage('moveFromReducer');
+    const ReducerClass = new ReducerManager(useSelector);
+    const currentState = ReducerClass.getStorage('moveFromReducer');
     const dispatch = useDispatch();
     // Get all storage unit data
     async function getAllStor() {
