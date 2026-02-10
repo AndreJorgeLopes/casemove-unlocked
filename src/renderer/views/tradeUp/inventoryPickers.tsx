@@ -124,6 +124,10 @@ function content() {
   });
 
   const isFull = tradeUpData.tradeUpProducts.length == 10;
+  const searchNeedle = tradeUpData.searchInput?.toLowerCase().trim() || '';
+  function matchesSearch(value) {
+    return typeof value === 'string' && value.toLowerCase().includes(searchNeedle);
+  }
   if (inventoryFilters.sortBack) {
     finalInventoryToUse.reverse();
   }
@@ -159,16 +163,10 @@ function content() {
             <tr
               key={projectRow.item_id}
               className={classNames(
-                projectRow.item_name
-                  ?.toLowerCase()
-                  .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
-                  projectRow.item_customname
-                    ?.toLowerCase()
-                    .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
-                  projectRow.item_wear_name
-                    ?.toLowerCase()
-                    .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
-                  tradeUpData.searchInput == undefined
+                searchNeedle === '' ||
+                  matchesSearch(projectRow.item_name) ||
+                  matchesSearch(projectRow.item_customname) ||
+                  matchesSearch(projectRow.item_wear_name)
                   ? ''
                   : 'hidden',
                 inventoryFilters.rarityFilter.length != 0
@@ -263,7 +261,7 @@ function content() {
                       )}
                       {projectRow.item_name !== '' &&
                       projectRow.item_customname !== null &&
-                      !projectRow.item_url.includes('casket') ? (
+                      !projectRow.item_url?.includes('casket') ? (
                         <TagIcon className="h-3 w-3  ml-1" />
                       ) : (
                         ''
@@ -285,7 +283,7 @@ function content() {
                         ''
                       )}
 
-                      {projectRow.item_url.includes('casket') ? (
+                      {projectRow.item_url?.includes('casket') ? (
                         <Link
                           to=""
                           className="text-gray-500"
@@ -341,14 +339,14 @@ function content() {
               </td>
               <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
                 <div className="flex items-center">
-                  <span>
-                    <span className="flex dark:text-dark-white">
-                      {projectRow.collection
-                        .replace('The ', '')
-                        .replace(' Collection', '')}
+                    <span>
+                      <span className="flex dark:text-dark-white">
+                        {(projectRow.collection || '')
+                          .replace('The ', '')
+                          .replace(' Collection', '') || '-'}
+                      </span>
                     </span>
-                  </span>
-                </div>
+                  </div>
               </td>
 
               <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
