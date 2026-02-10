@@ -1,5 +1,5 @@
 async function setCollections(currencyClass) {
-  let collections = require('./backup/collections.json');
+  const collections = require('./backup/collections.json');
 
   const directory = {};
   for (const [key, value] of Object.entries(collections)) {
@@ -36,10 +36,10 @@ export class tradeUps {
 
   // Get rarity
   getRarity(min_wear, max_wear, averageFloat) {
-    let c = (max_wear - min_wear) * averageFloat
+    const c = (max_wear - min_wear) * averageFloat
     for (const [key, value] of Object.entries(this.rarityLevels)) {
       // @ts-ignore
-      let chance = (value - min_wear) / (max_wear - min_wear);
+      const chance = (value - min_wear) / (max_wear - min_wear);
       if (chance > averageFloat) {
         return [key, c + parseFloat(min_wear)];
       }
@@ -51,7 +51,7 @@ export class tradeUps {
   getPossible(collection, quality) {
     let i = 1;
     while (true) {
-      let listOfPossibilites = [];
+      const listOfPossibilites = [];
       for (const [key, value] of Object.entries(this.collections[collection])) {
         // @ts-ignore
         if (value.best_quality == quality + i) {
@@ -70,12 +70,12 @@ export class tradeUps {
   getTradeUp(arrayOfItems: Array<any>) {
     return new Promise((resolve) => {
       arrayOfItems.forEach((element) => {
-        let itemName = element.item_name.replace('StatTrak™ ', '')
-        let collection = this.directory[itemName];
+        const itemName = element.item_name.replace('StatTrak™ ', '')
+        const collection = this.directory[itemName];
         element['tradeUpConfirmed'] = false;
 
         if (collection != undefined) {
-          let possible =
+          const possible =
             this.collections?.[collection][itemName]?.trade_up;
           element['tradeUpConfirmed'] = possible;
           element['collection'] = collection
@@ -92,10 +92,10 @@ export class tradeUps {
       // if (arrayOfItems.length != 10) {
       //   resolve(false);
       // }
-      let finalResult = [];
+      const finalResult = [];
       let average = 0;
-      let possibleSkins = [];
-      let seenSkins = [];
+      const possibleSkins = [];
+      const seenSkins = [];
       let isStattrak = false;
       // Check if stattrak
       if (arrayOfItems[0].item_name.includes('StatTrak™')) {
@@ -106,8 +106,8 @@ export class tradeUps {
         if (isStattrak) {
           element.item_name = element.item_name.replace('StatTrak™ ', '');
         }
-        let collection = this.directory[element.item_name];
-        let possible = this.getPossible(
+        const collection = this.directory[element.item_name];
+        const possible = this.getPossible(
           collection,
           parseInt(this.collections[collection][element.item_name].best_quality)
         );
@@ -123,17 +123,17 @@ export class tradeUps {
       average = average / arrayOfItems.length;
 
       seenSkins.forEach((element) => {
-        let relevantObject = this.collections[this.directory[element]][element];
+        const relevantObject = this.collections[this.directory[element]][element];
         let skinRarity = this.getRarity(
           relevantObject['min-wear'],
           relevantObject['max-wear'],
           average
         );
-        let floatChance = skinRarity[1]
+        const floatChance = skinRarity[1]
         // @ts-ignore
         skinRarity = skinRarity[0]
         // @ts-ignore
-        let percentageChance =
+        const percentageChance =
           100 /
           (possibleSkins.length /
             possibleSkins.filter(function (item) {
@@ -144,7 +144,7 @@ export class tradeUps {
         if (isStattrak) {
           item_name = 'StatTrak™ ' + item_name;
         }
-        let objectToWrite = {
+        const objectToWrite = {
           item_name: item_name,
           item_wear_name: skinRarity,
           percentage: percentageChance.toFixed(2),

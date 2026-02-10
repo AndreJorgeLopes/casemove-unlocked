@@ -1,17 +1,17 @@
 import CC from 'currency-converter-lt'
 
 async function setBackUp(currencyClass) {
-  let rates = require('./backup/currency.json')
+  const rates = require('./backup/currency.json')
   currencyClass.setRates(rates.rates)
 }
 
 async function getLiveRates(currencyClass) {
   console.log('here')
-    let currencyConverter = new CC({isDecimalComma:true});
+    const currencyConverter = new CC({isDecimalComma:true});
     currencyConverter.from('USD').to('EUR').amount(100).convert().then((response) => {
       console.log(response)
 
-      let secondConverter = new CC();
+      const secondConverter = new CC();
       secondConverter.from('USD').to('EUR').amount(100).convert().then((secondResponse) => {
         if (response < secondResponse) {
           currencyClass.setCurrencyClass(currencyConverter)
@@ -55,7 +55,7 @@ export class currency {
         resolve(this.rates[exchangeTo])
       }
       this.currencyConverter.from('USD').to(exchangeTo).amount(100).convert().then((response) => {
-        let rate = response / 100
+        const rate = response / 100
         if (typeof rate === 'number' && !Number.isNaN(rate)) {
           this.seenRates[exchangeTo] = rate
           resolve(rate)
