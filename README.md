@@ -121,15 +121,6 @@ As with anything, It's important to know that the using this software is distrib
 - Tailwind v2
 ----
 
-## Author
-
-Casemove was created by Nombers.
-
-- Steam: https://steamcommunity.com/id/realNombers/
-- Reddit: https://www.reddit.com/user/nubbiners
-- Discord: Nombers#1046
-----
-
 ## How to build
 
 The main instructions on how to build the application from source be found using the [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) and it's [docs](https://electron-react-boilerplate.js.org/docs/building). 
