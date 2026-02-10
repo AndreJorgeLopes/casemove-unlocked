@@ -4,11 +4,10 @@ import {
   ExternalLinkIcon,
   LockClosedIcon,
 } from '@heroicons/react/solid';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { LoadingButton } from '../../../renderer/components/content/shared/animations';
 import { classNames } from '../../../renderer/components/content/shared/filters/inventoryFunctions';
 import NotificationElement from '../../../renderer/components/content/shared/modals & notifcations/notification';
@@ -219,7 +218,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
         return;
       }
     }
-    let clientjstokenToSend = await validateWebToken();
+    const clientjstokenToSend = await validateWebToken();
     let usernameToSend = username as any;
     let passwordToSend = password as any;
     let storePasswordToSend = storeRefreshToken as any;

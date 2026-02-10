@@ -32,7 +32,7 @@ import { ConvertPrices } from '../../../../functionsClasses/prices';
 function content() {
   const dispatch = useDispatch();
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
-  let ReducerClass = new ReducerManager(useSelector);
+  const ReducerClass = new ReducerManager(useSelector);
 
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [storageLoading, setStorageLoading] = useState(false);
@@ -106,7 +106,7 @@ function content() {
   }
 
   // Get prices for storage units
-  let totalDict = {} as any;
+  const totalDict = {} as any;
   inventory.storageInventory.forEach((projectRow) => {
     if (totalDict[projectRow.storage_id] == undefined) {
       totalDict[projectRow.storage_id] = 0;
@@ -136,7 +136,7 @@ function content() {
     return 0;
   }
 
-  let inventoryToUse = inventory.inventory;
+  const inventoryToUse = inventory.inventory;
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
