@@ -190,7 +190,6 @@ Build/Packaging notes:
 - Added or updated regression tests for sanitize + reducer action paths.
 - Full test suite passes (`npm test -- --runInBand --watchAll=false`).
 - Commit message clearly ties fix to the runtime crash symptom.
-
 ## Security & Data
 
 - Do not store secrets or tokens in repo files or logs.
