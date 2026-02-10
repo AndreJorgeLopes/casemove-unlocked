@@ -31,7 +31,7 @@ export class HandleStorageData {
     this.dispatch(moveFromAddCasketToStorages(storageRow.item_id));
 
     // Fetch the storage unit data
-    let storageResult = await this._getStorageUnitData(storageRow);
+    const storageResult = await this._getStorageUnitData(storageRow);
     const ClassRequest = new RequestPrices(
       this.dispatch,
       this.settingsReducer,
@@ -67,11 +67,11 @@ export class HandleStorageData {
   // Get storage unit
   async _getStorageUnitData(storageRow: ItemRow) {
     console.log(storageRow.item_id, storageRow.item_customname);
-    let storageResult = await window.electron.ipcRenderer.getStorageUnitData(
+    const storageResult = await window.electron.ipcRenderer.getStorageUnitData(
       storageRow.item_id,
       storageRow.item_customname
     );
-    let returnData: Array<ItemRowStorage> = storageResult[1];
+    const returnData: Array<ItemRowStorage> = storageResult[1];
 
     let finalReturnData = (await combineInventory(
       returnData,

@@ -46,10 +46,10 @@ export default function InventoryFiltersDisclosure({ClassFilters}) {
 
   // Calculate inventory amount prices
   let totalAmount = 0 as any;
-  let inventoryFilter = searchFilter(inventoryToUse, inventoryFilters, inventoryFilters)
+  const inventoryFilter = searchFilter(inventoryToUse, inventoryFilters, inventoryFilters)
   const PricesClass = new ConvertPrices(settingsData, pricesResult)
   inventoryFilter.forEach((projectRow) => {
-    let itemRowPricing = PricesClass.getPrice(projectRow)
+    const itemRowPricing = PricesClass.getPrice(projectRow)
     if (itemRowPricing) {
       let individualPrice = projectRow.combined_QTY as number * itemRowPricing
       totalAmount += individualPrice = individualPrice ? individualPrice : 0
@@ -58,7 +58,7 @@ export default function InventoryFiltersDisclosure({ClassFilters}) {
   totalAmount = totalAmount.toFixed(0);
 
   let totalSeen = 0;
-  let ignoreCategories: Array<Filter> = []
+  const ignoreCategories: Array<Filter> = []
 
   Object.entries(ClassFilters.filters as Filters).map(([_key, filterObject]) => {
     filterObject.map((filter, _optionIdx) => {
@@ -68,7 +68,7 @@ export default function InventoryFiltersDisclosure({ClassFilters}) {
       }
     });
   });
-  let categoriesToRemove: Array<Filter> = []
+  const categoriesToRemove: Array<Filter> = []
   if (inventoryFilters.inventoryFilter.length > totalSeen) {
     inventoryFilters.inventoryFilter.forEach(element => {
       if (!_.some(ignoreCategories, element) && element.label != 'Storage moveable') {

@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const Store = require('electron-store');
+const ByteBuffer = require('bytebuffer');
 
 const localStore = new Store({
   name: 'casemoveEnc',
@@ -219,7 +220,7 @@ contextBridge.exposeInMainWorld('electron', {
     // Commands
     moveFromStorageUnit(casketID, itemID, fastMode) {
       // Create a promise that rejects in <ms> milliseconds
-      let storageUnitResponse = new Promise((resolve) => {
+      const storageUnitResponse = new Promise((resolve) => {
         ipcRenderer.send('removeFromStorageUnit', casketID, itemID, fastMode);
 
         if (fastMode) {
@@ -233,8 +234,8 @@ contextBridge.exposeInMainWorld('electron', {
       if (fastMode) {
         return true;
       } else {
-        let timeout = new Promise((_resolve, reject) => {
-          let id = setTimeout(() => {
+        const timeout = new Promise((_resolve, reject) => {
+          const id = setTimeout(() => {
             clearTimeout(id);
             reject();
           }, 10000);
@@ -244,7 +245,7 @@ contextBridge.exposeInMainWorld('electron', {
     },
     // Commands
     moveToStorageUnit(casketID, itemID, fastMode) {
-      let storageUnitResponse = new Promise((resolve) => {
+      const storageUnitResponse = new Promise((resolve) => {
         ipcRenderer.send('moveToStorageUnit', casketID, itemID, fastMode);
         if (fastMode) {
           resolve(fastMode);
@@ -258,8 +259,8 @@ contextBridge.exposeInMainWorld('electron', {
       if (fastMode) {
         return true;
       } else {
-        let timeout = new Promise((_resolve, reject) => {
-          let id = setTimeout(() => {
+        const timeout = new Promise((_resolve, reject) => {
+          const id = setTimeout(() => {
             clearTimeout(id);
             reject();
           }, 10000);
