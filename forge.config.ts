@@ -7,9 +7,15 @@ import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-nati
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import fs from 'fs';
 
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
+
+const certificateFile = process.env.CERTIFICATE_FILE || './cert.pfx';
+const shouldSignWindowsBuild =
+  Boolean(process.env.CERTIFICATE_PASSWORD) &&
+  fs.existsSync(certificateFile);
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -18,8 +24,12 @@ const config: ForgeConfig = {
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({
-      certificateFile: './cert.pfx',
-      certificatePassword: process.env.CERTIFICATE_PASSWORD,
+      ...(shouldSignWindowsBuild
+        ? {
+            certificateFile,
+            certificatePassword: process.env.CERTIFICATE_PASSWORD,
+          }
+        : {}),
     }),
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),
