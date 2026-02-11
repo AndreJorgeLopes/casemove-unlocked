@@ -1,9 +1,13 @@
 {
   "name": "casemove",
   "productName": "casemove",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "description": "Counter-Strike 2 Storage unit manager that helps you move stuff. ",
   "main": ".webpack/main",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndreJorgeLopes/casemove-unlocked.git"
+  },
   "author": {
     "name": "Nombers",
     "email": "casemovenombers@gmail.com",
