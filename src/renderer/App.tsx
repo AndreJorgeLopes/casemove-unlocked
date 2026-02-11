@@ -15,7 +15,14 @@ import {
   SearchIcon,
   SelectorIcon,
 } from '@heroicons/react/solid';
-import { Fragment, SetStateAction, useMemo, useState } from 'react';
+import {
+  Fragment,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Link,
@@ -93,6 +100,18 @@ function AppContent() {
   const [getToMoveContext, setToMoveContext] = useState({
     fromStorage: {},
   });
+  const [reconnectStatus, setReconnectStatus] = useState({
+    state: 'idle',
+    message: '',
+  });
+  const reconnectTimeoutRef = useRef<any>(null);
+  const reconnectResetStatusTimeoutRef = useRef<any>(null);
+  const reconnectAttemptRef = useRef<number>(0);
+  const reconnectInProgressRef = useRef<boolean>(false);
+  const isLoggedInRef = useRef<boolean>(false);
+  const hasGCConnectionRef = useRef<boolean>(false);
+  const AUTO_RECONNECT_MAX_ATTEMPTS = 3;
+  const AUTO_RECONNECT_ATTEMPT_TIMEOUT_MS = 7000;
   const toMoveValue = useMemo(
     () => ({ getToMoveContext, setToMoveContext }),
     [getToMoveContext, setToMoveContext],
@@ -109,6 +128,131 @@ function AppContent() {
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer,
   );
+
+  useEffect(() => {
+    isLoggedInRef.current = userDetails.isLoggedIn;
+    hasGCConnectionRef.current = userDetails.CSGOConnection;
+  }, [userDetails.isLoggedIn, userDetails.CSGOConnection]);
+
+  function clearReconnectTimers() {
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+    if (reconnectResetStatusTimeoutRef.current) {
+      clearTimeout(reconnectResetStatusTimeoutRef.current);
+      reconnectResetStatusTimeoutRef.current = null;
+    }
+  }
+
+  function finishReconnectSuccess() {
+    clearReconnectTimers();
+    reconnectInProgressRef.current = false;
+    reconnectAttemptRef.current = 0;
+    setReconnectStatus({
+      state: 'success',
+      message: 'Reconnected automatically.',
+    });
+    reconnectResetStatusTimeoutRef.current = setTimeout(() => {
+      setReconnectStatus({
+        state: 'idle',
+        message: '',
+      });
+      reconnectResetStatusTimeoutRef.current = null;
+    }, 4000);
+  }
+
+  function finishReconnectFailed(reason: string) {
+    clearReconnectTimers();
+    reconnectInProgressRef.current = false;
+    const attempts = reconnectAttemptRef.current;
+    console.error(
+      `[Reconnect] Failed after ${attempts} attempts. reason=${reason}`,
+    );
+    setReconnectStatus({
+      state: 'failed',
+      message: 'Reconnect failed. Please retry.',
+    });
+  }
+
+  function runReconnectAttempt() {
+    if (!isLoggedInRef.current) {
+      finishReconnectFailed('not_logged_in');
+      return;
+    }
+
+    reconnectAttemptRef.current += 1;
+    const currentAttempt = reconnectAttemptRef.current;
+    console.log(
+      `[Reconnect] Attempt ${currentAttempt}/${AUTO_RECONNECT_MAX_ATTEMPTS}`,
+    );
+    window.electron.ipcRenderer.retryConnection();
+
+    reconnectTimeoutRef.current = setTimeout(() => {
+      reconnectTimeoutRef.current = null;
+      if (!reconnectInProgressRef.current) {
+        return;
+      }
+      if (hasGCConnectionRef.current) {
+        finishReconnectSuccess();
+        return;
+      }
+      if (reconnectAttemptRef.current >= AUTO_RECONNECT_MAX_ATTEMPTS) {
+        finishReconnectFailed('max_attempts_reached');
+        return;
+      }
+      runReconnectAttempt();
+    }, AUTO_RECONNECT_ATTEMPT_TIMEOUT_MS);
+  }
+
+  function startAutoReconnect(reason: string) {
+    if (reconnectInProgressRef.current || hasGCConnectionRef.current) {
+      return;
+    }
+
+    clearReconnectTimers();
+    reconnectInProgressRef.current = true;
+    reconnectAttemptRef.current = 0;
+    setReconnectStatus({
+      state: 'pending',
+      message: 'Reconnecting in background...',
+    });
+    console.log(`[Reconnect] Starting auto reconnect. reason=${reason}`);
+    runReconnectAttempt();
+  }
+
+  useEffect(() => {
+    if (!userDetails.isLoggedIn) {
+      clearReconnectTimers();
+      reconnectInProgressRef.current = false;
+      reconnectAttemptRef.current = 0;
+      if (reconnectStatus.state != 'idle') {
+        setReconnectStatus({
+          state: 'idle',
+          message: '',
+        });
+      }
+      return;
+    }
+
+    if (
+      userDetails.isLoggedIn &&
+      userDetails.CSGOConnection == false &&
+      reconnectStatus.state == 'idle'
+    ) {
+      startAutoReconnect('logged_in_without_gc');
+    }
+  }, [
+    userDetails.isLoggedIn,
+    userDetails.CSGOConnection,
+    reconnectStatus.state,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      clearReconnectTimers();
+    };
+  }, []);
   function updateAutomation(itemHref: SetStateAction<string>) {
     setSideMenuOption(itemHref);
     setSidebarOpen(false);
@@ -204,6 +348,19 @@ function AppContent() {
       return;
     }
     if (messageValue.command == undefined) {
+      if (messageValue[0] == 3) {
+        if (messageValue[1] == 'connectedToGC') {
+          finishReconnectSuccess();
+        }
+        if (messageValue[1] == 'disconnectedFromGC') {
+          startAutoReconnect('gc_disconnected');
+        }
+      }
+      if (messageValue[0] == 2 && messageValue[1] == 'reconnected') {
+        if (!hasGCConnectionRef.current) {
+          startAutoReconnect('steam_reconnected_no_gc');
+        }
+      }
       const actionToTake = (await handleUserEvent(
         messageValue,
         settingsData,
@@ -224,12 +381,22 @@ function AppContent() {
   }
 
   async function logOut() {
+    if (reconnectInProgressRef.current) {
+      return;
+    }
+    clearReconnectTimers();
+    reconnectInProgressRef.current = false;
+    reconnectAttemptRef.current = 0;
+    setReconnectStatus({ state: 'idle', message: '' });
     window.electron.ipcRenderer.logUserOut();
     dispatch(signOut());
   }
 
   async function retryConnection() {
-    window.electron.ipcRenderer.retryConnection();
+    if (reconnectInProgressRef.current) {
+      return;
+    }
+    startAutoReconnect('manual_retry');
   }
 
   // Should update status
@@ -470,8 +637,14 @@ function AppContent() {
                             <div className="flex justify-between">
                               <div>
                                 {userDetails.CSGOConnection
-                                  ? 'Connected'
-                                  : 'Not connected'}
+                                  ? reconnectStatus.state == 'pending'
+                                    ? 'Reconnecting...'
+                                    : 'Connected'
+                                  : reconnectStatus.state == 'pending'
+                                    ? 'Reconnecting...'
+                                    : reconnectStatus.state == 'failed'
+                                      ? 'Reconnect failed'
+                                    : 'Not connected'}
                               </div>
                             </div>
                             <div className="text-gray-500">
@@ -535,6 +708,9 @@ function AppContent() {
                             active
                               ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
                               : 'text-gray-700 dark:text-dark-white',
+                            reconnectStatus.state == 'pending'
+                              ? 'pointer-events-none opacity-50'
+                              : '',
                             'block px-4 py-2 text-sm',
                           )}
                         >
@@ -548,20 +724,41 @@ function AppContent() {
             </Menu>
 
             <div className={shouldUpdate ? 'px-3 mt-5' : 'px-3 mt-5 '}>
-              {userDetails.CSGOConnection == false &&
+              {reconnectStatus.state == 'failed' &&
               userDetails.isLoggedIn == true ? (
-                <button
-                  type="button"
-                  onClick={() => retryConnection()}
-                  className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
-                >
-                  <RefreshIcon
-                    className="mr-3 h-4 w-4 text-green-900"
-                    style={{ marginLeft: -25 }}
-                    aria-hidden="true"
-                  />
-                  <span className="mr-3 text-green-900">Retry connection</span>
-                </button>
+                <>
+                  <button
+                    type="button"
+                    disabled={reconnectInProgressRef.current}
+                    onClick={() => retryConnection()}
+                    className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <RefreshIcon
+                      className="mr-3 h-4 w-4 text-green-900"
+                      style={{ marginLeft: -25 }}
+                      aria-hidden="true"
+                    />
+                    <span className="mr-3 text-green-900">
+                      {reconnectStatus.state == 'pending'
+                        ? 'Reconnecting...'
+                        : 'Retry connection'}
+                    </span>
+                  </button>
+                  {reconnectStatus.state != 'idle' ? (
+                    <div
+                      className={classNames(
+                        reconnectStatus.state == 'success'
+                          ? 'text-green-600'
+                          : reconnectStatus.state == 'failed'
+                            ? 'text-red-600'
+                            : 'text-gray-600',
+                        'mt-2 text-xs',
+                      )}
+                    >
+                      {reconnectStatus.message}
+                    </div>
+                  ) : null}
+                </>
               ) : shouldUpdate ? (
                 <button
                   type="button"
@@ -802,22 +999,41 @@ function AppContent() {
             <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
               <div className="flex-1 items-center justify-end flex">
                 <div className="px-3">
-                  {userDetails.CSGOConnection == false &&
+                  {reconnectStatus.state == 'failed' &&
                   userDetails.isLoggedIn == true ? (
-                    <button
-                      type="button"
-                      onClick={() => retryConnection()}
-                      className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
-                    >
-                      <RefreshIcon
-                        className="mr-3 h-4 w-4 text-green-900 "
-                        style={{ marginLeft: -25 }}
-                        aria-hidden="true"
-                      />
-                      <span className="mr-3 text-green-900">
-                        Retry connection
-                      </span>
-                    </button>
+                    <div>
+                      <button
+                        type="button"
+                        disabled={reconnectInProgressRef.current}
+                        onClick={() => retryConnection()}
+                        className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <RefreshIcon
+                          className="mr-3 h-4 w-4 text-green-900 "
+                          style={{ marginLeft: -25 }}
+                          aria-hidden="true"
+                        />
+                        <span className="mr-3 text-green-900">
+                          {reconnectStatus.state == 'pending'
+                            ? 'Reconnecting...'
+                            : 'Retry connection'}
+                        </span>
+                      </button>
+                      {reconnectStatus.state != 'idle' ? (
+                        <div
+                          className={classNames(
+                            reconnectStatus.state == 'success'
+                              ? 'text-green-600'
+                              : reconnectStatus.state == 'failed'
+                                ? 'text-red-600'
+                                : 'text-gray-600',
+                            'mt-2 text-xs text-right',
+                          )}
+                        >
+                          {reconnectStatus.message}
+                        </div>
+                      ) : null}
+                    </div>
                   ) : shouldUpdate == false ? (
                     <a
                       href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
@@ -842,11 +1058,11 @@ function AppContent() {
               </div>
               <div className="flex items-center">
                 {/* Profile dropdown */}
-                <Menu
-                  as="div"
-                  className={classNames(
-                    userDetails.isLoggedIn ? '' : 'pointer-events-none',
-                    'ml-3 relative',
+                  <Menu
+                    as="div"
+                    className={classNames(
+                      userDetails.isLoggedIn ? '' : 'pointer-events-none',
+                      'ml-3 relative',
                   )}
                 >
                   <div>
@@ -894,6 +1110,9 @@ function AppContent() {
                                 active
                                   ? 'bg-gray-100 text-gray-900'
                                   : 'text-gray-700',
+                                reconnectInProgressRef.current
+                                  ? 'pointer-events-none opacity-50'
+                                  : '',
                                 'block px-4 py-2 text-sm',
                               )}
                             >
