@@ -17,7 +17,7 @@ function ensureObject(value: any, fallback: Record<string, any> = {}) {
   return isObject(value) ? value : fallback
 }
 
-function sanitizePersistedState(state: any) {
+export function sanitizePersistedState(state: any) {
   if (state == null) {
     return {}
   }
