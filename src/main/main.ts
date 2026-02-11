@@ -34,6 +34,7 @@ import { autoUpdater } from 'electron-updater';
 import { emitterAccount } from '../emitters';
 import { flowLoginRegularQR } from './helpers/login/flowLoginRegularQR';
 import find from 'find-process';
+import { shouldInstallDevtoolsExtension } from './helpers/devtools';
 
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -155,7 +156,7 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
-  if (isDevelopment) {
+  if (shouldInstallDevtoolsExtension(isDevelopment)) {
     await installExtensions();
   }
 
