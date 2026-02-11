@@ -22,5 +22,17 @@ describe('shouldInstallDevtoolsExtension', () => {
       } as NodeJS.ProcessEnv),
     ).toBe(true);
   });
-});
 
+  it('returns false when variable is set to a non-supported value', () => {
+    expect(
+      shouldInstallDevtoolsExtension(true, {
+        CASEMOVE_ENABLE_REACT_DEVTOOLS: 'TRUE',
+      } as NodeJS.ProcessEnv),
+    ).toBe(false);
+    expect(
+      shouldInstallDevtoolsExtension(true, {
+        CASEMOVE_ENABLE_REACT_DEVTOOLS: 'false',
+      } as NodeJS.ProcessEnv),
+    ).toBe(false);
+  });
+});
