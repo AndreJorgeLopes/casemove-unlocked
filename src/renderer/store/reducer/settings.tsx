@@ -21,71 +21,92 @@ const initialState: Settings = {
   }
 };
 
+function normalizeState(state: Settings = initialState): Settings {
+  return {
+    ...initialState,
+    ...state,
+    columns: Array.isArray(state?.columns) ? state.columns : initialState.columns,
+    currencyPrice:
+      state?.currencyPrice && typeof state.currencyPrice === 'object'
+        ? state.currencyPrice
+        : initialState.currencyPrice,
+    source:
+      state?.source && typeof state.source === 'object'
+        ? state.source
+        : initialState.source,
+    overview:
+      state?.overview && typeof state.overview === 'object'
+        ? state.overview
+        : initialState.overview,
+  };
+}
+
 const settingsReducer = (state = initialState, action) => {
+  const safeState = normalizeState(state);
   switch (action.type) {
     case 'SETTINGS_SET_FASTMOVE':
       return {
-        ...state,
+        ...safeState,
         fastMove: action.payload,
       };
     case 'SETTINGS_SET_COLUMNS':
       return {
-        ...state,
+        ...safeState,
         columns: action.payload,
       };
     case 'SETTINGS_SET_CURRENCY':
       if (action.payload == true) {
         return {
-          ...state
+          ...safeState
         }
       }
       return {
-        ...state,
+        ...safeState,
         currency: action.payload,
       };
 
     case 'SETTINGS_SET_STEAMLOGINSHOW':
       return {
-        ...state,
+        ...safeState,
         steamLoginShow: action.payload,
       };
 
     case 'SETTINGS_SET_SOURCE':
       return {
-        ...state,
+        ...safeState,
         source: action.payload,
       };
       case 'SETTINGS_SET_LOCALE':
       return {
-        ...state,
+        ...safeState,
         locale: action.payload,
       };
       case 'SETTINGS_SET_OS':
       return {
-        ...state,
+        ...safeState,
         os: action.payload,
       };
       case 'SETTINGS_SET_DEVMODE':
       return {
-        ...state,
+        ...safeState,
         devmode: action.payload,
       };
       case 'SETTINGS_SET_OVERVIEW':
         return {
-          ...state,
+          ...safeState,
           overview: action.payload,
         };
       case 'SETTINGS_ADD_CURRENCYPRICE':
-        const currencyDict = state.currencyPrice
+        const currencyDict = { ...safeState.currencyPrice }
         currencyDict[action.payload.currency] = action.payload.rate
       return {
-        ...state,
+        ...safeState,
         currency: action.payload.currency,
         currencyPrice: currencyDict,
       };
 
     default:
-      return { ...state };
+      return { ...safeState };
   }
 };
 

@@ -17,14 +17,36 @@ const initialState: TradeUpActions = {
   options: ['Hide equipped'],
 };
 
+function normalizeState(state: TradeUpActions = initialState): TradeUpActions {
+  return {
+    ...initialState,
+    ...state,
+    tradeUpProducts: Array.isArray(state?.tradeUpProducts)
+      ? state.tradeUpProducts
+      : initialState.tradeUpProducts,
+    tradeUpProductsIDS: Array.isArray(state?.tradeUpProductsIDS)
+      ? state.tradeUpProductsIDS
+      : initialState.tradeUpProductsIDS,
+    possibleOutcomes: Array.isArray(state?.possibleOutcomes)
+      ? state.possibleOutcomes
+      : initialState.possibleOutcomes,
+    collections: Array.isArray(state?.collections)
+      ? state.collections
+      : initialState.collections,
+    options: Array.isArray(state?.options)
+      ? state.options
+      : initialState.options,
+  };
+}
+
 const tradeUpReducer = (state = initialState, action) => {
+  const safeState = normalizeState(state);
   switch (action.type) {
     case 'TRADEUP_ADD_REMOVE':
-      const toMoveAlreadyExists = state.tradeUpProducts.filter(
+      const toMoveAlreadyExists = safeState.tradeUpProducts.filter(
         (row) => row.item_id != action.payload.item_id,
       );
-      console.log(action.payload.item_id, toMoveAlreadyExists);
-      if (toMoveAlreadyExists.length == state.tradeUpProducts.length) {
+      if (toMoveAlreadyExists.length == safeState.tradeUpProducts.length) {
         toMoveAlreadyExists.push(action.payload);
       }
       const newTradeUpIDS = [] as any;
@@ -33,64 +55,64 @@ const tradeUpReducer = (state = initialState, action) => {
       });
       if (toMoveAlreadyExists.length != 10) {
         return {
-          ...state,
+          ...safeState,
           tradeUpProducts: toMoveAlreadyExists,
           tradeUpProductsIDS: newTradeUpIDS,
           possibleOutcomes: initialState.possibleOutcomes,
         };
       } else {
         return {
-          ...state,
+          ...safeState,
           tradeUpProducts: toMoveAlreadyExists,
           tradeUpProductsIDS: newTradeUpIDS,
         };
       }
 
     case 'TRADEUP_ADDREMOVE_COLLECTION':
-      const collectionAlreadyExists = state.collections.filter(
+      const collectionAlreadyExists = safeState.collections.filter(
         (row) => row != action.payload,
       );
-      if (collectionAlreadyExists.length == state.collections.length) {
+      if (collectionAlreadyExists.length == safeState.collections.length) {
         collectionAlreadyExists.push(action.payload);
       }
       return {
-        ...state,
+        ...safeState,
         collections: collectionAlreadyExists,
       };
 
     case 'TRADEUP_ADDREMOVE_OPTION':
-      const optionAlready = state.options.filter((row) => row != action.payload);
-      if (optionAlready.length == state.options.length) {
+      const optionAlready = safeState.options.filter((row) => row != action.payload);
+      if (optionAlready.length == safeState.options.length) {
         optionAlready.push(action.payload);
       }
       return {
-        ...state,
+        ...safeState,
         options: optionAlready,
       };
     case 'TRADEUP_SET_SEARCH':
       return {
-        ...state,
+        ...safeState,
         searchInput: action.payload.searchField,
       };
     case 'TRADEUP_SET_MIN':
       return {
-        ...state,
+        ...safeState,
         MinFloat: action.payload,
       };
     case 'TRADEUP_SET_MAX':
       return {
-        ...state,
+        ...safeState,
         MaxFloat: action.payload,
       };
     case 'TRADEUP_SET_POSSIBLE':
       return {
-        ...state,
+        ...safeState,
         possibleOutcomes: action.payload,
       };
     case 'TRADEUP_RESET':
       return {
         ...initialState,
-        collections: state.collections,
+        collections: safeState.collections,
       };
 
     case 'SIGN_OUT':
@@ -99,7 +121,7 @@ const tradeUpReducer = (state = initialState, action) => {
       };
 
     default:
-      return { ...state };
+      return { ...safeState };
   }
 };
 

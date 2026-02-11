@@ -10,6 +10,18 @@ const initialState: Inventory = {
     itemsLookUp: {}
 };
 
+function normalizeInventoryState(state: Inventory = initialState): Inventory {
+    return {
+        ...initialState,
+        ...state,
+        inventory: Array.isArray(state?.inventory) ? state.inventory : initialState.inventory,
+        combinedInventory: Array.isArray(state?.combinedInventory) ? state.combinedInventory : initialState.combinedInventory,
+        storageInventory: Array.isArray(state?.storageInventory) ? state.storageInventory : initialState.storageInventory,
+        storageInventoryRaw: Array.isArray(state?.storageInventoryRaw) ? state.storageInventoryRaw : initialState.storageInventoryRaw,
+        itemsLookUp: state?.itemsLookUp && typeof state.itemsLookUp === 'object' ? state.itemsLookUp : initialState.itemsLookUp,
+    };
+}
+
 
 export class InventoryActionsReducer {
 
@@ -32,7 +44,7 @@ export class InventoryActionsReducer {
         if (action.type in this.matchingObject) {
             this.relevantFunction = this.matchingObject[action.type]
         }
-        this.state = state
+        this.state = normalizeInventoryState(state)
         this.action = action
     }
 
@@ -55,8 +67,14 @@ export class InventoryActionsReducer {
     // Set the inventory whenever it changes
     setInventory() {
         let storageTotal = 0
+        const inventoryToStore = Array.isArray(this.action?.payload?.inventory)
+            ? this.action.payload.inventory
+            : [];
+        const combinedInventoryToStore = Array.isArray(this.action?.payload?.combinedInventory)
+            ? this.action.payload.combinedInventory
+            : [];
 
-        this.action.payload.inventory.forEach(element => {
+        inventoryToStore.forEach(element => {
             storageTotal += 1
             if (element.item_url == "econ/tools/casket") {
                 storageTotal += element.item_storage_total
@@ -67,8 +85,8 @@ export class InventoryActionsReducer {
 
         return {
             ...this.state,
-            inventory: this.action.payload.inventory,
-            combinedInventory: this.action.payload.combinedInventory,
+            inventory: inventoryToStore,
+            combinedInventory: combinedInventoryToStore,
             totalAccountItems: storageTotal
         }
     }
@@ -77,8 +95,10 @@ export class InventoryActionsReducer {
     addStorageUnitsItems() {
         const add_to_filtered = this.state.storageInventory?.filter(id => id.storage_id != this.action.payload.casketID) || []
         const add_to_filtered_raw = this.state.storageInventoryRaw?.filter(id => id.storage_id != this.action.pay) || []
-        this.action.payload.storageData.forEach(storageRow => add_to_filtered.push(storageRow))
-        this.action.payload.storageRowsRaw.forEach(storageRow => {
+        const storageData = Array.isArray(this.action?.payload?.storageData) ? this.action.payload.storageData : [];
+        const storageRowsRaw = Array.isArray(this.action?.payload?.storageRowsRaw) ? this.action.payload.storageRowsRaw : [];
+        storageData.forEach(storageRow => add_to_filtered.push(storageRow))
+        storageRowsRaw.forEach(storageRow => {
             add_to_filtered_raw.push(storageRow)
         })
 
@@ -122,4 +142,3 @@ export class InventoryActionsReducer {
 export function inventoryReducer(state = initialState, action) {
     return new InventoryActionsReducer(state, action).relevantFunction()
 }
-

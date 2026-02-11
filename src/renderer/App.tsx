@@ -347,6 +347,11 @@ function AppContent() {
       setIsListening(false);
       return;
     }
+    if (messageValue == null) {
+      setIsListening(false);
+      return;
+    }
+
     if (messageValue.command == undefined) {
       if (messageValue[0] == 3) {
         if (messageValue[1] == 'connectedToGC') {
@@ -365,8 +370,10 @@ function AppContent() {
         messageValue,
         settingsData,
       )) as any;
-      dispatch(actionToTake);
-      if (messageValue[0] == 1) {
+      if (actionToTake != undefined) {
+        dispatch(actionToTake);
+      }
+      if (Array.isArray(messageValue) && messageValue[0] == 1 && actionToTake) {
         await handleFilterData(
           actionToTake.payload.combinedInventory,
           filterDetails,
