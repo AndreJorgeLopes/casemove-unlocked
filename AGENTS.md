@@ -136,6 +136,61 @@ Build/Packaging notes:
 - Test files live in `src/__tests__/`.
 - Prefer running the single test file or name before full suite.
 
+## Renderer Startup Crash Prevention (Required)
+
+- Treat persisted Redux data as untrusted input. Any persisted slice may be
+  `null`, malformed, or from an older schema.
+- Keep migration sanitization in `src/renderer/store/configureStore.tsx`
+  (`sanitizePersistedState`) and ensure iterable/object contracts before any
+  reducer/UI iteration.
+- Keep reducer-level normalization in crash-prone reducers
+  (`settingsReducer`, `tradeUpReducer`) so action handlers are resilient even
+  if migration is bypassed.
+- Keep devtools extension install opt-in only via
+  `CASEMOVE_ENABLE_REACT_DEVTOOLS=true` (see `src/main/helpers/devtools.ts`).
+  Default dev startup should not install extensions automatically.
+- User need for this flow:
+  - Startup and navigation must not emit
+    `TypeError: object null is not iterable`.
+  - Related UI paths must render without silent failure.
+
+## Spec-Driven + TDD Workflow (Required)
+
+- Write a lightweight spec before edits for runtime bugs:
+  - Problem signature (exact log/error text).
+  - Scope and non-goals.
+  - Acceptance criteria with observable checks.
+- Follow red-green-refactor:
+  - Red: add/adjust failing test for the exact regression.
+  - Green: implement minimal fix.
+  - Refactor: tighten tests and simplify code while tests stay green.
+- For startup/runtime crash fixes, include at least:
+  - Unit tests for guard/helper behavior (example: devtools gating).
+  - Contract tests for persisted-state sanitization.
+  - Reducer tests that execute real actions with malformed state.
+
+## Live Runtime Verification Playbook
+
+- Run the app locally for verification:
+  - `npm run start -- -- --ozone-platform=wayland`
+- For deterministic checks, capture logs and scan patterns:
+  - Start in background and write logs to a file.
+  - Search with `rg` for:
+    - `sandboxed_renderer.bundle.js script failed to run`
+    - `object null is not iterable`
+- If either signature appears, fix is incomplete.
+- Always stop lingering processes and free logger port `19000` before reruns.
+- Treat these as informational unless behavior is impacted:
+  - `Autofill.enable` / `Autofill.setAddresses` devtools protocol warnings.
+  - browserslist staleness warnings.
+
+## PR Quality Checklist for This Area
+
+- Crash signature absent from local startup logs.
+- Added or updated regression tests for sanitize + reducer action paths.
+- Full test suite passes (`npm test -- --runInBand --watchAll=false`).
+- Commit message clearly ties fix to the runtime crash symptom.
+
 ## Security & Data
 
 - Do not store secrets or tokens in repo files or logs.
