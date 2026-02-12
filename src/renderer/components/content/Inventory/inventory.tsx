@@ -1,18 +1,44 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import InventoryFilters from './filterHeader';
 import InventoryRowsComponent from './inventoryRows';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LoadingButton } from '../shared/animations';
 import { RefreshIcon } from '@heroicons/react/solid';
 
 function Content() {
   const [getLoadingButton, setLoadingButton] = useState(false);
-  setLoadingButton;
+  const didInitialRefresh = useRef(false);
+  const refreshButtonTimeout = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
-  // Get the inventory
   async function refreshInventory() {
+    setLoadingButton(true);
     window.electron.ipcRenderer.refreshInventory();
+
+    // IPC command is fire-and-forget; clear local spinner shortly after dispatch.
+    if (refreshButtonTimeout.current) {
+      clearTimeout(refreshButtonTimeout.current);
+    }
+    refreshButtonTimeout.current = setTimeout(() => setLoadingButton(false), 300);
   }
+
+  useEffect(() => {
+    if (didInitialRefresh.current) {
+      return;
+    }
+
+    didInitialRefresh.current = true;
+    refreshInventory();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (refreshButtonTimeout.current) {
+        clearTimeout(refreshButtonTimeout.current);
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -27,8 +53,7 @@ function Content() {
           <button
             type="button"
             onClick={() => refreshInventory()}
-            className="focus:outline-none focus:bg-dark-level-four order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0'"
-
+            className="focus:outline-none focus:bg-dark-level-four order-1 ml-3 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 sm:order-0 sm:ml-0"
           >
             {getLoadingButton ? (
               <LoadingButton />
@@ -62,11 +87,11 @@ function Content() {
     </>
   );
 }
+
 export default function inventoryContent() {
   return (
     <Routes>
-        <Route path="*" element={<Content />} />
+      <Route path="*" element={<Content />} />
     </Routes>
-
   );
 }
