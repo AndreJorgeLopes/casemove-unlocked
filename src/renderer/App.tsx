@@ -533,7 +533,7 @@ function AppContent() {
                           to={item.href}
                           className={classNames(
                             currentSideMenuOption.includes(item.href)
-                              ? 'bg-gray-100 text-gray-900'
+                              ? 'bg-gray-700 text-white'
                               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
                             isSessionReady ? '' : 'pointer-events-none opacity-50',
                             'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
@@ -543,8 +543,8 @@ function AppContent() {
                         >
                           <item.icon
                             className={classNames(
-                              item.current
-                                ? 'text-gray-500'
+                              currentSideMenuOption.includes(item.href)
+                                ? 'text-gray-200'
                                 : 'text-gray-400 group-hover:text-gray-500',
                               'mr-3 shrink-0 h-6 w-6',
                             )}
@@ -841,7 +841,7 @@ function AppContent() {
                     to={item.href}
                     className={classNames(
                       currentSideMenuOption.includes(item.href)
-                        ? 'bg-gray-100 text-gray-900'
+                        ? 'bg-gray-700 text-white'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
                       isSessionReady ? '' : 'pointer-events-none opacity-50',
                       'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
@@ -852,7 +852,7 @@ function AppContent() {
                     <item.icon
                       className={classNames(
                         currentSideMenuOption.includes(item.href)
-                          ? 'text-gray-500'
+                          ? 'text-gray-200'
                           : 'text-gray-400 group-hover:text-gray-500',
                         'mr-3 shrink-0 h-6 w-6',
                       )}
