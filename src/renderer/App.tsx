@@ -457,22 +457,9 @@ function AppContent() {
     handleTradeUp();
   }
 
-  function SidebarContent({ isMobile = false }: { isMobile?: boolean }) {
+  function SidebarContent() {
     return (
       <>
-        {isMobile ? (
-          <div className="absolute top-0 right-0 -mr-12 pt-2">
-            <button
-              type="button"
-              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <span className="sr-only">Close sidebar</span>
-              <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
-            </button>
-          </div>
-        ) : null}
-
         <div
           className={classNames(
             settingsData.os == 'win32' ? 'pt-7' : '',
@@ -613,7 +600,7 @@ function AppContent() {
             </Transition>
           </Menu>
 
-          <div className={shouldUpdate ? 'px-3 mt-5' : 'px-3 mt-5 '}>
+          <div className="px-3 mt-5">
             {reconnectStatus.state == 'failed' && userDetails.isLoggedIn == true ? (
               <>
                 <button
@@ -664,40 +651,7 @@ function AppContent() {
                   Restart or download.
                 </span>
               </button>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <a href="https://discord.gg/n8QExYF7Qs" target="_blank">
-                <button
-                  type="button"
-                  className="flex items-center px-6 py-3 border border-gray-200 dark:border-gray-600 dark:bg-dark-level-three text-left text-base w-full font-medium rounded-md text-gray-600 dark:text-gray-200 bg-white hover:bg-gray-50 dark:hover:bg-dark-level-four focus:outline-none pl-9 sm:text-sm h-9"
-                >
-                  <div
-                    className="mr-3 h-4 w-4 text-indigo-500 dark:text-indigo-300"
-                    aria-hidden="true"
-                  >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 127.14 96.36"
-                        className="pt-0.5"
-                      >
-                        <g data-name="\u56FE\u5C42 2">
-                          <g data-name="Discord Logos">
-                            <path
-                              d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
-                              data-name="Discord Logo - Large - White"
-                              style={{
-                                fill: 'currentColor',
-                              }}
-                            />
-                          </g>
-                        </g>
-                      </svg>
-                    </div>
-                    <span className="mr-3">Join the discord</span>
-                  </button>
-                </a>
-              </div>
-            )}
+            ) : null}
           </div>
 
           {/* Navigation */}
@@ -866,6 +820,35 @@ function AppContent() {
     );
   }
 
+  function Sidebar({ mode }: { mode: 'mobile' | 'desktop' }) {
+    const isMobile = mode === 'mobile';
+
+    return (
+      <aside
+        className={classNames(
+          'flex-col pt-5 pb-4 bg-gray-100 dark:bg-dark-level-two',
+          isMobile
+            ? 'relative flex flex-1 max-w-xs w-full'
+            : 'hidden lg:flex lg:w-64 lg:fixed lg:inset-y-0 lg:border-r border-gray-200 dark:border-dark-level-three dark:border-opacity-50',
+        )}
+      >
+        {isMobile ? (
+          <div className="absolute top-0 right-0 -mr-12 pt-2">
+            <button
+              type="button"
+              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <span className="sr-only">Close sidebar</span>
+              <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+            </button>
+          </div>
+        ) : null}
+        <SidebarContent />
+      </aside>
+    );
+  }
+
   return (
     <>
       <TradeResultModal />
@@ -902,9 +885,7 @@ function AppContent() {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <aside className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gray-100 dark:bg-dark-level-two">
-                <SidebarContent isMobile />
-              </aside>
+              <Sidebar mode="mobile" />
             </Transition.Child>
             <div className="shrink-0 w-14" aria-hidden="true">
               {/* Dummy element to force sidebar to shrink to fit close icon */}
@@ -913,9 +894,7 @@ function AppContent() {
         </Transition.Root>
 
         {/* Static sidebar for desktop */}
-        <aside className="hidden lg:flex lg:flex-col dark:bg-dark-level-two dark:border-opacity-50 dark:border-dark-level-three lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
-          <SidebarContent />
-        </aside>
+        <Sidebar mode="desktop" />
         {/* Main column */}
         <div className="lg:pl-64 flex h-full min-h-0 flex-col">
           {/* Search header */}
