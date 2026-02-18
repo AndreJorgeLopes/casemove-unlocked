@@ -28,7 +28,10 @@ function LoginPageContent() {
 
 
         {/* Account switcher */}
-        <section aria-labelledby="summary-heading" className="hidden w-full max-w-xs flex-col lg:flex">
+        <section
+          aria-labelledby="summary-heading"
+          className="hidden w-full max-w-xs flex-col lg:flex bg-gray-50 dark:bg-dark-level-two border-l border-gray-200 dark:border-opacity-50"
+        >
 
 
           <UserGrid
