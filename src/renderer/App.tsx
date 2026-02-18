@@ -130,9 +130,8 @@ function AppContent() {
   );
   const isSessionReady = Boolean(
     userDetails?.hasConnection &&
-      (userDetails?.isLoggedIn ||
-        userDetails?.CSGOConnection ||
-        userDetails?.steamID),
+      userDetails?.isLoggedIn &&
+      userDetails?.steamID,
   );
 
   useEffect(() => {
