@@ -52,7 +52,7 @@ const settingsReducer = (state = initialState, action) => {
       };
     case 'SETTINGS_SET_THEME':
       return {
-        ...state,
+        ...safeState,
         theme: action.payload,
       };
     case 'SETTINGS_SET_COLUMNS':
