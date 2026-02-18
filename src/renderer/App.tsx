@@ -16,6 +16,7 @@ import {
   SelectorIcon,
 } from '@heroicons/react/solid';
 import {
+  forwardRef,
   Fragment,
   SetStateAction,
   useEffect,
@@ -820,34 +821,38 @@ function AppContent() {
     );
   }
 
-  function Sidebar({ mode }: { mode: 'mobile' | 'desktop' }) {
-    const isMobile = mode === 'mobile';
+  const Sidebar = forwardRef<HTMLElement, { mode: 'mobile' | 'desktop' }>(
+    function Sidebar({ mode }, ref) {
+      const isMobile = mode === 'mobile';
 
-    return (
-      <aside
-        className={classNames(
-          'flex-col pt-5 pb-4 bg-gray-100 dark:bg-dark-level-two',
-          isMobile
-            ? 'relative flex flex-1 max-w-xs w-full'
-            : 'hidden lg:flex lg:w-64 lg:fixed lg:inset-y-0 lg:border-r border-gray-200 dark:border-dark-level-three dark:border-opacity-50',
-        )}
-      >
-        {isMobile ? (
-          <div className="absolute top-0 right-0 -mr-12 pt-2">
-            <button
-              type="button"
-              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <span className="sr-only">Close sidebar</span>
-              <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
-            </button>
-          </div>
-        ) : null}
-        <SidebarContent />
-      </aside>
-    );
-  }
+      return (
+        <aside
+          ref={ref}
+          className={classNames(
+            'flex-col pt-5 pb-4 bg-gray-100 dark:bg-dark-level-two',
+            isMobile
+              ? 'relative flex flex-1 max-w-xs w-full'
+              : 'hidden lg:flex lg:w-64 lg:fixed lg:inset-y-0 lg:border-r border-gray-200 dark:border-dark-level-three dark:border-opacity-50',
+          )}
+        >
+          {isMobile ? (
+            <div className="absolute top-0 right-0 -mr-12 pt-2">
+              <button
+                type="button"
+                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <span className="sr-only">Close sidebar</span>
+                <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+              </button>
+            </div>
+          ) : null}
+          <SidebarContent />
+        </aside>
+      );
+    },
+  );
+  Sidebar.displayName = 'Sidebar';
 
   return (
     <>
