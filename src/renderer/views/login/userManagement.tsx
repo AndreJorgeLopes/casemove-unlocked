@@ -115,7 +115,7 @@ export default function UserGrid({
                 {getUsers.length == 0 ? (
                   <li
                     className={classNames(
-                      'relative rounded-lg border border-gray-300 border-dashed dark:bg-dark-level-four bg-white px-6 py-5 flex items-center space-x-3 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
+                      'relative rounded-lg border border-gray-300 dark:border-gray-600 border-dashed dark:bg-dark-level-four bg-white px-6 py-5 flex items-center space-x-3 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
                     )}
                   >
                     <div className="shrink-0">
@@ -172,7 +172,7 @@ export default function UserGrid({
                           type="button"
                           onClick={() => clickOnProfile([person.username, person.refreshToken])}
                           disabled={disabled}
-                          className="inline-flex items-center dark:text-dark-white p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
+                          className="inline-flex items-center p-1 border border-transparent rounded-full text-black dark:text-gray-200 dark:bg-dark-level-two hover:shadow-sm hover:bg-gray-50 dark:hover:bg-green-600 transition duration-500 ease-in-out hover:text-white transform hover:-translate-y-1 hover:scale-110"
                         >
                           <CheckIcon className="h-5 w-5" aria-hidden="true" />
                         </button>
@@ -182,7 +182,7 @@ export default function UserGrid({
                           disabled={disabled}
                           className={classNames(
                             disabled ? 'opacity-50 cursor-not-allowed hover:transform-none hover:scale-100 hover:bg-transparent' : '',
-                            'inline-flex items-center p-1 border border-transparent rounded-full dark:text-dark-white hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110'
+                            'inline-flex items-center p-1 border border-transparent rounded-full text-black dark:text-gray-200 dark:bg-dark-level-two hover:shadow-sm hover:bg-gray-50 dark:hover:bg-red-600 transition duration-500 ease-in-out hover:text-white transform hover:-translate-y-1 hover:scale-110'
                           )}
                         >
                           <TrashIcon className="h-5 w-5" aria-hidden="true" />
