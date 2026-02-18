@@ -16,7 +16,6 @@ import {
   SelectorIcon,
 } from '@heroicons/react/solid';
 import {
-  forwardRef,
   Fragment,
   SetStateAction,
   useEffect,
@@ -821,39 +820,6 @@ function AppContent() {
     );
   }
 
-  const Sidebar = forwardRef<HTMLElement, { mode: 'mobile' | 'desktop' }>(
-    function Sidebar({ mode }, ref) {
-      const isMobile = mode === 'mobile';
-
-      return (
-        <aside
-          ref={ref}
-          className={classNames(
-            'flex-col pt-5 pb-4 bg-gray-100 dark:bg-dark-level-two',
-            isMobile
-              ? 'relative flex flex-1 max-w-xs w-full'
-              : 'hidden lg:flex lg:w-64 lg:fixed lg:inset-y-0 lg:border-r border-gray-200 dark:border-dark-level-three dark:border-opacity-50',
-          )}
-        >
-          {isMobile ? (
-            <div className="absolute top-0 right-0 -mr-12 pt-2">
-              <button
-                type="button"
-                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <span className="sr-only">Close sidebar</span>
-                <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
-              </button>
-            </div>
-          ) : null}
-          <SidebarContent />
-        </aside>
-      );
-    },
-  );
-  Sidebar.displayName = 'Sidebar';
-
   return (
     <>
       <TradeResultModal />
@@ -882,7 +848,8 @@ function AppContent() {
               <Dialog.Panel className="fixed inset-0 bg-gray-600 bg-opacity-75" />
             </Transition.Child>
             <Transition.Child
-              as={Fragment}
+              as={Dialog.Panel}
+              className="relative flex flex-1 flex-col max-w-xs w-full pt-5 pb-4 bg-gray-100 dark:bg-dark-level-two"
               enter="transition ease-in-out duration-300 transform"
               enterFrom="-translate-x-full"
               enterTo="translate-x-0"
@@ -890,7 +857,17 @@ function AppContent() {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <Sidebar mode="mobile" />
+              <div className="absolute top-0 right-0 -mr-12 pt-2">
+                <button
+                  type="button"
+                  className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <span className="sr-only">Close sidebar</span>
+                  <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                </button>
+              </div>
+              <SidebarContent />
             </Transition.Child>
             <div className="shrink-0 w-14" aria-hidden="true">
               {/* Dummy element to force sidebar to shrink to fit close icon */}
@@ -899,7 +876,9 @@ function AppContent() {
         </Transition.Root>
 
         {/* Static sidebar for desktop */}
-        <Sidebar mode="desktop" />
+        <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:border-r border-gray-200 dark:border-dark-level-three dark:border-opacity-50 pt-5 pb-4 bg-gray-100 dark:bg-dark-level-two">
+          <SidebarContent />
+        </aside>
         {/* Main column */}
         <div className="lg:pl-64 flex h-full min-h-0 flex-col">
           {/* Search header */}
