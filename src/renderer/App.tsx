@@ -846,7 +846,15 @@ function AppContent() {
                       'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
                     )}
                     aria-current={item.current ? 'page' : undefined}
-                    onClick={() => updateAutomation(item.href)}
+                    aria-disabled={!isSessionReady}
+                    tabIndex={isSessionReady ? 0 : -1}
+                    onClick={(event) => {
+                      if (!isSessionReady) {
+                        event.preventDefault();
+                        return;
+                      }
+                      updateAutomation(item.href);
+                    }}
                   >
                     <item.icon
                       className={classNames(
