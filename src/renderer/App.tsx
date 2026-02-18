@@ -128,11 +128,6 @@ function AppContent() {
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer,
   );
-  const isSessionReady = Boolean(
-    userDetails?.hasConnection &&
-      userDetails?.isLoggedIn &&
-      userDetails?.steamID,
-  );
 
   useEffect(() => {
     isLoggedInRef.current = userDetails.isLoggedIn;
@@ -462,6 +457,415 @@ function AppContent() {
     handleTradeUp();
   }
 
+  function SidebarContent({ isMobile = false }: { isMobile?: boolean }) {
+    return (
+      <>
+        {isMobile ? (
+          <div className="absolute top-0 right-0 -mr-12 pt-2">
+            <button
+              type="button"
+              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <span className="sr-only">Close sidebar</span>
+              <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+            </button>
+          </div>
+        ) : null}
+
+        <div
+          className={classNames(
+            settingsData.os == 'win32' ? 'pt-7' : '',
+            'flex items-center shrink-0 px-6',
+          )}
+        >
+          <Logo />
+        </div>
+        {/* Sidebar component, swap this element with another sidebar if you like */}
+        <div className="mt-6 h-0 flex-1 flex flex-col overflow-y-auto">
+          {/* User account dropdown */}
+          <Menu
+            as="div"
+            className={classNames(
+              userDetails.isLoggedIn ? '' : 'pointer-events-none',
+              'px-3 relative inline-block text-left',
+            )}
+          >
+            <div>
+              <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 dark:bg-dark-level-two dark:text-dark-white hover:bg-gray-200 dark:hover:bg-dark-level-three focus:outline-none focus:ring-offset-2 focus:ring-offset-gray-100">
+                <span className="flex w-full justify-between items-center">
+                  <span className="flex min-w-0 items-center justify-between space-x-3">
+                    {userDetails.userProfilePicture == null ? (
+                      <svg
+                        className="w-10 h-10 rounded-full shrink-0 text-gray-300"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                    ) : (
+                      <img
+                        className="w-10 h-10 bg-gray-300 rounded-full shrink-0"
+                        src={userDetails.userProfilePicture}
+                        alt=""
+                      />
+                    )}
+
+                    <span className="flex-1 flex flex-col min-w-0">
+                      <span className="text-gray-900 dark:text-dark-white text-sm font-medium truncate">
+                        {userDetails.displayName}
+                      </span>
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-300 group-hover:text-gray-500">
+                        <span
+                          className={classNames(
+                            userDetails.CSGOConnection
+                              ? 'text-green-400'
+                              : 'text-red-400',
+                            'text-xs font-medium',
+                          )}
+                        >
+                          <div className="flex justify-between">
+                            <div>
+                              {userDetails.CSGOConnection
+                                ? reconnectStatus.state == 'pending'
+                                  ? 'Reconnecting...'
+                                  : 'Connected'
+                                : reconnectStatus.state == 'pending'
+                                  ? 'Reconnecting...'
+                                  : reconnectStatus.state == 'failed'
+                                    ? 'Reconnect failed'
+                                    : 'Not connected'}
+                            </div>
+                          </div>
+                          <div className="text-gray-500 dark:text-gray-300">
+                            {userDetails.walletBalance?.balance == 0 ||
+                            userDetails.walletBalance == null
+                              ? ''
+                              : new Intl.NumberFormat(settingsData.locale, {
+                                  style: 'currency',
+                                  currency:
+                                    userDetails.walletBalance?.currency ||
+                                    settingsData.currency,
+                                }).format(
+                                  userDetails.walletBalance?.balance || 0,
+                                )}
+                          </div>
+                        </span>
+                      </span>
+                    </span>
+                  </span>
+                  <SelectorIcon
+                    className="shrink-0 h-5 w-5 text-gray-400 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-dark-white"
+                    aria-hidden="true"
+                  />
+                </span>
+              </Menu.Button>
+            </div>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white dark:bg-dark-level-four ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 dark:divide-opacity-50 focus:outline-none">
+                <div className="py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to="/settings"
+                        className={classNames(
+                          active
+                            ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
+                            : 'text-gray-700 dark:text-dark-white',
+                          'block px-4 py-2 text-sm',
+                        )}
+                      >
+                        Settings
+                      </Link>
+                    )}
+                  </Menu.Item>
+                </div>
+                <div className="py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to=""
+                        onClick={() => logOut()}
+                        className={classNames(
+                          active
+                            ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
+                            : 'text-gray-700 dark:text-dark-white',
+                          reconnectStatus.state == 'pending'
+                            ? 'pointer-events-none opacity-50'
+                            : '',
+                          'block px-4 py-2 text-sm',
+                        )}
+                      >
+                        Logout
+                      </Link>
+                    )}
+                  </Menu.Item>
+                </div>
+              </Menu.Items>
+            </Transition>
+          </Menu>
+
+          <div className={shouldUpdate ? 'px-3 mt-5' : 'px-3 mt-5 '}>
+            {reconnectStatus.state == 'failed' && userDetails.isLoggedIn == true ? (
+              <>
+                <button
+                  type="button"
+                  disabled={reconnectInProgressRef.current}
+                  onClick={() => retryConnection()}
+                  className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white dark:bg-dark-level-three dark:text-dark-white hover:bg-gray-50 dark:hover:bg-dark-level-four hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 dark:border-gray-600 rounded-md h-9 text-gray-400 dark:text-gray-300 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <RefreshIcon
+                    className="mr-3 h-4 w-4 text-green-900"
+                    style={{ marginLeft: -25 }}
+                    aria-hidden="true"
+                  />
+                  <span className="mr-3 text-green-900">
+                    {reconnectStatus.state == 'pending'
+                      ? 'Reconnecting...'
+                      : 'Retry connection'}
+                  </span>
+                </button>
+                {reconnectStatus.state != 'idle' ? (
+                  <div
+                    className={classNames(
+                      reconnectStatus.state == 'success'
+                        ? 'text-green-600'
+                        : reconnectStatus.state == 'failed'
+                          ? 'text-red-600'
+                          : 'text-gray-600 dark:text-gray-300',
+                      'mt-2 text-xs',
+                    )}
+                  >
+                    {reconnectStatus.message}
+                  </div>
+                ) : null}
+              </>
+            ) : shouldUpdate ? (
+              <button
+                type="button"
+                disabled={true}
+                className="inline-flex items-center my-4 bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white dark:bg-dark-level-three dark:text-dark-white hover:bg-gray-50 dark:hover:bg-dark-level-four hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 dark:border-gray-600 rounded-md h-9 text-gray-400 dark:text-gray-300"
+              >
+                <InboxInIcon
+                  className="mr-3 h-4 w-4 text-gray-500 dark:text-gray-300"
+                  style={{ marginLeft: -22 }}
+                  aria-hidden="true"
+                />
+                <span className="mr-3 ">
+                  Update ready. <br />
+                  Restart or download.
+                </span>
+              </button>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <a href="https://discord.gg/n8QExYF7Qs" target="_blank">
+                <button
+                  type="button"
+                  className="flex items-center px-6 py-3 border border-gray-200 dark:border-gray-600 dark:bg-dark-level-three text-left text-base w-full font-medium rounded-md text-gray-600 dark:text-gray-200 bg-white hover:bg-gray-50 dark:hover:bg-dark-level-four focus:outline-none pl-9 sm:text-sm h-9"
+                >
+                  <div
+                    className="mr-3 h-4 w-4 text-indigo-500 dark:text-indigo-300"
+                    aria-hidden="true"
+                  >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 127.14 96.36"
+                        className="pt-0.5"
+                      >
+                        <g data-name="\u56FE\u5C42 2">
+                          <g data-name="Discord Logos">
+                            <path
+                              d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
+                              data-name="Discord Logo - Large - White"
+                              style={{
+                                fill: 'currentColor',
+                              }}
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                    <span className="mr-3">Join the discord</span>
+                  </button>
+                </a>
+              </div>
+            )}
+          </div>
+
+          {/* Navigation */}
+          <nav className="px-3 mt-5">
+            <div className="space-y-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={classNames(
+                    currentSideMenuOption.includes(item.href)
+                      ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-dark-white dark:hover:bg-dark-level-three',
+                    userDetails.isLoggedIn ? '' : 'pointer-events-none',
+                    'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
+                  )}
+                  aria-current={item.current ? 'page' : undefined}
+                  onClick={() => updateAutomation(item.href)}
+                >
+                  <item.icon
+                    className={classNames(
+                      currentSideMenuOption.includes(item.href)
+                        ? 'text-gray-500 dark:text-dark-white'
+                        : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-300 dark:group-hover:text-dark-white',
+                      'mr-3 shrink-0 h-6 w-6',
+                    )}
+                    aria-hidden="true"
+                  />
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            {!currentSideMenuOption.includes('/tradeup') ? (
+              <div className="mt-8">
+                {/* Secondary navigation */}
+                <h3
+                  className="px-3 text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  id="desktop-teams-headline"
+                >
+                  Storage categories
+                </h3>
+                <div
+                  className="mt-1 space-y-1"
+                  role="group"
+                  aria-labelledby="desktop-teams-headline"
+                >
+                  {itemCategories.map((team) => (
+                    <div
+                      key={team.name}
+                      className={classNames(
+                        filterDetails.categoryFilter?.includes(team.bgColorClass)
+                          ? 'bg-gray-200 dark:bg-dark-level-three'
+                          : '',
+                        'w-full',
+                      )}
+                    >
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            inventoryAddCategoryFilter(team.bgColorClass),
+                          )
+                        }
+                        className={classNames(
+                          userDetails.isLoggedIn == false
+                            ? 'pointer-events-none'
+                            : '',
+                          'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md',
+                        )}
+                      >
+                        <span
+                          className={classNames(
+                            team.bgColorClass,
+                            'w-2.5 h-2.5 mr-4 rounded-full',
+                          )}
+                          aria-hidden="true"
+                        />
+                        <span className="truncate">{team.name}</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="mt-8">
+                {/* Secondary navigation */}
+                <h3
+                  className="px-3 text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  id="desktop-teams-headline"
+                >
+                  RARITY
+                </h3>
+                <div
+                  className="mt-1 space-y-1"
+                  role="group"
+                  aria-labelledby="desktop-teams-headline"
+                >
+                  {itemRarities.map((rarity) => (
+                    <div
+                      key={rarity.value}
+                      className={classNames(
+                        filterDetails.rarityFilter?.includes(rarity.bgColorClass)
+                          ? 'bg-gray-200 dark:bg-dark-level-three'
+                          : '',
+                        'w-full',
+                      )}
+                    >
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            inventoryAddRarityFilter(rarity.bgColorClass),
+                          )
+                        }
+                        className={classNames(
+                          userDetails.isLoggedIn == false
+                            ? 'pointer-events-none'
+                            : '',
+                          'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md',
+                        )}
+                      >
+                        <span
+                          className={classNames(
+                            rarity.bgColorClass,
+                            'w-2.5 h-2.5 mr-4 rounded-full',
+                          )}
+                          aria-hidden="true"
+                        />
+                        <span className="truncate">{rarity.value}</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </nav>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs pl-4 text-gray-500 dark:text-gray-300">
+            {getVersion}
+          </span>
+          <a
+            className="flex items-center text-xs gap-2 text-gray-600 dark:text-dark-white hover:text-gray-800 dark:hover:text-white hover:scale-110 transform duration-200"
+            href="https://discord.gg/n8QExYF7Qs"
+            target="_blank"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 127.14 96.36"
+              className=" h-4 w-4  pt-0.5"
+            >
+              <g data-name="\u56FE\u5C42 2">
+                <g data-name="Discord Logos">
+                  <path
+                    d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
+                    data-name="Discord Logo - Large - White"
+                    style={{
+                      fill: 'currentColor',
+                    }}
+                  />
+                </g>
+              </g>
+            </svg>
+            Support
+          </a>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <TradeResultModal />
@@ -498,102 +902,9 @@ function AppContent() {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-in-out duration-300"
-                  enterFrom="opacity-0"
-                  enterTo="opacity-100"
-                  leave="ease-in-out duration-300"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <div className="absolute top-0 right-0 -mr-12 pt-2">
-                    <button
-                      type="button"
-                      className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                      onClick={() => setSidebarOpen(false)}
-                    >
-                      <span className="sr-only">Close sidebar</span>
-                      <XIcon
-                        className="h-6 w-6 text-white"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
-                </Transition.Child>
-                <div
-                  className={classNames(
-                    settingsData.os == 'win32' ? 'pt-7' : '',
-                    'shrink-0 flex items-center px-4',
-                  )}
-                >
-                  <Logo />
-                  <span className="">{shouldUpdate}</span>
-                </div>
-                <div className="mt-5 flex-1 h-0 overflow-y-auto">
-                  <nav className="px-2">
-                    <div className="space-y-1">
-                      {navigation.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className={classNames(
-                            currentSideMenuOption.includes(item.href)
-                              ? 'bg-gray-700 text-white'
-                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
-                            isSessionReady ? '' : 'pointer-events-none opacity-50',
-                            'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
-                          )}
-                          aria-current={item.current ? 'page' : undefined}
-                          onClick={() => updateAutomation(item.href)}
-                        >
-                          <item.icon
-                            className={classNames(
-                              currentSideMenuOption.includes(item.href)
-                                ? 'text-gray-200'
-                                : 'text-gray-400 group-hover:text-gray-500',
-                              'mr-3 shrink-0 h-6 w-6',
-                            )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                    <div className="mt-8">
-                      <h3
-                        className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                        id="mobile-teams-headline"
-                      >
-                        Teams
-                      </h3>
-                      <div
-                        className="mt-1 space-y-1"
-                        role="group"
-                        aria-labelledby="mobile-teams-headline"
-                      >
-                        {itemCategories.map((team) => (
-                          <a
-                            key={team.name}
-                            href={team.href}
-                            className="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50"
-                          >
-                            <span
-                              className={classNames(
-                                team.bgColorClass,
-                                'w-2.5 h-2.5 mr-4 rounded-full',
-                              )}
-                              aria-hidden="true"
-                            />
-                            <span className="truncate">{team.name}</span>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  </nav>
-                </div>
-              </div>
+              <aside className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gray-100 dark:bg-dark-level-two">
+                <SidebarContent isMobile />
+              </aside>
             </Transition.Child>
             <div className="shrink-0 w-14" aria-hidden="true">
               {/* Dummy element to force sidebar to shrink to fit close icon */}
@@ -602,419 +913,16 @@ function AppContent() {
         </Transition.Root>
 
         {/* Static sidebar for desktop */}
-        <div className="hidden lg:flex lg:flex-col dark:bg-dark-level-two dark:border-opacity-50 lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
-          <div
-            className={classNames(
-              settingsData.os == 'win32' ? 'pt-7' : '',
-              'flex items-center shrink-0 px-6',
-            )}
-          >
-            <Logo />
-          </div>
-          {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="mt-6 h-0 flex-1 flex flex-col overflow-y-auto">
-            {/* User account dropdown */}
-            <Menu
-              as="div"
-              className={classNames(
-                isSessionReady ? '' : 'pointer-events-none',
-                'px-3 relative inline-block text-left',
-              )}
-            >
-              <div>
-                <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 dark:bg-dark-level-two hover:bg-gray-200 focus:outline-none focus:ring-offset-2 focus:ring-offset-gray-100">
-                  <span className="flex w-full justify-between items-center">
-                    <span className="flex min-w-0 items-center justify-between space-x-3">
-                      {userDetails.userProfilePicture == null ? (
-                        <svg
-                          className="w-10 h-10 rounded-full shrink-0 text-gray-300"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                      ) : (
-                        <img
-                          className="w-10 h-10 bg-gray-300 rounded-full shrink-0"
-                          src={userDetails.userProfilePicture}
-                          alt=""
-                        />
-                      )}
-
-                      <span className="flex-1 flex flex-col min-w-0">
-                        <span className="text-gray-900 dark:text-dark-white text-sm font-medium truncate">
-                          {userDetails.displayName}
-                        </span>
-                        <span className="text-xs font-medium text-gray-500 group-hover:text-gray-500">
-                          <span
-                            className={classNames(
-                              userDetails.CSGOConnection
-                                ? 'text-green-400'
-                                : 'text-red-400',
-                              'text-xs font-medium',
-                            )}
-                          >
-                            <div className="flex justify-between">
-                              <div>
-                                {userDetails.CSGOConnection
-                                  ? reconnectStatus.state == 'pending'
-                                    ? 'Reconnecting...'
-                                    : 'Connected'
-                                  : reconnectStatus.state == 'pending'
-                                    ? 'Reconnecting...'
-                                    : reconnectStatus.state == 'failed'
-                                      ? 'Reconnect failed'
-                                    : 'Not connected'}
-                              </div>
-                            </div>
-                            <div className="text-gray-500">
-                              {userDetails.walletBalance?.balance == 0 ||
-                              userDetails.walletBalance == null
-                                ? ''
-                                : new Intl.NumberFormat(settingsData.locale, {
-                                    style: 'currency',
-                                    currency:
-                                      userDetails.walletBalance?.currency ||
-                                      settingsData.currency,
-                                  }).format(
-                                    userDetails.walletBalance?.balance || 0,
-                                  )}
-                            </div>
-                          </span>
-                        </span>
-                      </span>
-                    </span>
-                    <SelectorIcon
-                      className="shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                      aria-hidden="true"
-                    />
-                  </span>
-                </Menu.Button>
-              </div>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white dark:bg-dark-level-four ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 dark:divide-opacity-50 focus:outline-none">
-                  <div className="py-1">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <Link
-                          to="/settings"
-                          className={classNames(
-                            active
-                              ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
-                              : 'text-gray-700 dark:text-dark-white',
-                            'block px-4 py-2 text-sm',
-                          )}
-                        >
-                          Settings
-                        </Link>
-                      )}
-                    </Menu.Item>
-                  </div>
-                  <div className="py-1">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <Link
-                          to=""
-                          onClick={() => logOut()}
-                          className={classNames(
-                            active
-                              ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
-                              : 'text-gray-700 dark:text-dark-white',
-                            reconnectStatus.state == 'pending'
-                              ? 'pointer-events-none opacity-50'
-                              : '',
-                            'block px-4 py-2 text-sm',
-                          )}
-                        >
-                          Logout
-                        </Link>
-                      )}
-                    </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
-
-            <div className={shouldUpdate ? 'px-3 mt-5' : 'px-3 mt-5 '}>
-              {reconnectStatus.state == 'failed' &&
-              userDetails.isLoggedIn == true ? (
-                <>
-                  <button
-                    type="button"
-                    disabled={reconnectInProgressRef.current}
-                    onClick={() => retryConnection()}
-                    className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <RefreshIcon
-                      className="mr-3 h-4 w-4 text-green-900"
-                      style={{ marginLeft: -25 }}
-                      aria-hidden="true"
-                    />
-                    <span className="mr-3 text-green-900">
-                      {reconnectStatus.state == 'pending'
-                        ? 'Reconnecting...'
-                        : 'Retry connection'}
-                    </span>
-                  </button>
-                  {reconnectStatus.state != 'idle' ? (
-                    <div
-                      className={classNames(
-                        reconnectStatus.state == 'success'
-                          ? 'text-green-600'
-                          : reconnectStatus.state == 'failed'
-                            ? 'text-red-600'
-                            : 'text-gray-600',
-                        'mt-2 text-xs',
-                      )}
-                    >
-                      {reconnectStatus.message}
-                    </div>
-                  ) : null}
-                </>
-              ) : shouldUpdate ? (
-                <button
-                  type="button"
-                  disabled={true}
-                  className="inline-flex items-center my-4 bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
-                >
-                  <InboxInIcon
-                    className="mr-3 h-4 w-4 text-gray-500"
-                    style={{ marginLeft: -22 }}
-                    aria-hidden="true"
-                  />
-                  <span className="mr-3 ">
-                    Update ready. <br />
-                    Restart or download.
-                  </span>
-                </button>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  <a href="https://discord.gg/n8QExYF7Qs" target="_blank">
-                    <button
-                      type="button"
-                      className="flex  dark:text-dark-white items-center px-6 py-3 border border-gray-200 dark:bg-dark-level-three   dark:border-opacity-0  text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
-                    >
-                      <div
-                        className="mr-3  h-4 w-4 text-gray-500"
-                        aria-hidden="true"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 127.14 96.36"
-                          className="pt-0.5"
-                        >
-                          <g data-name="\u56FE\u5C42 2">
-                            <g data-name="Discord Logos">
-                              <path
-                                d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
-                                data-name="Discord Logo - Large - White"
-                                style={{
-                                  fill: '#fff',
-                                }}
-                              />
-                            </g>
-                          </g>
-                        </svg>
-                      </div>
-                      <span className="mr-3">Join the discord</span>
-                    </button>
-                  </a>
-                  {/* <a href="https://skinledger.com" target="_blank">
-                    <button
-                      type="button"
-                      className="text-white bg-linear-to-r w-full from-green-500 via-green-700 to-green-800 shadow-sm hover:opacity-80 hover:bg-linear-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-                    >
-                      <span className="mr-3">Join the Skinledger beta</span>
-                    </button>
-                  </a> */}
-                </div>
-              )}
-            </div>
-
-            {/* Navigation */}
-            <nav className="px-3 mt-5">
-              <div className="space-y-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={classNames(
-                      currentSideMenuOption.includes(item.href)
-                        ? 'bg-gray-700 text-white'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
-                      isSessionReady ? '' : 'pointer-events-none opacity-50',
-                      'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
-                    )}
-                    aria-current={item.current ? 'page' : undefined}
-                    aria-disabled={!isSessionReady}
-                    tabIndex={isSessionReady ? 0 : -1}
-                    onClick={(event) => {
-                      if (!isSessionReady) {
-                        event.preventDefault();
-                        return;
-                      }
-                      updateAutomation(item.href);
-                    }}
-                  >
-                    <item.icon
-                      className={classNames(
-                        currentSideMenuOption.includes(item.href)
-                          ? 'text-gray-200'
-                          : 'text-gray-400 group-hover:text-gray-500',
-                        'mr-3 shrink-0 h-6 w-6',
-                      )}
-                      aria-hidden="true"
-                    />
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-              {!currentSideMenuOption.includes('/tradeup') ? (
-                <div className="mt-8">
-                  {/* Secondary navigation */}
-                  <h3
-                    className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                    id="desktop-teams-headline"
-                  >
-                    Storage categories
-                  </h3>
-                  <div
-                    className="mt-1 space-y-1"
-                    role="group"
-                    aria-labelledby="desktop-teams-headline"
-                  >
-                    {itemCategories.map((team) => (
-                      <div
-                        className={classNames(
-                          filterDetails.categoryFilter?.includes(
-                            team.bgColorClass,
-                          )
-                            ? 'bg-gray-200 dark:bg-dark-level-three'
-                            : '',
-                          'w-full',
-                        )}
-                      >
-                        <button
-                          key={team.name}
-                          onClick={() =>
-                            dispatch(
-                              inventoryAddCategoryFilter(team.bgColorClass),
-                            )
-                          }
-                          className={classNames(
-                            isSessionReady ? '' : 'pointer-events-none',
-                            'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md',
-                          )}
-                        >
-                          <span
-                            className={classNames(
-                              team.bgColorClass,
-                              'w-2.5 h-2.5 mr-4 rounded-full',
-                            )}
-                            aria-hidden="true"
-                          />
-                          <span className="truncate">{team.name}</span>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-8">
-                  {/* Secondary navigation */}
-                  <h3
-                    className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                    id="desktop-teams-headline"
-                  >
-                    RARITY
-                  </h3>
-                  <div
-                    className="mt-1 space-y-1"
-                    role="group"
-                    aria-labelledby="desktop-teams-headline"
-                  >
-                    {itemRarities.map((rarity) => (
-                      <div
-                        className={classNames(
-                          filterDetails.rarityFilter?.includes(
-                            rarity.bgColorClass,
-                          )
-                            ? 'bg-gray-200 dark:bg-dark-level-three'
-                            : '',
-                          'w-full',
-                        )}
-                      >
-                        <button
-                          key={rarity.value}
-                          onClick={() =>
-                            dispatch(
-                              inventoryAddRarityFilter(rarity.bgColorClass),
-                            )
-                          }
-                          className={classNames(
-                            isSessionReady ? '' : 'pointer-events-none',
-                            'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md',
-                          )}
-                        >
-                          <span
-                            className={classNames(
-                              rarity.bgColorClass,
-                              'w-2.5 h-2.5 mr-4 rounded-full',
-                            )}
-                            aria-hidden="true"
-                          />
-                          <span className="truncate">{rarity.value}</span>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </nav>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs pl-4 text-gray-500">{getVersion}</span>
-            <a
-              className="flex items-center text-xs gap-2 text-dark-white hover:scale-110 transform duration-200"
-              href="https://discord.gg/n8QExYF7Qs"
-              target="_blank"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 127.14 96.36"
-                className=" h-4 w-4  pt-0.5"
-              >
-                <g data-name="\u56FE\u5C42 2">
-                  <g data-name="Discord Logos">
-                    <path
-                      d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
-                      data-name="Discord Logo - Large - White"
-                      style={{
-                        fill: '#d6d3cd',
-                      }}
-                    />
-                  </g>
-                </g>
-              </svg>
-              Support
-            </a>
-          </div>
-        </div>
+        <aside className="hidden lg:flex lg:flex-col dark:bg-dark-level-two dark:border-opacity-50 dark:border-dark-level-three lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
+          <SidebarContent />
+        </aside>
         {/* Main column */}
         <div className="lg:pl-64 flex h-full min-h-0 flex-col">
           {/* Search header */}
           <div className="sticky top-0 z-10 shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden dark:bg-dark-level-two">
             <button
               type="button"
-              className="px-4 border-r border-gray-200 text-gray-500 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-inset lg:hidden"
+              className="px-4 border-r border-gray-200 dark:border-dark-level-three text-gray-500 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-inset lg:hidden"
               onClick={() => setSidebarOpen(true)}
             >
               <span className="sr-only">Open sidebar</span>
@@ -1082,15 +990,15 @@ function AppContent() {
               </div>
               <div className="flex items-center">
                 {/* Profile dropdown */}
-                <Menu
-                  as="div"
-                  className={classNames(
-                    isSessionReady ? '' : 'pointer-events-none',
-                    'ml-3 relative',
+                  <Menu
+                    as="div"
+                    className={classNames(
+                      userDetails.isLoggedIn ? '' : 'pointer-events-none',
+                      'ml-3 relative',
                   )}
                 >
                   <div>
-                    <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2">
+                    <Menu.Button className="max-w-xs bg-white dark:bg-dark-level-two flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2">
                       <span className="sr-only">Open user menu</span>
                       {userDetails.userProfilePicture == null ? (
                         <svg
@@ -1123,7 +1031,7 @@ function AppContent() {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                    <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-dark-level-four ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 dark:divide-opacity-50 focus:outline-none">
                       <div className="py-1">
                         <Menu.Item>
                           {({ active }) => (
@@ -1132,8 +1040,8 @@ function AppContent() {
                               onClick={() => logOut()}
                               className={classNames(
                                 active
-                                  ? 'bg-gray-100 text-gray-900'
-                                  : 'text-gray-700',
+                                  ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
+                                  : 'text-gray-700 dark:text-dark-white',
                                 reconnectInProgressRef.current
                                   ? 'pointer-events-none opacity-50'
                                   : '',
@@ -1158,7 +1066,7 @@ function AppContent() {
                 <Route
                   path="/stats/*"
                   element={
-                    isSessionReady ? (
+                    userDetails.isLoggedIn ? (
                       <OverviewPage />
                     ) : (
                       <Navigate to="/signin" />
@@ -1168,7 +1076,7 @@ function AppContent() {
                 <Route
                   path="/transferfrom/*"
                   element={
-                    isSessionReady ? (
+                    userDetails.isLoggedIn ? (
                       <StorageUnitsComponent />
                     ) : (
                       <Navigate to="/signin" />
