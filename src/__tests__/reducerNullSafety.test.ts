@@ -47,6 +47,42 @@ describe('Reducer null-safety for persisted state corruption', () => {
     expect(state.currencyPrice).toEqual({ USD: 1.25 });
   });
 
+  it('settingsReducer keeps normalized fields when updating theme', () => {
+    const state = settingsReducer(
+      {
+        columns: null,
+        currencyPrice: null,
+        source: null,
+        overview: null,
+      } as any,
+      {
+        type: 'SETTINGS_SET_THEME',
+        payload: 'light',
+      } as any,
+    );
+
+    expect(state.theme).toBe('light');
+    expect(state.columns).toEqual([
+      'Price',
+      'Stickers/patches',
+      'Storage',
+      'Tradehold',
+      'Moveable',
+      'Inventory link',
+    ]);
+    expect(state.currencyPrice).toEqual({});
+    expect(state.source).toEqual({
+      title: 'steam_listing',
+      name: 'Steam Community Market',
+      avatar: 'https://steamcommunity.com/favicon.ico',
+    });
+    expect(state.overview).toEqual({
+      by: 'price',
+      chartleft: 'overall',
+      chartRight: 'itemDistribution',
+    });
+  });
+
   it('tradeUpReducer can add item when persisted arrays are null', () => {
     const payload = { item_id: 'item-1' } as any;
     const state = tradeUpReducer(
