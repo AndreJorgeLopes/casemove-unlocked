@@ -607,7 +607,7 @@ function AppContent() {
           </Menu>
 
           <div className="px-3 mt-5">
-            {reconnectStatus.state == 'failed' && userDetails.isLoggedIn == true ? (
+            {reconnectStatus.state != 'idle' && userDetails.isLoggedIn == true ? (
               <>
                 <button
                   type="button"
@@ -901,7 +901,7 @@ function AppContent() {
             <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
               <div className="flex-1 items-center justify-end flex">
                 <div className="px-3">
-                  {reconnectStatus.state == 'failed' &&
+                  {reconnectStatus.state != 'idle' &&
                   userDetails.isLoggedIn == true ? (
                     <div>
                       <button
