@@ -26,7 +26,7 @@ import {
 import { login } from './helpers/classes/steam/steam';
 import { tradeUps } from './helpers/classes/steam/tradeup';
 import MenuBuilder from './menu';
-import { getGithubVersion } from './scripts/versionHelper';
+import { getGithubVersion, normalizeVersionTag } from './scripts/versionHelper';
 import { resolveHtmlPath } from './util';
 // import log from 'electron-log';
 import log from 'electron-log';
@@ -374,7 +374,7 @@ ipcMain.on('needUpdate', async (event: any) => {
       const returnValue = await getGithubVersion(process.platform);
 
       // Get the current version
-      const version = parseInt(app.getVersion().toString().replaceAll('.', ''));
+      const version = normalizeVersionTag(app.getVersion().toString());
 
       // Check success status
       let successStatus: boolean = false;

@@ -1,0 +1,196 @@
+name: Release On Dev Merge
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: write
+
+jobs:
+  prepare-release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'dev'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      bump: ${{ steps.version.outputs.bump }}
+    steps:
+      - name: Checkout merge commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Compute semantic version
+        id: version
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const { execSync } = require('node:child_process');
+
+          const outputFile = process.env.GITHUB_OUTPUT;
+
+          const run = (cmd) => {
+            try {
+              return execSync(cmd, { encoding: 'utf8' }).trim();
+            } catch {
+              return '';
+            }
+          };
+
+          const tagsRaw = run("git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname");
+          const tags = tagsRaw ? tagsRaw.split('\n').filter(Boolean) : [];
+          const latestTag = tags[0] || null;
+
+          let bump = 'patch';
+          let version = '';
+
+          if (!latestTag) {
+            bump = 'initial';
+            version = '2.4.0';
+          } else {
+            const commitMessages = run(`git log ${latestTag}..HEAD --pretty=format:%s%n%b`);
+            const hasMajorBump =
+              /(^|\n)\w+(\([^)]+\))?!:/.test(commitMessages) ||
+              /BREAKING CHANGE:/.test(commitMessages);
+            const hasMinorBump = /(^|\n)feat(\([^)]+\))?:/.test(commitMessages);
+
+            if (hasMajorBump) {
+              bump = 'major';
+            } else if (hasMinorBump) {
+              bump = 'minor';
+            }
+
+            const [major, minor, patch] = latestTag
+              .replace(/^v/, '')
+              .split('.')
+              .map((part) => Number(part) || 0);
+
+            if (bump === 'major') {
+              version = `${major + 1}.0.0`;
+            } else if (bump === 'minor') {
+              version = `${major}.${minor + 1}.0`;
+            } else {
+              version = `${major}.${minor}.${patch + 1}`;
+            }
+          }
+
+          const tag = `v${version}`;
+
+          fs.appendFileSync(outputFile, `version=${version}\n`);
+          fs.appendFileSync(outputFile, `tag=${tag}\n`);
+          fs.appendFileSync(outputFile, `bump=${bump}\n`);
+
+          console.log(`Latest tag: ${latestTag || 'none'}`);
+          console.log(`Selected bump: ${bump}`);
+          console.log(`Next version: ${version}`);
+          NODE
+
+  quality-checks:
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout merge commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test -- --runInBand
+
+  build-artifacts:
+    needs:
+      - prepare-release
+      - quality-checks
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: linux
+            artifact_glob: |
+              out/make/**/*.deb
+              out/make/**/*.rpm
+          - os: windows-latest
+            artifact_name: windows
+            artifact_glob: |
+              out/make/**/*.exe
+              out/make/**/*.nupkg
+              out/make/**/RELEASES
+    steps:
+      - name: Checkout merge commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Linux packaging dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply release version
+        run: npm version ${{ needs.prepare-release.outputs.version }} --no-git-tag-version
+
+      - name: Build installers
+        run: npm run make
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}-artifacts-${{ needs.prepare-release.outputs.tag }}
+          path: ${{ matrix.artifact_glob }}
+          if-no-files-found: error
+
+  publish-release:
+    needs:
+      - prepare-release
+      - build-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: List release files
+        run: find release-assets -type f -print
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare-release.outputs.tag }}
+          name: Casemove ${{ needs.prepare-release.outputs.tag }}
+          target_commitish: ${{ github.event.pull_request.merge_commit_sha }}
+          generate_release_notes: true
+          files: |
+            release-assets/**/*
+          fail_on_unmatched_files: true

@@ -415,8 +415,11 @@ function AppContent() {
   }
 
   // Should update status
+  const fallbackReleaseURL =
+    'https://github.com/AndreJorgeLopes/casemove-unlocked/releases';
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [shouldCheckUpdate, setShouldCheckUpdate] = useState(true);
+  const [updateDownloadURL, setUpdateDownloadURL] = useState(fallbackReleaseURL);
 
   const [getVersion, setVersion] = useState('');
   async function getUpdate() {
@@ -424,6 +427,9 @@ function AppContent() {
     console.log(doUpdate);
     setVersion('v' + doUpdate.currentVersion);
     setShouldUpdate(doUpdate.requireUpdate);
+    setUpdateDownloadURL(
+      doUpdate?.githubResponse?.downloadLink || fallbackReleaseURL,
+    );
   }
   if (shouldCheckUpdate == true) {
     setShouldCheckUpdate(false);
@@ -636,21 +642,22 @@ function AppContent() {
                 ) : null}
               </>
             ) : shouldUpdate ? (
-              <button
-                type="button"
-                disabled={true}
-                className="inline-flex items-center my-4 bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white dark:bg-dark-level-three dark:text-dark-white hover:bg-gray-50 dark:hover:bg-dark-level-four hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 dark:border-gray-600 rounded-md h-9 text-gray-400 dark:text-gray-300"
-              >
-                <InboxInIcon
-                  className="mr-3 h-4 w-4 text-gray-500 dark:text-gray-300"
-                  style={{ marginLeft: -22 }}
-                  aria-hidden="true"
-                />
-                <span className="mr-3 ">
-                  Update ready. <br />
-                  Restart or download.
-                </span>
-              </button>
+              <a href={updateDownloadURL} target="_blank" rel="noreferrer">
+                <button
+                  type="button"
+                  className="inline-flex items-center my-4 bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white dark:bg-dark-level-three dark:text-dark-white hover:bg-gray-50 dark:hover:bg-dark-level-four hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 dark:border-gray-600 rounded-md h-9 text-gray-400 dark:text-gray-300"
+                >
+                  <InboxInIcon
+                    className="mr-3 h-4 w-4 text-gray-500 dark:text-gray-300"
+                    style={{ marginLeft: -22 }}
+                    aria-hidden="true"
+                  />
+                  <span className="mr-3 ">
+                    Update available. <br />
+                    Download latest version.
+                  </span>
+                </button>
+              </a>
             ) : null}
           </div>
 
@@ -929,10 +936,11 @@ function AppContent() {
                         </div>
                       ) : null}
                     </div>
-                  ) : shouldUpdate == false ? (
+                  ) : shouldUpdate ? (
                     <a
-                      href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
+                      href={updateDownloadURL}
                       target="_blank"
+                      rel="noreferrer"
                     >
                       <button
                         type="button"
@@ -943,7 +951,7 @@ function AppContent() {
                           style={{ marginLeft: -22 }}
                           aria-hidden="true"
                         />
-                        <span className="mr-3">Update ready</span>
+                        <span className="mr-3">Update available</span>
                       </button>
                     </a>
                   ) : (
