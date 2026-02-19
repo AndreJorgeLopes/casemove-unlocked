@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { classNames } from '../../../components/content/shared/filters/inventoryFunctions';
-import { ConvertPrices } from '../../../functionsClasses/prices';
+import { ConvertPrices, safeAdd, safePercent } from '../../../functionsClasses/prices';
 import { tradeUpSetPossible } from '../../../store/actions/tradeUpActions';
 
 const rarityShort = {
@@ -28,16 +28,15 @@ export default function PossibleOutcomes() {
 
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    totalPrice += pricingClass.getPrice(element, true);
+    totalPrice = safeAdd(totalPrice, pricingClass.getPrice(element, true));
   });
 
   tradeUpData.possibleOutcomes.forEach((element) => {
     const outcomePrice = pricingClass.getPrice(element, true);
-    element['profit_cal'] =
-      totalPrice > 0 ? (outcomePrice / totalPrice) * 100 : 0;
+    element['profit_cal'] = safePercent(outcomePrice, totalPrice, 0);
   });
   tradeUpData.possibleOutcomes.sort(function (a, b) {
-    var keyA = a.profit_cal,
+    const keyA = a.profit_cal,
       keyB = b.profit_cal;
     if (keyA < keyB) return 1;
     if (keyA > keyB) return -1;

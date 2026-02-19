@@ -1,15 +1,17 @@
-
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchFilter } from '../../../../renderer/functionsClasses/filters/search';
 import { RequestPrices } from '../../../../renderer/functionsClasses/prices';
 import { ReducerManager } from '../../../../renderer/functionsClasses/reducerManager';
-import { State } from '../../../../renderer/interfaces/states';
 import { classNames, sortDataFunction } from '../shared/filters/inventoryFunctions';
 import RenameModal from '../shared/modals & notifcations/modalRename';
 import { RowCollections } from './inventoryRows/collectionsRow';
 import { RowFloat } from './inventoryRows/floatRow';
-import { RowHeader, RowHeaderCondition, RowHeaderConditionNoSort } from './inventoryRows/headerRows';
+import {
+  RowHeader,
+  RowHeaderCondition,
+  RowHeaderConditionNoSort,
+} from './inventoryRows/headerRows';
 import { RowLinkInventory } from './inventoryRows/inventoryLinkRow';
 import { RowMoveable } from './inventoryRows/moveableRow';
 import { RowPrice } from './inventoryRows/priceRow';
@@ -20,49 +22,79 @@ import { RowStickersPatches } from './inventoryRows/stickerPatchesRow';
 import { RowStorage } from './inventoryRows/storageRow';
 import { RowTradehold } from './inventoryRows/tradeholdRow';
 
-
-function content() {
-  const [getInventory, setInventory] = useState([] as any);
-  const ReducerClass = new ReducerManager(useSelector)
+function Content() {
+  const [sortedInventory, setSortedInventory] = useState<any[]>([]);
+  const ReducerClass = new ReducerManager(useSelector);
   const inventory = ReducerClass.getStorage('inventoryReducer');
   const inventoryFilters = ReducerClass.getStorage('inventoryFiltersReducer');
   const pricesResult = ReducerClass.getStorage('pricingReducer');
   const settingsData = ReducerClass.getStorage('settingsReducer');
   const auth = ReducerClass.getStorage('authReducer');
-
   const dispatch = useDispatch();
 
-  // Sort function
+  const inventoryToUse = useMemo(() => {
+    if (
+      inventoryFilters.inventoryFiltered.length === 0 &&
+      inventoryFilters.inventoryFilter.length === 0
+    ) {
+      return inventory.combinedInventory;
+    }
 
-  let inventoryToUse = [] as any;
-  if (
-    inventoryFilters.inventoryFiltered.length == 0 &&
-    inventoryFilters.inventoryFilter.length == 0
-  ) {
-    inventoryToUse = inventory.combinedInventory;
-  } else {
-    inventoryToUse = inventoryFilters.inventoryFiltered;
-  }
-  let PricingRequest = new RequestPrices(dispatch, settingsData, pricesResult)
-  PricingRequest.handleRequestArray(inventoryToUse)
+    return inventoryFilters.inventoryFiltered;
+  }, [
+    inventory.combinedInventory,
+    inventoryFilters.inventoryFiltered,
+    inventoryFilters.inventoryFilter,
+  ]);
 
-  async function storageResult() {
-    let storageResult = await sortDataFunction(
-      inventoryFilters.sortValue,
-      inventoryToUse,
-      pricesResult.prices,
-      settingsData?.source?.title
-    );
+  useEffect(() => {
+    const pricingRequest = new RequestPrices(dispatch, settingsData, pricesResult);
+    pricingRequest.handleRequestArray(inventoryToUse);
+  }, [
+    dispatch,
+    inventoryToUse,
+    pricesResult.prices,
+    pricesResult.productsRequested,
+    settingsData.currency,
+    settingsData.currencyPrice,
+    settingsData.source?.title,
+  ]);
 
-    setInventory(storageResult);
-  }
+  useEffect(() => {
+    let isActive = true;
 
-  storageResult();
-  if (inventoryFilters.sortBack == true) {
-    getInventory.reverse();
-  }
+    async function runSort() {
+      const sorted = await sortDataFunction(
+        inventoryFilters.sortValue,
+        [...inventoryToUse],
+        pricesResult.prices,
+        settingsData?.source?.title,
+      );
 
-  let finalToUse = searchFilter(getInventory, inventoryFilters, inventoryFilters)
+      if (!isActive) {
+        return;
+      }
+
+      setSortedInventory(inventoryFilters.sortBack ? [...sorted].reverse() : sorted);
+    }
+
+    runSort();
+
+    return () => {
+      isActive = false;
+    };
+  }, [
+    inventoryToUse,
+    inventoryFilters.sortValue,
+    inventoryFilters.sortBack,
+    pricesResult.prices,
+    settingsData?.source?.title,
+  ]);
+
+  const finalToUse = useMemo(
+    () => searchFilter(sortedInventory, inventoryFilters, inventoryFilters),
+    [sortedInventory, inventoryFilters],
+  );
 
   return (
     <>
@@ -79,7 +111,7 @@ function content() {
           role="list"
           className="mt-3 border-t border-gray-200 divide-y divide-gray-100 dark:divide-gray-500"
         >
-          {getInventory.map((project) => (
+          {sortedInventory.map((project) => (
             <li key={project.item_id}>
               <a
                 href="#"
@@ -89,7 +121,7 @@ function content() {
                   <span
                     className={classNames(
                       project.bgColorClass,
-                      'w-2.5 h-2.5 shrink-0 rounded-full'
+                      'w-2.5 h-2.5 shrink-0 rounded-full',
                     )}
                     aria-hidden="true"
                   />
@@ -108,48 +140,76 @@ function content() {
           <tr
             className={classNames(
               settingsData.os == 'win32' ? 'top-7' : 'top-0',
-              'border-gray-200 sticky'
+              'border-gray-200 sticky',
             )}
           >
-
-            <RowHeader headerName='Product' sortName='Product name' />
-            <RowHeaderCondition headerName='Collection' sortName='Collection' condition='Collections' />
-            <RowHeaderCondition headerName='Price' sortName='Price' condition='Price' />
-            <RowHeaderCondition headerName='Stickers/Patches' sortName='Stickers' condition='Stickers/patches' />
-            <RowHeaderCondition headerName='Float' sortName='wearValue' condition='Float' />
-            <RowHeaderCondition headerName='Rarity' sortName='Rarity' condition='Rarity' />
-            <RowHeaderCondition headerName='Storage' sortName='StorageName' condition='Storage' />
-            <RowHeaderCondition headerName='Tradehold' sortName='tradehold' condition='Tradehold' />
-            <RowHeader headerName='QTY' sortName='QTY' />
-            <RowHeaderConditionNoSort headerName='Moveable' condition='Moveable' />
-            <RowHeaderConditionNoSort headerName='Link' condition='Inventory link' />
-
-
-
+            <RowHeader headerName="Product" sortName="Product name" />
+            <RowHeaderCondition
+              headerName="Collection"
+              sortName="Collection"
+              condition="Collections"
+            />
+            <RowHeaderCondition
+              headerName="Price"
+              sortName="Price"
+              condition="Price"
+            />
+            <RowHeaderCondition
+              headerName="Stickers/Patches"
+              sortName="Stickers"
+              condition="Stickers/patches"
+            />
+            <RowHeaderCondition
+              headerName="Float"
+              sortName="wearValue"
+              condition="Float"
+            />
+            <RowHeaderCondition
+              headerName="Rarity"
+              sortName="Rarity"
+              condition="Rarity"
+            />
+            <RowHeaderCondition
+              headerName="Storage"
+              sortName="StorageName"
+              condition="Storage"
+            />
+            <RowHeaderCondition
+              headerName="Tradehold"
+              sortName="tradehold"
+              condition="Tradehold"
+            />
+            <RowHeader headerName="QTY" sortName="QTY" />
+            <RowHeaderConditionNoSort headerName="Moveable" condition="Moveable" />
+            <RowHeaderConditionNoSort
+              headerName="Link"
+              condition="Inventory link"
+            />
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
           {finalToUse.map((projectRow) => (
-            <tr
-              key={projectRow.item_id}
-
-            >
-
-              <RowProduct itemRow={projectRow}  />
+            <tr key={projectRow.item_id}>
+              <RowProduct itemRow={projectRow} />
               <RowCollections itemRow={projectRow} settingsData={settingsData} />
-              <RowPrice itemRow={projectRow} settingsData={settingsData} pricesReducer={pricesResult} />
+              <RowPrice
+                itemRow={projectRow}
+                settingsData={settingsData}
+                pricesReducer={pricesResult}
+              />
               <RowStickersPatches itemRow={projectRow} settingsData={settingsData} />
               <RowFloat itemRow={projectRow} settingsData={settingsData} />
               <RowRarity itemRow={projectRow} settingsData={settingsData} />
-              <RowStorage itemRow={projectRow}  settingsData={settingsData}/>
+              <RowStorage itemRow={projectRow} settingsData={settingsData} />
               <RowTradehold itemRow={projectRow} settingsData={settingsData} />
               <RowQTY itemRow={projectRow} />
               <RowMoveable itemRow={projectRow} settingsData={settingsData} />
-              <RowLinkInventory itemRow={projectRow} settingsData={settingsData} userDetails={auth}/>
-              <td
-                key={Math.random().toString(36).substr(2, 9)}
-                className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"
-              ></td>
+              <RowLinkInventory
+                itemRow={projectRow}
+                settingsData={settingsData}
+                userDetails={auth}
+              />
+              <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
             </tr>
           ))}
         </tbody>
@@ -159,5 +219,5 @@ function content() {
 }
 
 export default function InventoryRowsComponent() {
-  return content();
+  return <Content />;
 }

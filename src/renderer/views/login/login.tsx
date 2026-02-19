@@ -7,6 +7,12 @@ Disclosure
 function LoginPageContent() {
   const [getLock, setLock] = useState([''])
   const [deleteUser, setdeleteUser] = useState('')
+  const [isAuthPending, setIsAuthPending] = useState(false)
+  const [authStatus, setAuthStatus] = useState({
+    state: 'idle',
+    title: '',
+    message: '',
+  })
 
   return (
     <>
@@ -22,10 +28,18 @@ function LoginPageContent() {
 
 
         {/* Account switcher */}
-        <section aria-labelledby="summary-heading" className="hidden w-full max-w-xs flex-col lg:flex">
+        <section
+          aria-labelledby="summary-heading"
+          className="hidden w-full max-w-xs flex-col lg:flex bg-gray-50 dark:bg-dark-level-two border-l border-gray-200 dark:border-opacity-50"
+        >
 
 
-          <UserGrid clickOnProfile={(username) => setLock(username)} runDeleteUser={() => setdeleteUser('')} deleteUser={deleteUser} />
+          <UserGrid
+            clickOnProfile={(username) => setLock(username)}
+            runDeleteUser={() => setdeleteUser('')}
+            deleteUser={deleteUser}
+            disabled={isAuthPending}
+          />
         </section>
 
         {/* Login */}
@@ -34,7 +48,15 @@ function LoginPageContent() {
           className="flex-auto overflow-y-auto px-4 pt-12 pb-16 sm:px-6 sm:pt-16 lg:px-8 lg:pt-0 bg-white lg:pb-24 dark:bg-dark-level-one"
         >
           <div className="max-w-lg mx-auto">
-            <LoginForm isLock={getLock} replaceLock={() => setLock([''])} runDeleteUser={(username) => setdeleteUser(username)}/>
+            <LoginForm
+              isLock={getLock}
+              replaceLock={() => setLock([''])}
+              runDeleteUser={(username) => setdeleteUser(username)}
+              isAuthPending={isAuthPending}
+              setIsAuthPending={setIsAuthPending}
+              authStatus={authStatus}
+              setAuthStatus={setAuthStatus}
+            />
           </div>
         </section>
       </main>

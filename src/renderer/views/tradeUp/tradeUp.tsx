@@ -16,13 +16,20 @@ import TradeUpSideBar from './sidebar/sideBar';
 import TradeUpFilters from './filter/tradeUpFilter';
 import { ReducerManager } from '../../functionsClasses/reducerManager';
 import { State } from '../../interfaces/states';
-import { ConvertPrices } from '../../functionsClasses/prices';
+import {
+  ConvertPrices,
+  ConvertPricesFormatted,
+  safeAdd,
+  safeDivide,
+  safePercent,
+  sanitizePriceNumber,
+} from '../../functionsClasses/prices';
 import { useState } from 'react';
 import { getAllStorages } from '../../functionsClasses/storageUnits/storageUnitsFunctions';
 import { LoadingButton } from '../../components/content/shared/animations';
 
 function SettingsContent() {
-  let ReducerClass = new ReducerManager(useSelector);
+  const ReducerClass = new ReducerManager(useSelector);
   const tradeUpData = ReducerClass.getStorage('tradeUpReducer');
   const settingsData = ReducerClass.getStorage('settingsReducer');
   const moveFromReducer = ReducerClass.getStorage('moveFromReducer');
@@ -37,6 +44,7 @@ function SettingsContent() {
     settingsData,
     ReducerClass.getStorage('pricingReducer'),
   );
+  const pricingFormatted = new ConvertPricesFormatted(settingsData, pricesResult);
   const [getLoadingButton, setLoadingButton] = useState(false);
   async function getAllStor() {
     setLoadingButton(true);
@@ -55,21 +63,35 @@ function SettingsContent() {
   let totalFloat = 0;
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    totalFloat += element.item_paint_wear as number;
-    totalPrice += PricingClass.getPrice(element);
+    totalFloat = safeAdd(
+      totalFloat,
+      sanitizePriceNumber(element.item_paint_wear, 0),
+    );
+    totalPrice = safeAdd(totalPrice, PricingClass.getPrice(element, true));
   });
-  totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
+  totalFloat = safeDivide(totalFloat, tradeUpData.tradeUpProducts.length, 0);
   let totalEV = 0;
   tradeUpData.possibleOutcomes.forEach((element) => {
-    let individualPrice = PricingClass.getPrice(element);
-    totalEV += individualPrice * (element.percentage / 100);
+    const chanceFraction = safeDivide(
+      sanitizePriceNumber(element.percentage, 0),
+      100,
+      0,
+    );
+    const outcomeValue = PricingClass.getPriceWithMultiplier(
+      element,
+      chanceFraction,
+      true,
+    );
+    totalEV = safeAdd(totalEV, outcomeValue);
   });
+  const profitValue = safeAdd(totalEV, -totalPrice);
+  const profitPercentage = safePercent(totalEV, totalPrice, 0);
 
   return (
     <>
       <TradeModal />
 
-      <div className="h-screen flex flex-col overflow-hidden">
+      <div className="h-full min-h-0 flex flex-col overflow-hidden">
         {/* Page title & actions */}
         <div className="border-b border-gray-200 px-4 h-14  py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8 dark:border-opacity-50 shrink-0">
           <div className="flex-1 min-w-0">
@@ -92,27 +114,18 @@ function SettingsContent() {
                 <span className="text-blue-500 pl-2 border-l border-gray-200 dark:border-gray-400" />
 
                 <PricingAmount
-                  totalAmount={new Intl.NumberFormat(settingsData.locale, {
-                    style: 'currency',
-                    currency: settingsData.currency,
-                  }).format(totalPrice)}
+                  totalAmount={pricingFormatted.formatPrice(totalPrice)}
                   IconToUse={ArrowCircleUpIcon}
                   colorOf={'text-red-500'}
                 />
 
                 <PricingAmount
-                  totalAmount={new Intl.NumberFormat(settingsData.locale, {
-                    style: 'currency',
-                    currency: settingsData.currency,
-                  }).format(totalEV)}
+                  totalAmount={pricingFormatted.formatPrice(totalEV)}
                   IconToUse={ArrowCircleDownIcon}
                   colorOf={'text-green-500'}
                 />
                 <PricingAmount
-                  totalAmount={new Intl.NumberFormat(settingsData.locale, {
-                    style: 'currency',
-                    currency: settingsData.currency,
-                  }).format(-(totalPrice - totalEV))}
+                  totalAmount={pricingFormatted.formatPrice(profitValue)}
                   colorOf={'text-yellow-500'}
                 />
                 <PricingAmount
@@ -120,7 +133,7 @@ function SettingsContent() {
                     new Intl.NumberFormat(settingsData.locale, {
                       style: 'decimal',
                       maximumFractionDigits: 2,
-                    }).format((100 / totalPrice) * totalEV) + '  %'
+                    }).format(profitPercentage) + '  %'
                   }
                   colorOf={'text-yellow-500'}
                   IconToUse={ScaleIcon}
@@ -184,8 +197,8 @@ function SettingsContent() {
         {/* Content area */}
 
         <div className="flex-1 flex overflow-hidden min-h-0">
-          <div className="flex-1 relative z-0 flex h-full">
-            <main className="flex-1 relative z-0 overflow-y-auto">
+          <div className="flex h-full flex-1 min-h-0 relative z-0">
+            <main className="flex-1 min-h-0 relative z-0 overflow-y-auto">
               {/* Start main area*/}
               <div className="inset-0">
                 <TradeUpFilters />
@@ -193,7 +206,7 @@ function SettingsContent() {
               </div>
               {/* End main area */}
             </main>
-            <aside className="hidden relative lg:flex lg:flex-col bg-gray-50 shrink-0 w-96 border-l dark:border-opacity-50  border-gray-200 overflow-y-auto dark:bg-dark-level-one">
+            <aside className="hidden relative lg:flex lg:flex-col bg-gray-50 shrink-0 w-96 border-l dark:border-opacity-50 border-gray-200 min-h-0 overflow-hidden dark:bg-dark-level-one">
               {/* Start secondary column (hidden on smaller screens) */}
               <div className="">
                 <TradeUpSideBar />

@@ -29,14 +29,15 @@ function content() {
   const pricesResult = reducerManager.getStorage('pricingReducer');
   const settingsData = reducerManager.getStorage('settingsReducer');
   const tradeUpData = reducerManager.getStorage('tradeUpReducer');
+  const pricingFormatted = new ConvertPricesFormatted(settingsData, pricesResult);
 
   const dispatch = useDispatch();
 
   // Sort function
 
   // Convert to dict for easier match
-  let finalList = {};
-  let inventoryToUse = [
+  const finalList = {};
+  const inventoryToUse = [
     ...inventory.inventory,
     ...inventory.storageInventoryRaw,
   ];
@@ -44,7 +45,7 @@ function content() {
     if (finalList[element.item_name] == undefined) {
       finalList[element.item_name] = [element];
     } else {
-      let listToUse = finalList[element.item_name];
+      const listToUse = finalList[element.item_name];
       listToUse.push(element);
       finalList[element.item_name] = listToUse;
     }
@@ -52,8 +53,8 @@ function content() {
 
   // Inventory to use
   let finalInventoryToUse = [] as any;
-  let seenNames = [] as any;
-  let inventoryFilter = [
+  const seenNames = [] as any;
+  const inventoryFilter = [
     ...inventoryFilters.inventoryFiltered,
     ...inventory.storageInventory,
   ];
@@ -102,8 +103,8 @@ function content() {
       }
     }
     if (tradeUpData.tradeUpProducts.length != 0) {
-      let restrictRarity = tradeUpData.tradeUpProducts[0].rarityName;
-      let restrictStattrak = tradeUpData.tradeUpProducts[0].stattrak;
+      const restrictRarity = tradeUpData.tradeUpProducts[0].rarityName;
+      const restrictStattrak = tradeUpData.tradeUpProducts[0].stattrak;
       if (item.rarityName != restrictRarity) {
         return false;
       }
@@ -115,7 +116,7 @@ function content() {
     return true;
   });
 
-  let itemR = {};
+  const itemR = {};
   itemRarities.forEach((element) => {
     itemR[element.value] = element.bgColorClass;
   });
@@ -124,6 +125,10 @@ function content() {
   });
 
   const isFull = tradeUpData.tradeUpProducts.length == 10;
+  const searchNeedle = tradeUpData.searchInput?.toLowerCase().trim() || '';
+  function matchesSearch(value) {
+    return typeof value === 'string' && value.toLowerCase().includes(searchNeedle);
+  }
   if (inventoryFilters.sortBack) {
     finalInventoryToUse.reverse();
   }
@@ -159,16 +164,10 @@ function content() {
             <tr
               key={projectRow.item_id}
               className={classNames(
-                projectRow.item_name
-                  ?.toLowerCase()
-                  .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
-                  projectRow.item_customname
-                    ?.toLowerCase()
-                    .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
-                  projectRow.item_wear_name
-                    ?.toLowerCase()
-                    .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
-                  tradeUpData.searchInput == undefined
+                searchNeedle === '' ||
+                  matchesSearch(projectRow.item_name) ||
+                  matchesSearch(projectRow.item_customname) ||
+                  matchesSearch(projectRow.item_wear_name)
                   ? ''
                   : 'hidden',
                 inventoryFilters.rarityFilter.length != 0
@@ -263,7 +262,7 @@ function content() {
                       )}
                       {projectRow.item_name !== '' &&
                       projectRow.item_customname !== null &&
-                      !projectRow.item_url.includes('casket') ? (
+                      !projectRow.item_url?.includes('casket') ? (
                         <TagIcon className="h-3 w-3  ml-1" />
                       ) : (
                         ''
@@ -285,7 +284,7 @@ function content() {
                         ''
                       )}
 
-                      {projectRow.item_url.includes('casket') ? (
+                      {projectRow.item_url?.includes('casket') ? (
                         <Link
                           to=""
                           className="text-gray-500"
@@ -341,27 +340,22 @@ function content() {
               </td>
               <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
                 <div className="flex items-center">
-                  <span>
-                    <span className="flex dark:text-dark-white">
-                      {projectRow.collection
-                        .replace('The ', '')
-                        .replace(' Collection', '')}
+                    <span>
+                      <span className="flex dark:text-dark-white">
+                        {(projectRow.collection || '')
+                          .replace('The ', '')
+                          .replace(' Collection', '') || '-'}
+                      </span>
                     </span>
-                  </span>
-                </div>
+                  </div>
               </td>
 
               <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
-                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
-                    {pricesResult.prices[
-                      projectRow.item_name + projectRow.item_wear_name || ''
-                    ] == undefined
+                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                    <div className="flex shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
+                    {Number.isNaN(pricingFormatted.getPrice(projectRow))
                       ? ''
-                      : new ConvertPricesFormatted(
-                          settingsData,
-                          pricesResult,
-                        ).getFormattedPrice(projectRow)}
+                      : pricingFormatted.getFormattedPrice(projectRow)}
                   </div>
                 </div>
               </td>

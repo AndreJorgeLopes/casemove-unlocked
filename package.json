@@ -1,9 +1,13 @@
 {
   "name": "casemove",
   "productName": "casemove",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "description": "Counter-Strike 2 Storage unit manager that helps you move stuff. ",
   "main": ".webpack/main",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndreJorgeLopes/casemove-unlocked.git"
+  },
   "author": {
     "name": "Nombers",
     "email": "casemovenombers@gmail.com",
@@ -16,7 +20,11 @@
     }
   ],
   "scripts": {
-    "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.ts-node",
+    "lint": "eslint . --cache",
+    "format": "prettier --ignore-path .gitignore --write .",
+    "format:check": "prettier --ignore-path .gitignore --check .",
+    "format:check:changed": "node scripts/format-check-changed.cjs",
+    "cleanup": "npm run format:check:changed && npm run lint && npm test -- --runInBand --passWithNoTests",
     "package": "electron-forge package",
     "prepare": "husky",
     "start": "electron-forge start",
@@ -28,16 +36,16 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "cross-env NODE_ENV=development eslint --cache"
+      "eslint --cache"
     ],
     "*.json,.{eslintrc,prettierrc}": [
-      "prettier --ignore-path .eslintignore --parser json --write"
+      "prettier --ignore-path .gitignore --parser json --write"
     ],
     "*.{css,scss}": [
-      "prettier --ignore-path .eslintignore --single-quote --write"
+      "prettier --ignore-path .gitignore --single-quote --write"
     ],
     "*.{html,md,yml}": [
-      "prettier --ignore-path .eslintignore --single-quote --write"
+      "prettier --ignore-path .gitignore --single-quote --write"
     ]
   },
   "jest": {
@@ -101,7 +109,7 @@
     "@types/terser-webpack-plugin": "^5.2.0",
     "@types/webpack-bundle-analyzer": "^4.7.0",
     "@types/webpack-env": "^1.18.8",
-    "@typescript-eslint/eslint-plugin": "^8.35.1",
+    "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "autoprefixer": "^10.4.21",
     "babel-loader": "^10.0.0",
@@ -117,6 +125,7 @@
     "electron-devtools-installer": "^4.0.0",
     "electron-notarize": "^1.2.2",
     "eslint": "^9.30.1",
+    "eslint-plugin-import": "^2.32.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.3",
     "husky": "9.1.7",

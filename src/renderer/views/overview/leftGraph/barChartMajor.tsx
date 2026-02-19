@@ -5,12 +5,12 @@ import { ReducerManager } from '../../../../renderer/functionsClasses/reducerMan
 import { ItemRow } from '../../../../renderer/interfaces/items';
 import { searchFilter } from '../../../../renderer/functionsClasses/filters/search';
 import { Settings } from '../../../../renderer/interfaces/states';
-import { ConvertPrices } from '../../../../renderer/functionsClasses/prices';
+import { ConvertPrices, safeAdd } from '../../../../renderer/functionsClasses/prices';
 Chart;
 
 function runArray(arrayToRun: Array<ItemRow>, objectToUse: any, by: string, PricingConverter) {
   objectToUse = getObject(arrayToRun, objectToUse, by, PricingConverter);
-  var items = Object.keys(objectToUse).map(function (key) {
+  const items = Object.keys(objectToUse).map(function (key) {
     return [key, objectToUse[key]];
   });
 
@@ -29,8 +29,11 @@ function getObject(arrayToRun: Array<ItemRow>, objectToUse: any, by: string, Pri
     if (objectToUse[element.item_name] == undefined) {
       switch (by) {
         case 'price':
-
-          objectToUse[element.item_name] = PricingConverter.getPrice(element, true)  *  element.combined_QTY;
+          objectToUse[element.item_name] = PricingConverter.getPriceWithMultiplier(
+            element,
+            element.combined_QTY,
+            true,
+          );
           break
         case 'volume':
 
@@ -42,9 +45,14 @@ function getObject(arrayToRun: Array<ItemRow>, objectToUse: any, by: string, Pri
     } else {
       switch (by) {
         case 'price':
-
-          objectToUse[element.item_name] =
-        objectToUse[element.item_name] + PricingConverter.getPrice(element, true)  *  element.combined_QTY;
+          objectToUse[element.item_name] = safeAdd(
+            objectToUse[element.item_name],
+            PricingConverter.getPriceWithMultiplier(
+              element,
+              element.combined_QTY,
+              true,
+            ),
+          );
           break
         case 'volume':
 
@@ -99,35 +107,35 @@ export default function OverallMajor() {
   };
 
   // Go through inventory and find matching categories
-  let Reducer = new ReducerManager(useSelector);
-  let settingsdata: Settings = Reducer.getStorage(Reducer.names.settings)
-  let PricingConverter = new ConvertPrices(Reducer.getStorage(Reducer.names.settings), Reducer.getStorage(Reducer.names.pricing))
+  const Reducer = new ReducerManager(useSelector);
+  const settingsdata: Settings = Reducer.getStorage(Reducer.names.settings)
+  const PricingConverter = new ConvertPrices(Reducer.getStorage(Reducer.names.settings), Reducer.getStorage(Reducer.names.pricing))
   PricingConverter
   const inventory = Reducer.getStorage(Reducer.names.inventory);
 
   // Convert inventory to chart data
 
-  let seenNamesOverall: any = {};
-  let seenNamesInventory: any = {};
-  let seenNamesStorage: any = {};
+  const seenNamesOverall: any = {};
+  const seenNamesInventory: any = {};
+  const seenNamesStorage: any = {};
 
-  let inventoryFiltered = searchFilter(inventory.combinedInventory, Reducer.getStorage(Reducer.names.inventoryFilters), undefined)
+  const inventoryFiltered = searchFilter(inventory.combinedInventory, Reducer.getStorage(Reducer.names.inventoryFilters), undefined)
 
-  let storageFiltered = searchFilter(inventory.storageInventory, Reducer.getStorage(Reducer.names.inventoryFilters), undefined)
+  const storageFiltered = searchFilter(inventory.storageInventory, Reducer.getStorage(Reducer.names.inventoryFilters), undefined)
 
-  let overallData = runArray(
+  const overallData = runArray(
     [...inventoryFiltered, ...storageFiltered],
     seenNamesOverall,
     settingsdata.overview.by,
     PricingConverter
   );
-  let inventoryData = getObject(
+  const inventoryData = getObject(
     inventoryFiltered,
     seenNamesInventory,
     settingsdata.overview.by,
     PricingConverter
   );
-  let storageData = getObject(storageFiltered, seenNamesStorage, settingsdata.overview.by, PricingConverter);
+  const storageData = getObject(storageFiltered, seenNamesStorage, settingsdata.overview.by, PricingConverter);
 
   console.log(overallData, inventoryData, storageData);
 

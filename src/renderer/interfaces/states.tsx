@@ -112,8 +112,8 @@ export interface MoveFromReducer {
   searchInput: string,
   searchInputStorage: string,
   sortValue: string,
-  doCancel: Boolean,
-  sortBack: Boolean,
+  doCancel: boolean,
+  sortBack: boolean,
 }
 
 export interface MoveToReducer {
@@ -126,8 +126,8 @@ export interface MoveToReducer {
   searchInput: string,
   searchInputStorage: string,
   sortValue: string,
-  doCancel: Boolean,
-  sortBack: Boolean,
+  doCancel: boolean,
+  sortBack: boolean,
 };
 
 export interface Prices {
@@ -142,11 +142,12 @@ export interface Overview {
 }
 export interface Settings {
   fastMove: boolean,
+  theme: 'dark' | 'light',
   currency: string,
   locale: string,
   steamLoginShow: boolean,
   os: string,
-  devmode: Boolean,
+  devmode: boolean,
   columns: Array<string>,
   currencyPrice: { [key: string]: number },
   source: source

@@ -13,7 +13,7 @@ import { itemCategories } from '../../../../renderer/components/content/shared/c
 import { categoriesRGB } from './categoriesRGB';
 import PieChart from '../charts/pieChart';
 import { ReducerManager } from '../../../../renderer/functionsClasses/reducerManager';
-import { ConvertPrices } from '../../../../renderer/functionsClasses/prices';
+import { ConvertPrices, safeAdd } from '../../../../renderer/functionsClasses/prices';
 import { Settings } from '../../../../renderer/interfaces/states';
 
 
@@ -28,10 +28,10 @@ ChartJS.register(
 );
 
 function getData(ReducerClass, by) {
-  let categoriesFixed: Array<string> = [];
-  let categoriesColors: any = {};
+  const categoriesFixed: Array<string> = [];
+  const categoriesColors: any = {};
 
-  let resultingData = {} as any;
+  const resultingData = {} as any;
   itemCategories.forEach((element) => {
     categoriesFixed.push(element.name);
     categoriesColors[element.name] = categoriesRGB[element.value]
@@ -41,14 +41,16 @@ function getData(ReducerClass, by) {
     }
   });
 
-  let PricingConverter = new ConvertPrices(ReducerClass.getStorage(ReducerClass.names.settings), ReducerClass.getStorage(ReducerClass.names.pricing))
+  const PricingConverter = new ConvertPrices(ReducerClass.getStorage(ReducerClass.names.settings), ReducerClass.getStorage(ReducerClass.names.pricing))
   // Go through inventory and find matching categories
   const inventory = ReducerClass.getStorage(ReducerClass.names.inventory)
   inventory.combinedInventory.forEach(element => {
     if (resultingData[element.category]) {
       if (by == 'price') {
-
-        resultingData[element.category].inventory += PricingConverter.getPrice(element, true) * element.combined_QTY
+        resultingData[element.category].inventory = safeAdd(
+          resultingData[element.category].inventory,
+          PricingConverter.getPriceWithMultiplier(element, element.combined_QTY, true),
+        );
       }
       if (by == 'volume') {
         resultingData[element.category].inventory = resultingData?.[element.category]?.inventory + element.combined_QTY
@@ -61,8 +63,10 @@ function getData(ReducerClass, by) {
   inventory.storageInventory.forEach(element => {
     if (resultingData[element.category]) {
       if (by == 'price') {
-
-        resultingData[element.category].storageUnits += PricingConverter.getPrice(element, true) * element.combined_QTY
+        resultingData[element.category].storageUnits = safeAdd(
+          resultingData[element.category].storageUnits,
+          PricingConverter.getPriceWithMultiplier(element, element.combined_QTY, true),
+        );
       }
       if (by == 'volume') {
         resultingData[element.category].storageUnits = resultingData?.[element.category]?.storageUnits + element.combined_QTY
@@ -71,9 +75,9 @@ function getData(ReducerClass, by) {
   });
 
   // Convert inventory to chart data
-  let finalDataToUse: Array<number> = [];
-  let rgbColorsToUse: Array<string> = [];
-  let rgbColorsToUseBorder: Array<string> = [];
+  const finalDataToUse: Array<number> = [];
+  const rgbColorsToUse: Array<string> = [];
+  const rgbColorsToUseBorder: Array<string> = [];
 
   categoriesFixed.forEach(category => {
     finalDataToUse.push(resultingData[category].inventory + resultingData[category].storageUnits)
@@ -91,7 +95,7 @@ function getData(ReducerClass, by) {
 }
 export default function ItemDistributionByVolume() {
   const ReducerClass = new ReducerManager(useSelector)
-  let settingsData: Settings = ReducerClass.getStorage(ReducerClass.names.settings);
+  const settingsData: Settings = ReducerClass.getStorage(ReducerClass.names.settings);
 
   let returnObject: any = {
     labels: [],
