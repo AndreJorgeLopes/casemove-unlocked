@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { Provider } from "react-redux";
 import App from "./App";
+import { VibeKanbanWebCompanion } from 'vibe-kanban-web-companion';
 import { PersistGate } from 'redux-persist/integration/react'
 import returnVar from './store/configureStore'
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -36,6 +37,7 @@ root.render(
       <Provider store={myVar.reduxStore}>
         <PersistGate loading={null} persistor={myVar.persistor}>
         <App />
+        <VibeKanbanWebCompanion />
         </PersistGate>
       </Provider>
   </Router>
