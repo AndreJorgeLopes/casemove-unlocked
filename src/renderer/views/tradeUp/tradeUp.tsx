@@ -16,7 +16,14 @@ import TradeUpSideBar from './sidebar/sideBar';
 import TradeUpFilters from './filter/tradeUpFilter';
 import { ReducerManager } from '../../functionsClasses/reducerManager';
 import { State } from '../../interfaces/states';
-import { ConvertPrices } from '../../functionsClasses/prices';
+import {
+  ConvertPrices,
+  ConvertPricesFormatted,
+  safeAdd,
+  safeDivide,
+  safePercent,
+  sanitizePriceNumber,
+} from '../../functionsClasses/prices';
 import { useState } from 'react';
 import { getAllStorages } from '../../functionsClasses/storageUnits/storageUnitsFunctions';
 import { LoadingButton } from '../../components/content/shared/animations';
@@ -37,6 +44,7 @@ function SettingsContent() {
     settingsData,
     ReducerClass.getStorage('pricingReducer'),
   );
+  const pricingFormatted = new ConvertPricesFormatted(settingsData, pricesResult);
   const [getLoadingButton, setLoadingButton] = useState(false);
   async function getAllStor() {
     setLoadingButton(true);
@@ -55,15 +63,29 @@ function SettingsContent() {
   let totalFloat = 0;
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    totalFloat += element.item_paint_wear as number;
-    totalPrice += PricingClass.getPrice(element);
+    totalFloat = safeAdd(
+      totalFloat,
+      sanitizePriceNumber(element.item_paint_wear, 0),
+    );
+    totalPrice = safeAdd(totalPrice, PricingClass.getPrice(element, true));
   });
-  totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
+  totalFloat = safeDivide(totalFloat, tradeUpData.tradeUpProducts.length, 0);
   let totalEV = 0;
   tradeUpData.possibleOutcomes.forEach((element) => {
-    const individualPrice = PricingClass.getPrice(element);
-    totalEV += individualPrice * (element.percentage / 100);
+    const chanceFraction = safeDivide(
+      sanitizePriceNumber(element.percentage, 0),
+      100,
+      0,
+    );
+    const outcomeValue = PricingClass.getPriceWithMultiplier(
+      element,
+      chanceFraction,
+      true,
+    );
+    totalEV = safeAdd(totalEV, outcomeValue);
   });
+  const profitValue = safeAdd(totalEV, -totalPrice);
+  const profitPercentage = safePercent(totalEV, totalPrice, 0);
 
   return (
     <>
@@ -92,27 +114,18 @@ function SettingsContent() {
                 <span className="text-blue-500 pl-2 border-l border-gray-200 dark:border-gray-400" />
 
                 <PricingAmount
-                  totalAmount={new Intl.NumberFormat(settingsData.locale, {
-                    style: 'currency',
-                    currency: settingsData.currency,
-                  }).format(totalPrice)}
+                  totalAmount={pricingFormatted.formatPrice(totalPrice)}
                   IconToUse={ArrowCircleUpIcon}
                   colorOf={'text-red-500'}
                 />
 
                 <PricingAmount
-                  totalAmount={new Intl.NumberFormat(settingsData.locale, {
-                    style: 'currency',
-                    currency: settingsData.currency,
-                  }).format(totalEV)}
+                  totalAmount={pricingFormatted.formatPrice(totalEV)}
                   IconToUse={ArrowCircleDownIcon}
                   colorOf={'text-green-500'}
                 />
                 <PricingAmount
-                  totalAmount={new Intl.NumberFormat(settingsData.locale, {
-                    style: 'currency',
-                    currency: settingsData.currency,
-                  }).format(-(totalPrice - totalEV))}
+                  totalAmount={pricingFormatted.formatPrice(profitValue)}
                   colorOf={'text-yellow-500'}
                 />
                 <PricingAmount
@@ -120,7 +133,7 @@ function SettingsContent() {
                     new Intl.NumberFormat(settingsData.locale, {
                       style: 'decimal',
                       maximumFractionDigits: 2,
-                    }).format((100 / totalPrice) * totalEV) + '  %'
+                    }).format(profitPercentage) + '  %'
                   }
                   colorOf={'text-yellow-500'}
                   IconToUse={ScaleIcon}

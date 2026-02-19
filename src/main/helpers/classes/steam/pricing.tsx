@@ -7,6 +7,61 @@ dotenv.config()
 class MyEmitter extends EventEmitter {}
 export const pricingEmitter = new MyEmitter();
 
+const PRICE_PLACEHOLDER_THRESHOLD = Number.MAX_VALUE / 1024;
+const MAX_REASONABLE_MARKET_PRICE = 10000000;
+
+function normalizeProviderPrice(value) {
+  let parsedValue = value;
+  if (typeof parsedValue === 'string' && parsedValue.trim() !== '') {
+    parsedValue = Number(parsedValue);
+  }
+
+  if (typeof parsedValue !== 'number' || !Number.isFinite(parsedValue)) {
+    return 0;
+  }
+
+  if (Math.abs(parsedValue) >= PRICE_PLACEHOLDER_THRESHOLD) {
+    return 0;
+  }
+
+  if (Math.abs(parsedValue) > MAX_REASONABLE_MARKET_PRICE) {
+    return 0;
+  }
+
+  return Math.round((parsedValue + Number.EPSILON) * 100) / 100;
+}
+
+function hasValidPricingValue(pricingData) {
+  if (typeof pricingData !== 'object' || pricingData == null) {
+    return false;
+  }
+
+  const entries = Object.values(pricingData);
+  for (const entry of entries as any[]) {
+    const steamCandidates = [
+      entry?.steam?.last_24h,
+      entry?.steam?.last_7d,
+      entry?.steam?.last_30d,
+      entry?.steam?.last_90d,
+    ];
+
+    const providerCandidates = [
+      ...steamCandidates,
+      entry?.skinport?.starting_at,
+      entry?.buff163?.starting_at?.price,
+    ];
+
+    const hasValid = providerCandidates.some(
+      (candidate) => normalizeProviderPrice(candidate) > 0,
+    );
+    if (hasValid) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // Get latest prices, if fail use backup
 
 export async function getPricesBackup(cas) {
@@ -24,7 +79,12 @@ export async function getPrices(cas) {
         response !== null
       );
       if (typeof response === 'object' && response !== null) {
-        cas.setPricing(response.data, 'normal');
+        if (hasValidPricingValue(response.data)) {
+          cas.setPricing(response.data, 'normal');
+        } else {
+          console.log('Invalid CDN pricing payload, using backup');
+          getPricesBackup(cas);
+        }
       } else {
         getPricesBackup(cas);
       }
@@ -112,42 +172,57 @@ export class runItems {
     this.prices = pricingData;
   }
   async makeSinglerequest(itemRow) {
-    let itemNamePricing = itemRow.item_name.replaceAll(
+    const baseName = itemRow.item_name.replaceAll(
       '(Holo/Foil)',
       '(Holo-Foil)'
     );
-    if (itemRow.item_wear_name !== undefined) {
-      itemNamePricing = itemRow.item_name + ' (' + itemRow.item_wear_name + ')';
-      if (!this.prices[itemNamePricing] && this.prices[itemRow.item_name]) {
-        itemNamePricing = itemRow.item_name;
-      }
+    const hasWear =
+      itemRow.item_wear_name !== undefined && itemRow.item_wear_name !== '';
+    let itemNamePricing = hasWear
+      ? baseName + ' (' + itemRow.item_wear_name + ')'
+      : baseName;
+
+    if (!this.prices[itemNamePricing] && this.prices[baseName]) {
+      itemNamePricing = baseName;
     }
 
     if (this.prices[itemNamePricing] !== undefined) {
+      const buffPrice = normalizeProviderPrice(
+        this.prices[itemNamePricing]?.buff163?.starting_at?.price,
+      );
+      const skinportPrice = normalizeProviderPrice(
+        this.prices[itemNamePricing]?.skinport?.starting_at,
+      );
+
+      const steamCandidates = [
+        this.prices[itemNamePricing]?.steam?.last_24h,
+        this.prices[itemNamePricing]?.steam?.last_7d,
+        this.prices[itemNamePricing]?.steam?.last_30d,
+        this.prices[itemNamePricing]?.steam?.last_90d,
+      ];
+      let steamPrice = 0;
+      steamCandidates.some((candidate) => {
+        const normalized = normalizeProviderPrice(candidate);
+        if (normalized > 0) {
+          steamPrice = normalized;
+          return true;
+        }
+
+        return false;
+      });
+
       const pricingDict = {
-        buff163: this.prices[itemNamePricing]?.buff163?.starting_at?.price,
-        steam_listing: this.prices[itemNamePricing]?.steam?.last_90d,
-        skinport: this.prices[itemNamePricing]?.skinport?.starting_at,
+        buff163: buffPrice,
+        steam_listing: steamPrice,
+        skinport: skinportPrice,
         bitskins: 0,
       };
-      if (this.prices[itemNamePricing]?.steam?.last_30d) {
-        pricingDict.steam_listing =
-          this.prices[itemNamePricing]?.steam?.last_30d;
-      }
-      if (this.prices[itemNamePricing]?.steam?.last_7d) {
-        pricingDict.steam_listing =
-          this.prices[itemNamePricing]?.steam?.last_7d;
-      }
-
-      if (this.prices[itemNamePricing]?.steam?.last_24h) {
-        pricingDict.steam_listing =
-          this.prices[itemNamePricing]?.steam?.last_24h;
-      }
       if (
-        this.prices[itemNamePricing]?.steam?.last_7d == 0 &&
-        this.prices[itemNamePricing]?.buff163?.starting_at?.price > 2000
+        normalizeProviderPrice(this.prices[itemNamePricing]?.steam?.last_7d) ===
+          0 &&
+        buffPrice > 2000
       ) {
-        pricingDict.steam_listing = this.prices[itemNamePricing]?.buff163.starting_at?.price * 0.8;
+        pricingDict.steam_listing = normalizeProviderPrice(buffPrice * 0.8);
       }
       itemRow['pricing'] = pricingDict;
       return itemRow;

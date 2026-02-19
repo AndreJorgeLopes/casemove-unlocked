@@ -1,6 +1,9 @@
 import {
   ConvertPrices,
   getPriceKey,
+  normalizeMoneyValue,
+  safeAdd,
+  safePercent,
 } from '../renderer/functionsClasses/prices';
 import { ItemRow } from '../renderer/interfaces/items';
 import { Prices, Settings } from '../renderer/interfaces/states';
@@ -95,7 +98,21 @@ describe('pricing helpers', () => {
     expect(getPriceKey(itemRow, prices.prices)).toBe('AK-47');
   });
 
-  it('clamps getPrice to MAX_SAFE_INTEGER on overflow', () => {
+  it('normalizes Holo/Foil wear key lookups', () => {
+    const prices = createPrices({
+      'Sticker | Test (Holo-Foil) (Factory New)': { steam_listing: 3 },
+    });
+    const itemRow = createItemRow({
+      item_name: 'Sticker | Test (Holo/Foil)',
+      item_wear_name: 'Factory New',
+    });
+
+    expect(getPriceKey(itemRow, prices.prices)).toBe(
+      'Sticker | Test (Holo-Foil) (Factory New)',
+    );
+  });
+
+  it('treats implausibly large source prices as invalid', () => {
     const prices = createPrices({
       'AK-47 (Factory New)': { steam_listing: Number.MAX_SAFE_INTEGER },
     });
@@ -109,10 +126,11 @@ describe('pricing helpers', () => {
       item_wear_name: 'Factory New',
     });
 
-    expect(converter.getPrice(itemRow)).toBe(Number.MAX_SAFE_INTEGER);
+    expect(Number.isNaN(converter.getPrice(itemRow))).toBe(true);
+    expect(converter.getPrice(itemRow, true)).toBe(0);
   });
 
-  it('clamps getPriceWithMultiplier to MAX_SAFE_INTEGER on overflow', () => {
+  it('allows aggregate totals above 10M while still clamping overflow', () => {
     const prices = createPrices({
       'AK-47 (Factory New)': { steam_listing: 10 },
     });
@@ -127,6 +145,10 @@ describe('pricing helpers', () => {
     ).toBe(Number.MAX_SAFE_INTEGER);
   });
 
+  it('safeAdd keeps valid aggregate values above 10M', () => {
+    expect(safeAdd(9_500_000, 1_200_000)).toBe(10_700_000);
+  });
+
   it('returns zero when nanToZero is set and price is missing', () => {
     const prices = createPrices({});
     const converter = new ConvertPrices(baseSettings, prices);
@@ -136,5 +158,37 @@ describe('pricing helpers', () => {
     });
 
     expect(converter.getPrice(itemRow, true)).toBe(0);
+  });
+
+  it('treats Number.MAX_VALUE provider placeholders as invalid prices', () => {
+    const prices = createPrices({
+      'AK-47 (Factory New)': { steam_listing: Number.MAX_VALUE },
+    });
+    const converter = new ConvertPrices(baseSettings, prices);
+    const itemRow = createItemRow({
+      item_name: 'AK-47',
+      item_wear_name: 'Factory New',
+    });
+
+    expect(Number.isNaN(converter.getPrice(itemRow))).toBe(true);
+    expect(converter.getPrice(itemRow, true)).toBe(0);
+  });
+
+  it('normalizes money calculations to two decimals', () => {
+    const prices = createPrices({
+      'AK-47 (Factory New)': { steam_listing: 1.239 },
+    });
+    const converter = new ConvertPrices(baseSettings, prices);
+    const itemRow = createItemRow({
+      item_name: 'AK-47',
+      item_wear_name: 'Factory New',
+    });
+
+    expect(converter.getPrice(itemRow)).toBe(1.24);
+    expect(normalizeMoneyValue(1.235)).toBe(1.24);
+  });
+
+  it('safePercent returns fallback for zero totals', () => {
+    expect(safePercent(20, 0, 0)).toBe(0);
   });
 });

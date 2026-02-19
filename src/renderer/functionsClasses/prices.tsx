@@ -16,14 +16,20 @@ export class ConvertPrices {
   }
 
   getPrice(itemRow: ItemRow, nanToZero = false) {
-    const itemPrice = safeMultiply(
-      this.prices?.prices?.[this._getName(itemRow)]?.[
-        this.settingsData.source.title
-      ],
+    const sourcePrice = sanitizeProviderPrice(
+      this.prices?.prices?.[this._getName(itemRow)]?.[this.settingsData.source.title],
+    );
+    const currencyMultiplier = sanitizePriceNumber(
       this.settingsData.currencyPrice?.[this.settingsData.currency],
     );
+    const itemPrice = normalizeMoneyValue(
+      safeMultiply(
+      sourcePrice,
+      currencyMultiplier,
+      ),
+    );
 
-    if (nanToZero && isNaN(itemPrice)) {
+    if (nanToZero && Number.isNaN(itemPrice)) {
       return 0;
     }
 
@@ -36,9 +42,9 @@ export class ConvertPrices {
     nanToZero = false,
   ) {
     const itemPrice = this.getPrice(itemRow, nanToZero);
-    const totalPrice = safeMultiply(itemPrice, multiplier);
+    const totalPrice = normalizeMoneyValue(safeMultiply(itemPrice, multiplier));
 
-    if (nanToZero && isNaN(totalPrice)) {
+    if (nanToZero && Number.isNaN(totalPrice)) {
       return 0;
     }
 
@@ -52,10 +58,11 @@ export class ConvertPricesFormatted extends ConvertPrices {
   }
 
   formatPrice(price: number) {
+    const safePrice = sanitizePriceNumber(price, 0);
     return new Intl.NumberFormat(this.settingsData.locale, {
       style: 'currency',
       currency: this.settingsData.currency,
-    }).format(price);
+    }).format(safePrice);
   }
 
   getFormattedPrice(itemRow: ItemRow, nanToZero = false) {
@@ -75,6 +82,8 @@ async function requestPrice(priceToGet: Array<ItemRow>) {
 }
 
 const MAX_SAFE_PRICE = Number.MAX_SAFE_INTEGER;
+const PRICE_PLACEHOLDER_THRESHOLD = Number.MAX_VALUE / 1024;
+const MAX_REASONABLE_MARKET_PRICE = 10000000;
 
 function clampPrice(value: number) {
   if (!Number.isFinite(value)) {
@@ -92,12 +101,111 @@ function clampPrice(value: number) {
   return value;
 }
 
-function safeMultiply(valueOne?: number, valueTwo?: number) {
-  if (typeof valueOne !== 'number' || typeof valueTwo !== 'number') {
+export function sanitizePriceNumber(
+  value?: number | string,
+  fallback: number = Number.NaN,
+) {
+  const normalizeNumeric = (numericValue: number) => {
+    if (Math.abs(numericValue) >= PRICE_PLACEHOLDER_THRESHOLD) {
+      return fallback;
+    }
+
+    return clampPrice(numericValue);
+  };
+
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return normalizeNumeric(value);
+  }
+
+  if (typeof value === 'string' && value.trim() !== '') {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) {
+      return normalizeNumeric(parsed);
+    }
+  }
+
+  return fallback;
+}
+
+export function sanitizeProviderPrice(
+  value?: number | string,
+  fallback: number = Number.NaN,
+) {
+  const sanitizedValue = sanitizePriceNumber(value, fallback);
+  if (Number.isNaN(sanitizedValue)) {
+    return fallback;
+  }
+
+  if (Math.abs(sanitizedValue) > MAX_REASONABLE_MARKET_PRICE) {
+    return fallback;
+  }
+
+  return sanitizedValue;
+}
+
+export function normalizeMoneyValue(
+  value?: number,
+  fallback: number = Number.NaN,
+) {
+  const sanitized = sanitizePriceNumber(value, Number.NaN);
+  if (Number.isNaN(sanitized)) {
+    return fallback;
+  }
+
+  return Math.round((sanitized + Number.EPSILON) * 100) / 100;
+}
+
+export function safeAdd(valueOne?: number, valueTwo?: number) {
+  const parsedOne = sanitizePriceNumber(valueOne);
+  const parsedTwo = sanitizePriceNumber(valueTwo);
+  if (Number.isNaN(parsedOne) || Number.isNaN(parsedTwo)) {
     return Number.NaN;
   }
 
-  return clampPrice(valueOne * valueTwo);
+  return clampPrice(parsedOne + parsedTwo);
+}
+
+export function safeMultiply(valueOne?: number, valueTwo?: number) {
+  const parsedOne = sanitizePriceNumber(valueOne);
+  const parsedTwo = sanitizePriceNumber(valueTwo);
+  if (Number.isNaN(parsedOne) || Number.isNaN(parsedTwo)) {
+    return Number.NaN;
+  }
+
+  return clampPrice(parsedOne * parsedTwo);
+}
+
+export function safeDivide(
+  valueOne?: number,
+  valueTwo?: number,
+  fallback: number = Number.NaN,
+) {
+  const parsedOne = sanitizePriceNumber(valueOne);
+  const parsedTwo = sanitizePriceNumber(valueTwo);
+
+  if (
+    Number.isNaN(parsedOne) ||
+    Number.isNaN(parsedTwo) ||
+    parsedTwo === 0
+  ) {
+    return fallback;
+  }
+
+  return clampPrice(parsedOne / parsedTwo);
+}
+
+export function safePercent(
+  value?: number,
+  total?: number,
+  fallback: number = 0,
+) {
+  const ratio = safeDivide(value, total, Number.NaN);
+  const percent = safeMultiply(ratio, 100);
+  if (Number.isNaN(percent)) {
+    return fallback;
+  }
+
+  return percent;
 }
 
 export function getPriceKey(itemRow: ItemRow, prices?: Prices['prices']) {
@@ -105,7 +213,7 @@ export function getPriceKey(itemRow: ItemRow, prices?: Prices['prices']) {
   const hasWear =
     itemRow?.item_wear_name !== undefined && itemRow?.item_wear_name !== '';
   const wearName = hasWear
-    ? `${itemRow.item_name} (${itemRow.item_wear_name})`
+    ? `${baseName} (${itemRow.item_wear_name})`
     : baseName;
 
   if (prices?.[wearName]) {
