@@ -22,9 +22,11 @@ export class ConvertPrices {
     const currencyMultiplier = sanitizePriceNumber(
       this.settingsData.currencyPrice?.[this.settingsData.currency],
     );
-    const itemPrice = safeMultiply(
+    const itemPrice = normalizeMoneyValue(
+      safeMultiply(
       sourcePrice,
       currencyMultiplier,
+      ),
     );
 
     if (nanToZero && Number.isNaN(itemPrice)) {
@@ -40,7 +42,7 @@ export class ConvertPrices {
     nanToZero = false,
   ) {
     const itemPrice = this.getPrice(itemRow, nanToZero);
-    const totalPrice = safeMultiply(itemPrice, multiplier);
+    const totalPrice = normalizeMoneyValue(safeMultiply(itemPrice, multiplier));
 
     if (nanToZero && Number.isNaN(totalPrice)) {
       return 0;
@@ -80,6 +82,8 @@ async function requestPrice(priceToGet: Array<ItemRow>) {
 }
 
 const MAX_SAFE_PRICE = Number.MAX_SAFE_INTEGER;
+const PRICE_PLACEHOLDER_THRESHOLD = Number.MAX_VALUE / 1024;
+const MAX_REASONABLE_MARKET_PRICE = 10000000;
 
 function clampPrice(value: number) {
   if (!Number.isFinite(value)) {
@@ -101,18 +105,42 @@ export function sanitizePriceNumber(
   value?: number | string,
   fallback: number = Number.NaN,
 ) {
+  const normalizeNumeric = (numericValue: number) => {
+    if (Math.abs(numericValue) >= PRICE_PLACEHOLDER_THRESHOLD) {
+      return fallback;
+    }
+
+    if (Math.abs(numericValue) > MAX_REASONABLE_MARKET_PRICE) {
+      return fallback;
+    }
+
+    return clampPrice(numericValue);
+  };
+
   if (typeof value === 'number' && Number.isFinite(value)) {
-    return clampPrice(value);
+    return normalizeNumeric(value);
   }
 
   if (typeof value === 'string' && value.trim() !== '') {
     const parsed = Number(value);
     if (Number.isFinite(parsed)) {
-      return clampPrice(parsed);
+      return normalizeNumeric(parsed);
     }
   }
 
   return fallback;
+}
+
+export function normalizeMoneyValue(
+  value?: number,
+  fallback: number = Number.NaN,
+) {
+  const sanitized = sanitizePriceNumber(value, Number.NaN);
+  if (Number.isNaN(sanitized)) {
+    return fallback;
+  }
+
+  return Math.round((sanitized + Number.EPSILON) * 100) / 100;
 }
 
 export function safeAdd(valueOne?: number, valueTwo?: number) {

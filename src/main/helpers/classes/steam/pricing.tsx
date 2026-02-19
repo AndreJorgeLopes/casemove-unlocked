@@ -7,6 +7,25 @@ dotenv.config()
 class MyEmitter extends EventEmitter {}
 export const pricingEmitter = new MyEmitter();
 
+const PRICE_PLACEHOLDER_THRESHOLD = Number.MAX_VALUE / 1024;
+const MAX_REASONABLE_MARKET_PRICE = 10000000;
+
+function normalizeProviderPrice(value) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return 0;
+  }
+
+  if (Math.abs(value) >= PRICE_PLACEHOLDER_THRESHOLD) {
+    return 0;
+  }
+
+  if (Math.abs(value) > MAX_REASONABLE_MARKET_PRICE) {
+    return 0;
+  }
+
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
 // Get latest prices, if fail use backup
 
 export async function getPricesBackup(cas) {
@@ -127,30 +146,42 @@ export class runItems {
     }
 
     if (this.prices[itemNamePricing] !== undefined) {
+      const buffPrice = normalizeProviderPrice(
+        this.prices[itemNamePricing]?.buff163?.starting_at?.price,
+      );
+      const skinportPrice = normalizeProviderPrice(
+        this.prices[itemNamePricing]?.skinport?.starting_at,
+      );
+
+      const steamCandidates = [
+        this.prices[itemNamePricing]?.steam?.last_24h,
+        this.prices[itemNamePricing]?.steam?.last_7d,
+        this.prices[itemNamePricing]?.steam?.last_30d,
+        this.prices[itemNamePricing]?.steam?.last_90d,
+      ];
+      let steamPrice = 0;
+      steamCandidates.some((candidate) => {
+        const normalized = normalizeProviderPrice(candidate);
+        if (normalized > 0) {
+          steamPrice = normalized;
+          return true;
+        }
+
+        return false;
+      });
+
       const pricingDict = {
-        buff163: this.prices[itemNamePricing]?.buff163?.starting_at?.price,
-        steam_listing: this.prices[itemNamePricing]?.steam?.last_90d,
-        skinport: this.prices[itemNamePricing]?.skinport?.starting_at,
+        buff163: buffPrice,
+        steam_listing: steamPrice,
+        skinport: skinportPrice,
         bitskins: 0,
       };
-      if (this.prices[itemNamePricing]?.steam?.last_30d) {
-        pricingDict.steam_listing =
-          this.prices[itemNamePricing]?.steam?.last_30d;
-      }
-      if (this.prices[itemNamePricing]?.steam?.last_7d) {
-        pricingDict.steam_listing =
-          this.prices[itemNamePricing]?.steam?.last_7d;
-      }
-
-      if (this.prices[itemNamePricing]?.steam?.last_24h) {
-        pricingDict.steam_listing =
-          this.prices[itemNamePricing]?.steam?.last_24h;
-      }
       if (
-        this.prices[itemNamePricing]?.steam?.last_7d == 0 &&
-        this.prices[itemNamePricing]?.buff163?.starting_at?.price > 2000
+        normalizeProviderPrice(this.prices[itemNamePricing]?.steam?.last_7d) ===
+          0 &&
+        buffPrice > 2000
       ) {
-        pricingDict.steam_listing = this.prices[itemNamePricing]?.buff163.starting_at?.price * 0.8;
+        pricingDict.steam_listing = normalizeProviderPrice(buffPrice * 0.8);
       }
       itemRow['pricing'] = pricingDict;
       return itemRow;
