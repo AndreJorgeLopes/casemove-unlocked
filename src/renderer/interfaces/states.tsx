@@ -142,6 +142,7 @@ export interface Overview {
 }
 export interface Settings {
   fastMove: boolean,
+  theme: 'dark' | 'light',
   currency: string,
   locale: string,
   steamLoginShow: boolean,

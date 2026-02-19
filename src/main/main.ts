@@ -1033,6 +1033,11 @@ ipcMain.on('getCurrency', async (event) => {
 
 // Set initial settings
 async function settingsSetup() {
+  getValue('theme').then((returnValue) => {
+    if (returnValue == undefined) {
+      setValue('theme', 'dark');
+    }
+  });
   getValue('devmode').then((returnValue) => {
     if (returnValue == undefined) {
       setValue('devmode', false);

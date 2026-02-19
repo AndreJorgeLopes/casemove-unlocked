@@ -396,7 +396,7 @@ export default function LoginForm({
                   ? 'Scan QR Code'
                   : 'Connect from browser'}
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
+            <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
               {loginMethod === 'REGULAR'
                 ? 'The application needs to have an active Steam connection to manage your CSGO items. You should not have any games open on the Steam account.'
                 : loginMethod === 'QR'
@@ -407,10 +407,10 @@ export default function LoginForm({
               <div
                 className={classNames(
                   authStatus.state === 'success'
-                    ? 'border-green-500 bg-green-50 text-green-800'
+                    ? 'border-green-500 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/30 dark:text-green-200'
                     : authStatus.state === 'error'
-                      ? 'border-red-500 bg-red-50 text-red-800'
-                      : 'border-blue-500 bg-blue-50 text-blue-800',
+                      ? 'border-red-500 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/30 dark:text-red-200'
+                      : 'border-blue-500 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-200',
                   'mt-4 rounded-md border px-3 py-2 text-sm',
                 )}
               >
