@@ -1,4 +1,5 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
+import { execSync } from 'child_process';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
@@ -45,6 +46,7 @@ const config: ForgeConfig = {
         liveReload: false,
       },
       mainConfig,
+      loggerPort,
       renderer: {
         config: rendererConfig,
         nodeIntegration: true,

@@ -28,6 +28,7 @@
     "package": "electron-forge package",
     "prepare": "husky",
     "start": "electron-forge start",
+    "start-hyprland": "DEBUG=steam-session* electron-forge start -- -- --ozone-platform=wayland",
     "test": "jest",
     "make": "electron-forge make --stats-error-details",
     "linear:init": "node scripts/linear-sync.js --mode=init",
@@ -201,6 +202,7 @@
     "ts-loader": "^9.5.2",
     "uglify-js": "^3.19.3",
     "update-electron-app": "^3.1.1",
+    "vibe-kanban-web-companion": "^0.0.5",
     "webpack": "^5.100.1",
     "webpack-cli": "^6.0.1",
     "xmldom": "^0.6.0"
