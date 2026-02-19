@@ -2,6 +2,7 @@ import {
   ConvertPrices,
   getPriceKey,
   normalizeMoneyValue,
+  safeAdd,
   safePercent,
 } from '../renderer/functionsClasses/prices';
 import { ItemRow } from '../renderer/interfaces/items';
@@ -129,7 +130,7 @@ describe('pricing helpers', () => {
     expect(converter.getPrice(itemRow, true)).toBe(0);
   });
 
-  it('treats implausibly large multiplied totals as invalid', () => {
+  it('allows aggregate totals above 10M while still clamping overflow', () => {
     const prices = createPrices({
       'AK-47 (Factory New)': { steam_listing: 10 },
     });
@@ -141,10 +142,11 @@ describe('pricing helpers', () => {
 
     expect(
       converter.getPriceWithMultiplier(itemRow, Number.MAX_SAFE_INTEGER),
-    ).toBeNaN();
-    expect(
-      converter.getPriceWithMultiplier(itemRow, Number.MAX_SAFE_INTEGER, true),
-    ).toBe(0);
+    ).toBe(Number.MAX_SAFE_INTEGER);
+  });
+
+  it('safeAdd keeps valid aggregate values above 10M', () => {
+    expect(safeAdd(9_500_000, 1_200_000)).toBe(10_700_000);
   });
 
   it('returns zero when nanToZero is set and price is missing', () => {
