@@ -16,7 +16,7 @@ export class ConvertPrices {
   }
 
   getPrice(itemRow: ItemRow, nanToZero = false) {
-    const sourcePrice = sanitizePriceNumber(
+    const sourcePrice = sanitizeProviderPrice(
       this.prices?.prices?.[this._getName(itemRow)]?.[this.settingsData.source.title],
     );
     const currencyMultiplier = sanitizePriceNumber(
@@ -110,10 +110,6 @@ export function sanitizePriceNumber(
       return fallback;
     }
 
-    if (Math.abs(numericValue) > MAX_REASONABLE_MARKET_PRICE) {
-      return fallback;
-    }
-
     return clampPrice(numericValue);
   };
 
@@ -129,6 +125,22 @@ export function sanitizePriceNumber(
   }
 
   return fallback;
+}
+
+export function sanitizeProviderPrice(
+  value?: number | string,
+  fallback: number = Number.NaN,
+) {
+  const sanitizedValue = sanitizePriceNumber(value, fallback);
+  if (Number.isNaN(sanitizedValue)) {
+    return fallback;
+  }
+
+  if (Math.abs(sanitizedValue) > MAX_REASONABLE_MARKET_PRICE) {
+    return fallback;
+  }
+
+  return sanitizedValue;
 }
 
 export function normalizeMoneyValue(
