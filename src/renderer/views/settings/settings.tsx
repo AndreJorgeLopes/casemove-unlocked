@@ -445,7 +445,7 @@ export default function settingsPage() {
                             </div>
                             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
                               <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
-                                Theme <br />
+                                Dark mode <br />
                                 <span className="text-gray-400">
                                   {' '}
                                   Toggle between light and dark mode.
