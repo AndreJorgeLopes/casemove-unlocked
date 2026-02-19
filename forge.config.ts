@@ -1,5 +1,4 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
-import { execSync } from 'child_process';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
@@ -17,6 +16,7 @@ const certificateFile = process.env.CERTIFICATE_FILE || './cert.pfx';
 const shouldSignWindowsBuild =
   Boolean(process.env.CERTIFICATE_PASSWORD) &&
   fs.existsSync(certificateFile);
+const loggerPort = 19000;
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -39,14 +39,13 @@ const config: ForgeConfig = {
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
-      loggerPort: 19000,
+      loggerPort,
       port: 3001,
       devServer: {
         hot: false,
         liveReload: false,
       },
       mainConfig,
-      loggerPort,
       renderer: {
         config: rendererConfig,
         nodeIntegration: true,
