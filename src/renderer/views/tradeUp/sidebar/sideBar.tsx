@@ -17,7 +17,7 @@ export default function TradeUpSideBar() {
   totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
 
 
-  let productsToUse = [...tradeUpData.tradeUpProducts];
+  const productsToUse = [...tradeUpData.tradeUpProducts];
 
   while (true) {
     if (productsToUse.length != 10) {
@@ -28,8 +28,8 @@ export default function TradeUpSideBar() {
   }
 
   return (
-    <div>
-      <div className="px-4 py-5 border-b border-gray-200 sm:px-6 dark:bg-dark-level-two dark:border-opacity-50 items-center">
+    <div className="h-full min-h-0 flex flex-col">
+      <div className="px-4 py-5 border-b border-gray-200 sm:px-6 dark:bg-dark-level-two dark:border-opacity-50 items-center shrink-0">
         <div className="flex justify-center items-center">
         <div className="">
               <div className="flex items-center flex-nowrap">
@@ -71,7 +71,7 @@ export default function TradeUpSideBar() {
             </div>
         </div>
       </div>
-      <div className="px-4 py-5">
+      <div className="px-4 py-5 flex-1 min-h-0 overflow-y-auto">
         <PossibleOutcomes />
       </div>
     </div>

@@ -17,13 +17,16 @@ const tabs: TabProps[] = [
 type LoginTabsProps = {
   selectedTab: LoginMethod;
   setSelectedTab: (tab: LoginMethod) => void;
+  disabled?: boolean;
 };
 
 export default function LoginTabs({
   selectedTab,
   setSelectedTab,
+  disabled = false,
 }: LoginTabsProps) {
   const defaultValue: LoginMethod = 'REGULAR';
+  defaultValue;
   return (
     <div className="bg-dark-level-one px-4 pt-6 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -36,7 +39,11 @@ export default function LoginTabs({
               name="tabs"
               className="block w-full rounded-md border-none bg-white/5 py-2 pl-3 pr-10 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm"
               value={tabs.find((tab) => tab.key === selectedTab)?.name}
+              disabled={disabled}
               onChange={e => {
+                if (disabled) {
+                  return;
+                }
                 const selectedName = e.target.value;
                 const selectedTabObj = tabs.find(tab => tab.name === selectedName);
                 if (selectedTabObj) {
@@ -58,7 +65,9 @@ export default function LoginTabs({
               {tabs.map((tab) => (
                 <li key={tab.name}>
                   <button
-                      onClick={() => setSelectedTab(tab.key)} className={classNames(tab.key === selectedTab ? 'bg-dark-level-three' : '', 'flex px-3 py-1 pointer place-content-center h-full items-center rounded-md')}>
+                      onClick={() => setSelectedTab(tab.key)}
+                      disabled={disabled}
+                      className={classNames(tab.key === selectedTab ? 'bg-dark-level-three' : '', disabled ? 'opacity-50 cursor-not-allowed' : '', 'flex px-3 py-1 pointer place-content-center h-full items-center rounded-md')}>
                     <tab.icon className={classNames(tab.key === selectedTab ? 'text-dark-white' : "text-gray-400", 'h-6 w-6 pr-2')}/>
                     <span
                       className={

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { classNames } from '../../../../renderer/components/content/shared/filters/inventoryFunctions';
+import { ConvertPrices, safeAdd, safePercent } from '../../../../renderer/functionsClasses/prices';
 import { tradeUpSetPossible } from '../../../../renderer/store/actions/tradeUpActions';
 
 const rarityShort = {
@@ -19,21 +20,20 @@ export default function PossibleOutcomes() {
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const [outcomesRequested, setOutcomesRequested] = useState(0);
   const dispatch = useDispatch();
+  const pricingClass = new ConvertPrices(settingsData, pricesResult);
   console.log(tradeUpData.possibleOutcomes.length, tradeUpData.tradeUpProducts.length)
 
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    totalPrice += pricesResult.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'];
+    totalPrice = safeAdd(totalPrice, pricingClass.getPrice(element, true));
   });
-  totalPrice;
 
   tradeUpData.possibleOutcomes.forEach((element) => {
-    element['profit_cal'] =
-      (100 / (totalPrice * 100)) *
-      (pricesResult?.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'] * 100);
+    const outcomePrice = pricingClass.getPrice(element, true);
+    element['profit_cal'] = safePercent(outcomePrice, totalPrice, 0);
   });
   tradeUpData.possibleOutcomes.sort(function (a, b) {
-    var keyA = a.profit_cal,
+    const keyA = a.profit_cal,
       keyB = b.profit_cal;
     if (keyA < keyB) return 1;
     if (keyA > keyB) return -1;

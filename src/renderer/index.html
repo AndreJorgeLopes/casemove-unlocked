@@ -7,11 +7,16 @@
     <title>Casemove</title>
     <script>
       try {
-        const theme = window.electron?.store?.getThemeSync?.() || 'dark';
+        const storedTheme = window.electron?.store?.getThemeSync?.();
+        const theme = storedTheme === 'light' ? 'light' : 'dark';
+        document.documentElement.classList.remove('dark', 'light');
         document.documentElement.classList.add(theme);
+        document.documentElement.style.colorScheme = theme;
       } catch (e) {
         console.error('Failed to set theme', e);
+        document.documentElement.classList.remove('light');
         document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = 'dark';
       }
     </script>
   </head>

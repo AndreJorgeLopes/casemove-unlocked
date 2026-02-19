@@ -8,58 +8,15 @@ import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-nati
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import fs from 'fs';
 
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 
-const portRangeStart = 9000;
-const portRangeEnd = 9999;
-
-const resolveLoggerPort = (): number => {
-  const requestedPort = Number(process.env.PORT);
-  const startPort =
-    Number.isFinite(requestedPort) &&
-    requestedPort >= portRangeStart &&
-    requestedPort <= portRangeEnd
-      ? requestedPort
-      : portRangeStart;
-
-  const probeScript = `
-const net = require('net');
-const start = ${startPort};
-const end = ${portRangeEnd};
-const tryPort = (port) => new Promise((resolve) => {
-  const server = net.createServer().unref();
-  server.once('error', () => resolve(false));
-  server.listen(port, () => server.close(() => resolve(true)));
-});
-(async () => {
-  for (let port = start; port <= end; port++) {
-    if (await tryPort(port)) {
-      process.stdout.write(String(port));
-      return;
-    }
-  }
-  process.stderr.write('No available port in range');
-  process.exit(1);
-})();
-`;
-
-  const output = execSync(`node -e ${JSON.stringify(probeScript)}`, {
-    stdio: ['ignore', 'pipe', 'pipe'],
-  })
-    .toString()
-    .trim();
-  const port = Number(output);
-  if (!Number.isFinite(port)) {
-    throw new Error(
-      `Failed to resolve dev server port from probe output: "${output}"`,
-    );
-  }
-  return port;
-};
-
-const loggerPort = resolveLoggerPort();
+const certificateFile = process.env.CERTIFICATE_FILE || './cert.pfx';
+const shouldSignWindowsBuild =
+  Boolean(process.env.CERTIFICATE_PASSWORD) &&
+  fs.existsSync(certificateFile);
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -68,8 +25,12 @@ const config: ForgeConfig = {
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({
-      certificateFile: './cert.pfx',
-      certificatePassword: process.env.CERTIFICATE_PASSWORD,
+      ...(shouldSignWindowsBuild
+        ? {
+            certificateFile,
+            certificatePassword: process.env.CERTIFICATE_PASSWORD,
+          }
+        : {}),
     }),
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),
@@ -80,6 +41,10 @@ const config: ForgeConfig = {
     new WebpackPlugin({
       loggerPort: 19000,
       port: 3001,
+      devServer: {
+        hot: false,
+        liveReload: false,
+      },
       mainConfig,
       loggerPort,
       renderer: {

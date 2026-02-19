@@ -1,6 +1,11 @@
 import { useSelector } from 'react-redux';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { ConvertPrices } from '../../functionsClasses/prices';
+import {
+  ConvertPrices,
+  safeAdd,
+  safeDivide,
+  sanitizePriceNumber,
+} from '../../functionsClasses/prices';
 import RunOverview from './runOverview';
 
 function OverviewContent() {
@@ -11,19 +16,18 @@ function OverviewContent() {
   let totalFloat = 0;
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    totalFloat += element.item_paint_wear;
-    totalPrice += pricingClass.getPrice(element, true);
+    totalFloat = safeAdd(totalFloat, sanitizePriceNumber(element.item_paint_wear, 0));
+    totalPrice = safeAdd(totalPrice, pricingClass.getPrice(element, true));
   });
-  totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
+  totalFloat = safeDivide(totalFloat, tradeUpData.tradeUpProducts.length, 0);
   let totalEV = 0;
   tradeUpData.possibleOutcomes.forEach((element) => {
     const individualPrice = pricingClass.getPriceWithMultiplier(
       element,
-      element.percentage / 100,
+      safeDivide(sanitizePriceNumber(element.percentage, 0), 100, 0),
       true,
     );
-    totalEV += individualPrice;
-    console.log(element, element.percentage, individualPrice);
+    totalEV = safeAdd(totalEV, individualPrice);
   });
 
   return (

@@ -12,6 +12,9 @@ export async function handleLogonSuccess(message) {
 }
 
 export async function handleUserEvent(message, settings) {
+    if (!Array.isArray(message) || message.length < 2) {
+        return;
+    }
     const statusCode = message[0]
     const description = message[1]
     switch (statusCode) {
@@ -44,4 +47,3 @@ export async function handleUserEvent(message, settings) {
 
     }
 }
-

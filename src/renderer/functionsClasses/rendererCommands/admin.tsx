@@ -8,6 +8,7 @@ import {
   setOS,
   setSourceValue,
   setSteamLoginShow,
+  setTheme,
 } from '../../../renderer/store/actions/settings';
 import {
   DispatchIPCBuildingObject,
@@ -16,9 +17,19 @@ import {
   DispatchStoreHandleBuildingOptionsClass,
 } from '../../../shared/Interfaces.tsx/login';
 
+function getElectronBridge() {
+  if (window.electron?.ipcRenderer && window.electron?.store) {
+    return window.electron;
+  }
+
+  throw new Error(
+    'Electron preload bridge is unavailable. Ensure preload loaded and contextIsolation is enabled.',
+  );
+}
+
 export class IPCCommunication {
-  ipc = window.electron.ipcRenderer;
-  store = window.electron.store;
+  ipc = getElectronBridge().ipcRenderer;
+  store = getElectronBridge().store;
 
   async get(command: Function) {
     return await command().then((returnValue) => {
@@ -59,6 +70,10 @@ export class DispatchStore extends IPCCommunication {
     fastmove: {
       name: 'fastmove',
       action: setFastMove
+    },
+    theme: {
+      name: 'theme',
+      action: setTheme
     },
     currency: {
       name: 'currency',
