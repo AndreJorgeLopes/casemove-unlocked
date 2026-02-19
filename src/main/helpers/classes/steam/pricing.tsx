@@ -11,19 +11,55 @@ const PRICE_PLACEHOLDER_THRESHOLD = Number.MAX_VALUE / 1024;
 const MAX_REASONABLE_MARKET_PRICE = 10000000;
 
 function normalizeProviderPrice(value) {
-  if (typeof value !== 'number' || !Number.isFinite(value)) {
+  let parsedValue = value;
+  if (typeof parsedValue === 'string' && parsedValue.trim() !== '') {
+    parsedValue = Number(parsedValue);
+  }
+
+  if (typeof parsedValue !== 'number' || !Number.isFinite(parsedValue)) {
     return 0;
   }
 
-  if (Math.abs(value) >= PRICE_PLACEHOLDER_THRESHOLD) {
+  if (Math.abs(parsedValue) >= PRICE_PLACEHOLDER_THRESHOLD) {
     return 0;
   }
 
-  if (Math.abs(value) > MAX_REASONABLE_MARKET_PRICE) {
+  if (Math.abs(parsedValue) > MAX_REASONABLE_MARKET_PRICE) {
     return 0;
   }
 
-  return Math.round((value + Number.EPSILON) * 100) / 100;
+  return Math.round((parsedValue + Number.EPSILON) * 100) / 100;
+}
+
+function hasValidPricingValue(pricingData) {
+  if (typeof pricingData !== 'object' || pricingData == null) {
+    return false;
+  }
+
+  const entries = Object.values(pricingData);
+  for (const entry of entries as any[]) {
+    const steamCandidates = [
+      entry?.steam?.last_24h,
+      entry?.steam?.last_7d,
+      entry?.steam?.last_30d,
+      entry?.steam?.last_90d,
+    ];
+
+    const providerCandidates = [
+      ...steamCandidates,
+      entry?.skinport?.starting_at,
+      entry?.buff163?.starting_at?.price,
+    ];
+
+    const hasValid = providerCandidates.some(
+      (candidate) => normalizeProviderPrice(candidate) > 0,
+    );
+    if (hasValid) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // Get latest prices, if fail use backup
@@ -43,7 +79,12 @@ export async function getPrices(cas) {
         response !== null
       );
       if (typeof response === 'object' && response !== null) {
-        cas.setPricing(response.data, 'normal');
+        if (hasValidPricingValue(response.data)) {
+          cas.setPricing(response.data, 'normal');
+        } else {
+          console.log('Invalid CDN pricing payload, using backup');
+          getPricesBackup(cas);
+        }
       } else {
         getPricesBackup(cas);
       }
