@@ -21,7 +21,11 @@ import PricingAmount from '../../shared/filters/pricingAmount';
 import InventoryFiltersDisclosure from '../../Inventory/filtersDisclosure';
 import { searchFilter } from '../../../../../renderer/functionsClasses/filters/search';
 import { ReducerManager } from '../../../../../renderer/functionsClasses/reducerManager';
-import { ConvertPrices } from '../../../../../renderer/functionsClasses/prices';
+import {
+  ConvertPrices,
+  normalizeMoneyValue,
+  safeAdd,
+} from '../../../../../renderer/functionsClasses/prices';
 import { toGetFilterManager } from './toFilterSetup';
 import { addMajorsFilters } from '../../../../../renderer/functionsClasses/filters/filters';
 const ClassFilters = toGetFilterManager()
@@ -93,15 +97,21 @@ function content() {
       (row) => row[0] == projectRow.item_id
     );
     if (filtered.length > 0) {
-      totalHighlighted +=
-        classConvert.getPrice(projectRow) * filtered[0][2].length;
+      totalHighlighted = safeAdd(
+        totalHighlighted,
+        classConvert.getPriceWithMultiplier(
+          projectRow,
+          filtered[0][2].length,
+          true,
+        ),
+      );
     }
 
     // Get total price
-    totalAmount += classConvert.getPrice(projectRow, true);
+    totalAmount = safeAdd(totalAmount, classConvert.getPrice(projectRow, true));
   });
-  totalHighlighted = totalHighlighted.toFixed(0);
-  totalAmount = totalAmount.toFixed(0);
+  totalHighlighted = normalizeMoneyValue(totalHighlighted, 0);
+  totalAmount = normalizeMoneyValue(totalAmount, 0);
   addMajorsFilters(inventory.combinedInventory).then((returnValue) => {
     ClassFilters.loadFilter(returnValue, true)
   })

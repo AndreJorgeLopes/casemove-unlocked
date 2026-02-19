@@ -1,6 +1,7 @@
 import {
   ConvertPrices,
   getPriceKey,
+  normalizeMoneyValue,
   safePercent,
 } from '../renderer/functionsClasses/prices';
 import { ItemRow } from '../renderer/interfaces/items';
@@ -110,7 +111,7 @@ describe('pricing helpers', () => {
     );
   });
 
-  it('clamps getPrice to MAX_SAFE_INTEGER on overflow', () => {
+  it('treats implausibly large source prices as invalid', () => {
     const prices = createPrices({
       'AK-47 (Factory New)': { steam_listing: Number.MAX_SAFE_INTEGER },
     });
@@ -124,10 +125,11 @@ describe('pricing helpers', () => {
       item_wear_name: 'Factory New',
     });
 
-    expect(converter.getPrice(itemRow)).toBe(Number.MAX_SAFE_INTEGER);
+    expect(Number.isNaN(converter.getPrice(itemRow))).toBe(true);
+    expect(converter.getPrice(itemRow, true)).toBe(0);
   });
 
-  it('clamps getPriceWithMultiplier to MAX_SAFE_INTEGER on overflow', () => {
+  it('treats implausibly large multiplied totals as invalid', () => {
     const prices = createPrices({
       'AK-47 (Factory New)': { steam_listing: 10 },
     });
@@ -139,7 +141,10 @@ describe('pricing helpers', () => {
 
     expect(
       converter.getPriceWithMultiplier(itemRow, Number.MAX_SAFE_INTEGER),
-    ).toBe(Number.MAX_SAFE_INTEGER);
+    ).toBeNaN();
+    expect(
+      converter.getPriceWithMultiplier(itemRow, Number.MAX_SAFE_INTEGER, true),
+    ).toBe(0);
   });
 
   it('returns zero when nanToZero is set and price is missing', () => {
@@ -151,6 +156,34 @@ describe('pricing helpers', () => {
     });
 
     expect(converter.getPrice(itemRow, true)).toBe(0);
+  });
+
+  it('treats Number.MAX_VALUE provider placeholders as invalid prices', () => {
+    const prices = createPrices({
+      'AK-47 (Factory New)': { steam_listing: Number.MAX_VALUE },
+    });
+    const converter = new ConvertPrices(baseSettings, prices);
+    const itemRow = createItemRow({
+      item_name: 'AK-47',
+      item_wear_name: 'Factory New',
+    });
+
+    expect(Number.isNaN(converter.getPrice(itemRow))).toBe(true);
+    expect(converter.getPrice(itemRow, true)).toBe(0);
+  });
+
+  it('normalizes money calculations to two decimals', () => {
+    const prices = createPrices({
+      'AK-47 (Factory New)': { steam_listing: 1.239 },
+    });
+    const converter = new ConvertPrices(baseSettings, prices);
+    const itemRow = createItemRow({
+      item_name: 'AK-47',
+      item_wear_name: 'Factory New',
+    });
+
+    expect(converter.getPrice(itemRow)).toBe(1.24);
+    expect(normalizeMoneyValue(1.235)).toBe(1.24);
   });
 
   it('safePercent returns fallback for zero totals', () => {
