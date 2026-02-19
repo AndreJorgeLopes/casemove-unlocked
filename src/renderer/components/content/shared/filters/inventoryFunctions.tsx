@@ -1,6 +1,11 @@
 import { ItemRow, ItemRowStorage } from '../../../../../renderer/interfaces/items';
 import { Inventory, InventoryFilters, Prices, Settings, State } from '../../../../../renderer/interfaces/states';
 import { filterInventorySetSort } from '../../../../../renderer/store/actions/filtersInventoryActions';
+import {
+  getPriceKey,
+  normalizeMoneyValue,
+  safeMultiply,
+} from '../../../../../renderer/functionsClasses/prices';
 import {itemCategories, itemSubCategories} from '../categories';
 
 
@@ -217,6 +222,14 @@ export async function sortDataFunction(
   prices,
   pricingSource
 ) {
+  const getSortPrice = (item) => {
+    const key = getPriceKey(item, prices);
+    return normalizeMoneyValue(
+      safeMultiply(prices?.[key]?.[pricingSource], item?.combined_QTY || 1),
+      Number.NaN
+    );
+  };
+
   function sortRun(valueOne, ValueTwo, useNaN = false) {
     if (valueOne == undefined) {
       valueOne = -90000000000
@@ -289,8 +302,8 @@ export async function sortDataFunction(
     case 'Price':
       inventory.sort(function (a, b) {
         return sortRunAlt(
-          prices[a.item_name  + a.item_wear_name || '']?.[pricingSource] * a.combined_QTY,
-          prices[b.item_name  + b.item_wear_name || '']?.[pricingSource] * b.combined_QTY
+          getSortPrice(a),
+          getSortPrice(b)
         );
       });
       return inventory;
@@ -360,6 +373,14 @@ export function sortDataFunctionTwo(
   prices,
   pricingSource
 ) {
+  const getSortPrice = (item) => {
+    const key = getPriceKey(item, prices);
+    return normalizeMoneyValue(
+      safeMultiply(prices?.[key]?.[pricingSource], item?.combined_QTY || 1),
+      Number.NaN
+    );
+  };
+
   function sortRun(valueOne, ValueTwo, useNaN = false) {
     if (valueOne == undefined) {
       valueOne = -90000000000
@@ -432,8 +453,8 @@ export function sortDataFunctionTwo(
     case 'Price':
       inventory.sort(function (a, b) {
         return sortRunAlt(
-          prices[a.item_name  + a.item_wear_name || '']?.[pricingSource] * a.combined_QTY || 1,
-          prices[b.item_name  + b.item_wear_name || '']?.[pricingSource] * b.combined_QTY || 1
+          getSortPrice(a),
+          getSortPrice(b)
         );
       });
       return inventory;

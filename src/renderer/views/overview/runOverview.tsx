@@ -17,7 +17,11 @@ import {
 } from 'react-router-dom';
 import { ReducerManager } from '../../../renderer/functionsClasses/reducerManager';
 import { State } from '../../../renderer/interfaces/states';
-import { ConvertPrices, RequestPrices } from '../../../renderer/functionsClasses/prices';
+import {
+  ConvertPrices,
+  RequestPrices,
+  safeAdd,
+} from '../../../renderer/functionsClasses/prices';
 import { downloadReport } from '../../../renderer/functionsClasses/downloadReport';
 import { LoadButton } from '../../../renderer/components/content/loadStorageUnitsButton';
 import ListBoxOptions from './overviewOptionsDropdown';
@@ -58,18 +62,22 @@ function Content() {
   const PricingClass = new ConvertPrices(settingsData, currentState.pricingReducer)
   let inventoryValue = 0
   inventory.combinedInventory.forEach(element => {
-    const itemPrice = PricingClass.getPrice(element)
-    if (!isNaN(itemPrice)) {
-      inventoryValue += itemPrice * element.combined_QTY
-    }
+    const combinedPrice = PricingClass.getPriceWithMultiplier(
+      element,
+      element.combined_QTY,
+      true,
+    );
+    inventoryValue = safeAdd(inventoryValue, combinedPrice);
   });
 
   let storageUnitsValue = 0
   inventory.storageInventory.forEach(element => {
-    const itemPrice = PricingClass.getPrice(element)
-    if (!isNaN(itemPrice)) {
-      storageUnitsValue += itemPrice * element.combined_QTY
-    }
+    const combinedPrice = PricingClass.getPriceWithMultiplier(
+      element,
+      element.combined_QTY,
+      true,
+    );
+    storageUnitsValue = safeAdd(storageUnitsValue, combinedPrice);
   });
 
 

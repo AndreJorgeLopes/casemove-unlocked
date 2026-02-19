@@ -13,7 +13,7 @@ import { itemCategories } from '../../../../renderer/components/content/shared/c
 import { categoriesRGB } from './categoriesRGB';
 import PieChart from '../charts/pieChart';
 import { ReducerManager } from '../../../../renderer/functionsClasses/reducerManager';
-import { ConvertPrices } from '../../../../renderer/functionsClasses/prices';
+import { ConvertPrices, safeAdd } from '../../../../renderer/functionsClasses/prices';
 import { Settings } from '../../../../renderer/interfaces/states';
 
 
@@ -47,8 +47,10 @@ function getData(ReducerClass, by) {
   inventory.combinedInventory.forEach(element => {
     if (resultingData[element.category]) {
       if (by == 'price') {
-
-        resultingData[element.category].inventory += PricingConverter.getPrice(element, true) * element.combined_QTY
+        resultingData[element.category].inventory = safeAdd(
+          resultingData[element.category].inventory,
+          PricingConverter.getPriceWithMultiplier(element, element.combined_QTY, true),
+        );
       }
       if (by == 'volume') {
         resultingData[element.category].inventory = resultingData?.[element.category]?.inventory + element.combined_QTY
@@ -61,8 +63,10 @@ function getData(ReducerClass, by) {
   inventory.storageInventory.forEach(element => {
     if (resultingData[element.category]) {
       if (by == 'price') {
-
-        resultingData[element.category].storageUnits += PricingConverter.getPrice(element, true) * element.combined_QTY
+        resultingData[element.category].storageUnits = safeAdd(
+          resultingData[element.category].storageUnits,
+          PricingConverter.getPriceWithMultiplier(element, element.combined_QTY, true),
+        );
       }
       if (by == 'volume') {
         resultingData[element.category].storageUnits = resultingData?.[element.category]?.storageUnits + element.combined_QTY

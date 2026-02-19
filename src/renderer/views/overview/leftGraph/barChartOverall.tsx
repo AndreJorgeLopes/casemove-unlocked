@@ -8,6 +8,7 @@ import { Prices, Settings } from '../../../../renderer/interfaces/states';
 import {
   ConvertPrices,
   ConvertPricesFormatted,
+  safeAdd,
 } from '../../../../renderer/functionsClasses/prices';
 Chart;
 
@@ -42,7 +43,11 @@ function getObject(
       switch (by) {
         case 'price':
           objectToUse[element.item_name] =
-            PricingConverter.getPrice(element, true) * element.combined_QTY;
+            PricingConverter.getPriceWithMultiplier(
+              element,
+              element.combined_QTY,
+              true,
+            );
           break;
         case 'volume':
           objectToUse[element.item_name] = element.combined_QTY;
@@ -53,9 +58,14 @@ function getObject(
     } else {
       switch (by) {
         case 'price':
-          objectToUse[element.item_name] =
-            objectToUse[element.item_name] +
-            PricingConverter.getPrice(element, true) * element.combined_QTY;
+          objectToUse[element.item_name] = safeAdd(
+            objectToUse[element.item_name],
+            PricingConverter.getPriceWithMultiplier(
+              element,
+              element.combined_QTY,
+              true,
+            ),
+          );
           break;
         case 'volume':
           objectToUse[element.item_name] =

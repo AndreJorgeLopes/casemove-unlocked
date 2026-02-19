@@ -5,7 +5,7 @@ import { ReducerManager } from '../../../../renderer/functionsClasses/reducerMan
 import { ItemRow } from '../../../../renderer/interfaces/items';
 import { searchFilter } from '../../../../renderer/functionsClasses/filters/search';
 import { Settings } from '../../../../renderer/interfaces/states';
-import { ConvertPrices } from '../../../../renderer/functionsClasses/prices';
+import { ConvertPrices, safeAdd } from '../../../../renderer/functionsClasses/prices';
 Chart;
 
 function runArray(arrayToRun: Array<ItemRow>, objectToUse: any, by: string, PricingConverter) {
@@ -29,8 +29,11 @@ function getObject(arrayToRun: Array<ItemRow>, objectToUse: any, by: string, Pri
     if (objectToUse[element.item_name] == undefined) {
       switch (by) {
         case 'price':
-
-          objectToUse[element.item_name] = PricingConverter.getPrice(element, true)  *  element.combined_QTY;
+          objectToUse[element.item_name] = PricingConverter.getPriceWithMultiplier(
+            element,
+            element.combined_QTY,
+            true,
+          );
           break
         case 'volume':
 
@@ -42,9 +45,14 @@ function getObject(arrayToRun: Array<ItemRow>, objectToUse: any, by: string, Pri
     } else {
       switch (by) {
         case 'price':
-
-          objectToUse[element.item_name] =
-        objectToUse[element.item_name] + PricingConverter.getPrice(element, true)  *  element.combined_QTY;
+          objectToUse[element.item_name] = safeAdd(
+            objectToUse[element.item_name],
+            PricingConverter.getPriceWithMultiplier(
+              element,
+              element.combined_QTY,
+              true,
+            ),
+          );
           break
         case 'volume':
 
