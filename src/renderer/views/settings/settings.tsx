@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Listbox, Switch, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -7,6 +7,7 @@ import {
   setSourceValue,
   setSteamLoginShow,
   setFastMove,
+  setTheme,
 } from '../../../renderer/store/actions/settings';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { classNames } from '../../../renderer/components/content/shared/filters/inventoryFunctions';
@@ -182,6 +183,11 @@ export default function settingsPage() {
   const dispatch = useDispatch();
   const settingsData = useSelector((state: any) => state.settingsReducer);
 
+  function applyThemeToRoot(theme: 'dark' | 'light') {
+    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.add(theme);
+    document.documentElement.style.colorScheme = theme;
+  }
 
   // Fastmove
   async function updateShowSteamLogin() {
@@ -201,7 +207,22 @@ export default function settingsPage() {
   }
   const [fastMoveStatus, setFastMoveStatus] = useState(settingsData.fastMove);
 
-  // Dark mode
+  // Theme
+  async function updateTheme() {
+    const nextTheme = themeStatus === 'dark' ? 'light' : 'dark';
+    setThemeStatus(nextTheme);
+    applyThemeToRoot(nextTheme);
+    await window.electron.store.set('theme', nextTheme);
+    dispatch(setTheme(nextTheme));
+  }
+  const [themeStatus, setThemeStatus] = useState<'dark' | 'light'>(
+    settingsData.theme || 'dark',
+  );
+  useEffect(() => {
+    setThemeStatus(settingsData.theme || 'dark');
+  }, [settingsData.theme]);
+
+  // Dev mode
   async function updateDevMode() {
     const correctValue = !(await window.electron.store.get('devmode.value'));
     setDevModeStatus(correctValue);
@@ -418,6 +439,39 @@ export default function settingsPage() {
                                         </svg>
                                       </span>
                                     </span>
+                                  </Switch>
+                                </span>
+                              </dd>
+                            </div>
+                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                              <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
+                                Dark mode <br />
+                                <span className="text-gray-400">
+                                  {' '}
+                                  Toggle between light and dark mode.
+                                </span>
+                              </dt>
+                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span className="grow"></span>
+                                <span className="flex items-center ml-4 shrink-0">
+                                  <Switch
+                                    checked={themeStatus === 'dark'}
+                                    onChange={() => updateTheme()}
+                                    className={classNames(
+                                      themeStatus === 'dark'
+                                        ? 'bg-indigo-600 dark:bg-indigo-700'
+                                        : 'bg-gray-200',
+                                      'relative inline-flex mr-3 shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+                                    )}
+                                  >
+                                    <span
+                                      className={classNames(
+                                        themeStatus === 'dark'
+                                          ? 'translate-x-5'
+                                          : 'translate-x-0',
+                                        'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+                                      )}
+                                    />
                                   </Switch>
                                 </span>
                               </dd>

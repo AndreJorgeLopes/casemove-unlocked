@@ -7,6 +7,12 @@ export const setFastMove = (valueToSet) => {
       payload: valueToSet
   }
 }
+export const setTheme = (valueToSet: 'dark' | 'light') => {
+  return {
+      type: 'SETTINGS_SET_THEME',
+      payload: valueToSet
+  }
+}
 export const setColumns = (valueToSet) => {
   return {
       type: 'SETTINGS_SET_COLUMNS',

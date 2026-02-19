@@ -10,3 +10,56 @@ body {
   margin: 0;
   overflow: hidden;
 }
+
+/* Global dark-theme fallback styling.
+   Keep specificity low so explicit `dark:*` utilities still win. */
+:where(html.dark) {
+  background-color: #121212;
+  color: #d6d3cd;
+}
+
+:where(html.dark) body,
+:where(html.dark) #root {
+  background-color: #121212;
+  color: #d6d3cd;
+}
+
+:where(html.dark) .bg-white {
+  background-color: #121212;
+}
+
+:where(html.dark) .bg-gray-50 {
+  background-color: #181818;
+}
+
+:where(html.dark) .bg-gray-100 {
+  background-color: #282828;
+}
+
+:where(html.dark) .bg-gray-200 {
+  background-color: #404040;
+}
+
+:where(html.dark) .text-gray-900 {
+  color: #d6d3cd;
+}
+
+:where(html.dark) .text-gray-700 {
+  color: #c7c7c7;
+}
+
+:where(html.dark) .text-gray-600,
+:where(html.dark) .text-gray-500,
+:where(html.dark) .text-gray-400 {
+  color: #9aa0a6;
+}
+
+:where(html.dark) .border-gray-200,
+:where(html.dark) .border-gray-100 {
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+:where(html.dark) .divide-gray-200 > :not([hidden]) ~ :not([hidden]),
+:where(html.dark) .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(148, 163, 184, 0.35);
+}
