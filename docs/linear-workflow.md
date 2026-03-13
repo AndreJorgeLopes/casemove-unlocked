@@ -15,7 +15,7 @@ Optional (recommended) defaults:
 
 ## Initialize Session Settings
 
-Run once per project to store defaults in `.sisyphus/linear-session.json`:
+Run once per project to store defaults in `.local/linear-session.json`:
 
 ```bash
 npm run linear:init

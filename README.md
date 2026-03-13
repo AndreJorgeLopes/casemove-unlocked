@@ -34,13 +34,13 @@ Export-Certificate -Cert $certfile -FilePath "C:\Cert$certificate.cert" -Type CE
 
 ## Download Latest Version (Casemove 2.3.3)
 
-This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
+This is the latest stable version and can be downloaded from the [releases](https://github.com/AndreJorgeLopes/casemove-unlocked/releases) page, or directly from:
 
 
-- [Windows - (Casemove-2.3.3)](https://github.com/nombersDev/casemove/releases/download/v2.3.3/Casemove-Setup-2.3.3.exe)
-- [Mac - (Casemove-2.3.3)](https://github.com/nombersDev/casemove/releases/download/v2.3.3/Casemove-2.3.3.dmg)
-- [Mac ARM 64 (M1) - (Casemove-2.3.3)](https://github.com/nombersDev/casemove/releases/download/v2.3.3/Casemove-2.3.3-arm64.dmg)
-- [Linux Deb - (Casemove-2.3.3)](https://github.com/nombersDev/casemove/releases/download/v2.3.3/casemove_2.3.3_amd64.deb)
+- [Windows - (Casemove-2.3.3)](https://github.com/AndreJorgeLopes/casemove-unlocked/releases/download/v2.3.3/Casemove-Setup-2.3.3.exe)
+- [Mac - (Casemove-2.3.3)](https://github.com/AndreJorgeLopes/casemove-unlocked/releases/download/v2.3.3/Casemove-2.3.3.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.3.3)](https://github.com/AndreJorgeLopes/casemove-unlocked/releases/download/v2.3.3/Casemove-2.3.3-arm64.dmg)
+- [Linux Deb - (Casemove-2.3.3)](https://github.com/AndreJorgeLopes/casemove-unlocked/releases/download/v2.3.3/casemove_2.3.3_amd64.deb)
 
 ## Support
 
@@ -78,7 +78,7 @@ Trade up features:
 
 ### How To Use
 
-Use this link to install [Casemove](https://github.com/nombersDev/casemove/releases) 
+Use this link to install [Casemove](https://github.com/AndreJorgeLopes/casemove-unlocked/releases) 
 
 To use:
   * Download the latest stable version of Casemove

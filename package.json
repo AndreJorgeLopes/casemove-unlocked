@@ -5,16 +5,10 @@
   "description": "Counter-Strike 2 Storage unit manager that helps you move stuff. ",
   "main": ".webpack/main",
   "author": {
-    "name": "Nombers",
-    "email": "casemovenombers@gmail.com",
-    "url": "https://github.com/nombersDev/casemove"
+    "name": "Andre Jorge Lopes",
+    "email": "andrelopes.professional@gmail.com",
+    "url": "https://github.com/AndreJorgeLopes/casemove-unlocked"
   },
-  "contributors": [
-    {
-      "name": "AaronTarga",
-      "url": "https://github.com/AaronTarga/casemove"
-    }
-  ],
   "scripts": {
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.ts-node",
     "package": "electron-forge package",

@@ -24,7 +24,7 @@ release/build
 .env
 
 # Local automation/session state
-.sisyphus/
+.local/
 
 .idea
 npm-debug.log.*

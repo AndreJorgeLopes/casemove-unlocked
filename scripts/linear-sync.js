@@ -11,7 +11,7 @@ const args = parseArgs(process.argv.slice(2));
 const mode = args.mode || 'manual';
 
 const repoRoot = getRepoRoot();
-const sessionPath = path.join(repoRoot, '.sisyphus', 'linear-session.json');
+const sessionPath = path.join(repoRoot, '.local', 'linear-session.json');
 const session = readSession(sessionPath);
 
 const LINEAR_API_KEY = process.env.LINEAR_API_KEY || session.apiKey;
